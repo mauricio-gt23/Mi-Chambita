@@ -14,13 +14,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
 import com.michambita.utils.DismissKeyboardWrapper
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(navController: NavHostController) {
+fun HomeScreen() {
     DismissKeyboardWrapper {
         val scaffoldState = rememberBottomSheetScaffoldState()
         val scope = rememberCoroutineScope()
@@ -41,9 +40,7 @@ fun MainScreen(navController: NavHostController) {
                         .imePadding(),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
                             imageVector = if (tipoOperacion == "venta") Icons.Default.PointOfSale else Icons.Default.MoneyOff,
                             contentDescription = null
@@ -60,9 +57,7 @@ fun MainScreen(navController: NavHostController) {
                         onValueChange = { descripcion = it },
                         label = { Text("Descripción") },
                         placeholder = {
-                            Text(
-                                if (tipoOperacion == "venta") "Ej: venta de jugos" else "Ej: compra de vasos"
-                            )
+                            Text(if (tipoOperacion == "venta") "Ej: venta de jugos" else "Ej: compra de vasos")
                         },
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -89,19 +84,9 @@ fun MainScreen(navController: NavHostController) {
                         Text(if (tipoOperacion == "venta") "Guardar Venta" else "Guardar Gasto")
                     }
                 }
-            },
-            topBar = {
-                TopAppBar(
-                    title = { Text("¡Bienvenido de nuevo, Juan 👋!") },
-                    actions = {
-                        IconButton(onClick = { /* Acción perfil */ }) {
-                            Icon(Icons.Default.AccountCircle, contentDescription = "Perfil")
-                        }
-                    }
-                )
             }
         ) { padding ->
-            MainScreenContentLayoutOnly(
+            HomeContentLayoutOnly(
                 modifier = Modifier.padding(padding),
                 onRegistrarVenta = {
                     tipoOperacion = "venta"
@@ -117,7 +102,7 @@ fun MainScreen(navController: NavHostController) {
 }
 
 @Composable
-fun MainScreenContentLayoutOnly(
+fun HomeContentLayoutOnly(
     modifier: Modifier = Modifier,
     onRegistrarVenta: () -> Unit,
     onRegistrarGasto: () -> Unit

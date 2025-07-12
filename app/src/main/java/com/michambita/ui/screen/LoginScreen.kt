@@ -7,14 +7,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavHostController
-import com.michambita.navigation.Screen
+import com.michambita.domain.viewmodel.LoginViewModel
 import com.michambita.ui.common.UiState
 import com.michambita.utils.DismissKeyboardWrapper
 
 @Composable
 fun LoginScreen(
-    navController: NavHostController,
+    onLoginSuccess: () -> Unit,
     viewModel: LoginViewModel = hiltViewModel()
 ) {
     DismissKeyboardWrapper {
@@ -22,13 +21,7 @@ fun LoginScreen(
         var email by remember { mutableStateOf("") }
 
         LaunchedEffect(uiState) {
-            if (uiState is UiState.Success) {
-                navController.navigate(Screen.Main.route) {
-                    popUpTo(Screen.Login.route) {
-                        inclusive = true
-                    }
-                }
-            }
+            if (uiState is UiState.Success) { onLoginSuccess() }
         }
 
         Column(
