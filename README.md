@@ -53,38 +53,6 @@
 
 ---
 
-## 📂 Estructura del proyecto
-MiChambita/
-│
-├── data/
-│ ├── local/
-│ │ ├── database/
-│ │ ├── dao/
-│ │ └── entity/
-│ ├── remote/
-│ └── repository/
-│
-├── domain/
-│ ├── model/
-│ └── usecase/
-│
-├── ui/
-│ ├── screen/
-│ │ ├── login/
-│ │ ├── ventas/
-│ │ ├── gastos/
-│ │ ├── inventario/
-│ │ └── resumen/
-│ ├── components/
-│ └── theme/
-│
-├── utils/
-├── di/
-├── navigation/
-└── build.gradle.kts
-
----
-
 ## 🔄 Modo offline y sincronización automática
 
 - Arquitectura **offline-first**: todos los datos se guardan primero en Room
@@ -123,9 +91,3 @@ MiChambita/
 - (Futuro) Encriptación de backups locales
 
 ---
-
-## 🧪 Instalación
-
-1. Clona el repositorio:
-   ```bash
-   git clone https://github.com/tuusuario/MiChambita.git
