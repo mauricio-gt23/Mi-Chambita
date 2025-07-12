@@ -5,6 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.michambita.ui.screen.LoginScreen
+import com.michambita.ui.screen.MainScreen
 
 @Composable
 fun NavigationGraph(navController: NavHostController, startDestination: String = Screen.Login.route) {
@@ -15,9 +16,9 @@ fun NavigationGraph(navController: NavHostController, startDestination: String =
         composable(Screen.Login.route) {
             LoginScreen(navController)
         }
-//        composable(Screen.Onboarding.route) {
-//            OnboardingScreen(navController)
-//        }
+        composable(Screen.Main.route) {
+            MainScreen(navController)
+        }
 //        composable(Screen.Ventas.route) {
 //            VentasScreen(navController)
 //        }
