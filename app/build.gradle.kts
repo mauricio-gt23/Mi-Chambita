@@ -58,10 +58,12 @@ dependencies {
     // Jetpack Compose
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-tooling-preview")
+    implementation("androidx.compose.ui:ui-text")
     implementation("androidx.compose.material3:material3")
     implementation("androidx.navigation:navigation-compose")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose")
     implementation("androidx.activity:activity-compose")
+    implementation(libs.androidx.material.icons.extended)
 
     // Room
     implementation(libs.androidx.room.runtime)
