@@ -9,16 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 
-/**
- * Oculta el teclado desde un Composable usando LocalSoftwareKeyboardController.
- */
-@Composable
-fun rememberKeyboardHider(): () -> Unit {
-    val controller = LocalSoftwareKeyboardController.current
-    return remember { { controller?.hide() } }
-}
 
 /**
  * Envuelve un contenido Composable para permitir ocultar el teclado al tocar fuera.

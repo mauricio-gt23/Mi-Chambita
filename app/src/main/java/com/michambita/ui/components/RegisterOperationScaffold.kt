@@ -14,7 +14,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.michambita.utils.DismissKeyboardWrapper
-import com.michambita.utils.rememberKeyboardHider
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -29,7 +28,6 @@ fun RegisterOperationScaffold(
 ) {
     val scope = rememberCoroutineScope()
     val scaffoldState = rememberBottomSheetScaffoldState()
-    val hideKeyboard = rememberKeyboardHider()
 
     var descripcion by remember { mutableStateOf("") }
     var monto by remember { mutableStateOf("") }
@@ -73,7 +71,6 @@ fun RegisterOperationScaffold(
 
                     Button(
                         onClick = {
-                            hideKeyboard()
                             onGuardar(monto.trim(), descripcion.trim())
                             scope.launch {
                                 scaffoldState.bottomSheetState.hide()
