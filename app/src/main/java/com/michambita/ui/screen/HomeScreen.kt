@@ -14,6 +14,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.michambita.domain.model.Movimiento
+import com.michambita.ui.components.MovimientoItem
 import com.michambita.utils.DismissKeyboardWrapper
 import kotlinx.coroutines.launch
 
@@ -21,12 +23,16 @@ import kotlinx.coroutines.launch
 @Composable
 fun HomeScreen() {
     DismissKeyboardWrapper {
-        val scaffoldState = rememberBottomSheetScaffoldState()
+        val scaffoldState = rememberBottomSheetScaffoldState(
+            bottomSheetState = rememberStandardBottomSheetState(skipHiddenState = false)
+        )
         val scope = rememberCoroutineScope()
 
-        var tipoOperacion by remember { mutableStateOf("venta") }
-        var descripcion by remember { mutableStateOf("") }
+        var tipoOperacion by remember { mutableStateOf("V") } // "V" = venta, "G" = gasto
+        var titulo by remember { mutableStateOf("") }
         var monto by remember { mutableStateOf("") }
+
+        val movimientos = remember { mutableStateListOf<Movimiento>() }
 
         BottomSheetScaffold(
             scaffoldState = scaffoldState,
@@ -42,22 +48,22 @@ fun HomeScreen() {
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
-                            imageVector = if (tipoOperacion == "venta") Icons.Default.PointOfSale else Icons.Default.MoneyOff,
+                            imageVector = if (tipoOperacion == "V") Icons.Default.PointOfSale else Icons.Default.MoneyOff,
                             contentDescription = null
                         )
                         Spacer(Modifier.width(8.dp))
                         Text(
-                            text = if (tipoOperacion == "venta") "Registrar Venta" else "Registrar Gasto",
+                            text = if (tipoOperacion == "V") "Registrar Venta" else "Registrar Gasto",
                             style = MaterialTheme.typography.titleLarge
                         )
                     }
 
                     OutlinedTextField(
-                        value = descripcion,
-                        onValueChange = { descripcion = it },
+                        value = titulo,
+                        onValueChange = { titulo = it },
                         label = { Text("Descripción") },
                         placeholder = {
-                            Text(if (tipoOperacion == "venta") "Ej: venta de jugos" else "Ej: compra de vasos")
+                            Text(if (tipoOperacion == "V") "Ej: venta de jugos" else "Ej: compra de vasos")
                         },
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -72,28 +78,33 @@ fun HomeScreen() {
 
                     Button(
                         onClick = {
-                            println("$tipoOperacion -> monto: $monto | desc: $descripcion")
-                            scope.launch {
-                                scaffoldState.bottomSheetState.hide()
-                                descripcion = ""
-                                monto = ""
+                            val montoDecimal = monto.trim().toBigDecimal()
+                            if (titulo.isNotBlank() && monto.isNotBlank()) {
+                                movimientos.add(0, Movimiento(titulo.trim(), montoDecimal, tipoOperacion))
+                                println("$tipoOperacion -> monto: $monto | desc: $titulo")
+                                scope.launch {
+                                    scaffoldState.bottomSheetState.hide()
+                                    titulo = ""
+                                    monto = ""
+                                }
                             }
                         },
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text(if (tipoOperacion == "venta") "Guardar Venta" else "Guardar Gasto")
+                        Text(if (tipoOperacion == "V") "Guardar Venta" else "Guardar Gasto")
                     }
                 }
             }
         ) { padding ->
             HomeContentLayoutOnly(
                 modifier = Modifier.padding(padding),
+                movimientos = movimientos,
                 onRegistrarVenta = {
-                    tipoOperacion = "venta"
+                    tipoOperacion = "V"
                     scope.launch { scaffoldState.bottomSheetState.expand() }
                 },
                 onRegistrarGasto = {
-                    tipoOperacion = "gasto"
+                    tipoOperacion = "G"
                     scope.launch { scaffoldState.bottomSheetState.expand() }
                 }
             )
@@ -104,6 +115,7 @@ fun HomeScreen() {
 @Composable
 fun HomeContentLayoutOnly(
     modifier: Modifier = Modifier,
+    movimientos: List<Movimiento>,
     onRegistrarVenta: () -> Unit,
     onRegistrarGasto: () -> Unit
 ) {
@@ -113,15 +125,9 @@ fun HomeContentLayoutOnly(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(
-                top = 16.dp,
-                start = 20.dp,
-                end = 20.dp,
-                bottom = 0.dp
-            ),
+            .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
-        // 📊 Resumen del Día
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
@@ -142,7 +148,6 @@ fun HomeContentLayoutOnly(
             )
         }
 
-        // 🔘 Botones
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -157,15 +162,10 @@ fun HomeContentLayoutOnly(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // 🧾 Movimientos
-        Text(
-            text = "Últimos movimientos",
-            style = MaterialTheme.typography.titleMedium
-        )
+        Text("Últimos movimientos", style = MaterialTheme.typography.titleMedium)
 
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            RecentActivityItem("Venta de jugos", "S/ 20.00", true)
-            RecentActivityItem("Compra de vasos", "S/ 8.50", false)
+            movimientos.forEach { movimiento -> MovimientoItem(movimiento) }
         }
     }
 }
@@ -219,32 +219,5 @@ fun ActionButton(
         Icon(icon, contentDescription = null)
         Spacer(modifier = Modifier.width(8.dp))
         Text(text, fontSize = 16.sp)
-    }
-}
-
-@Composable
-fun RecentActivityItem(titulo: String, monto: String, esVenta: Boolean) {
-    val color = if (esVenta) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
-    val icon = if (esVenta) Icons.Filled.PointOfSale else Icons.Filled.Receipt
-
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(2.dp),
-        shape = MaterialTheme.shapes.small
-    ) {
-        Row(
-            modifier = Modifier
-                .padding(12.dp)
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(icon, contentDescription = null, tint = color)
-            Spacer(Modifier.width(12.dp))
-            Column(modifier = Modifier.weight(1f)) {
-                Text(titulo, fontWeight = FontWeight.SemiBold)
-                Text(monto, color = color)
-            }
-        }
     }
 }
