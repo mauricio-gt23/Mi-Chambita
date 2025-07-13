@@ -41,7 +41,6 @@ fun RegisterOperationScaffold(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(24.dp)
-                        .navigationBarsPadding()
                         .imePadding(),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {

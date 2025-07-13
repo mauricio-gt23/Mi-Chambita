@@ -1,5 +1,8 @@
 package com.michambita.ui.screen
 
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
@@ -11,6 +14,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -36,7 +41,10 @@ fun MainContainer() {
         NavHost(
             navController = navController,
             startDestination = Screen.MainContainer.route,
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier.padding(PaddingValues(
+                start = 0.dp, top = innerPadding.calculateTopPadding(),
+                end = 0.dp, bottom = 0.dp
+            ))
         ) {
             composable(Screen.MainContainer.route) { HomeScreen() }
 //            composable(Screen.Ventas.route) { VentasScreen(navController) }

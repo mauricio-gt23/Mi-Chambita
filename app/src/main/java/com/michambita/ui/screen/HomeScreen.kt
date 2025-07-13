@@ -113,7 +113,12 @@ fun HomeContentLayoutOnly(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(
+                top = 16.dp,
+                start = 20.dp,
+                end = 20.dp,
+                bottom = 0.dp
+            ),
         verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
         // 📊 Resumen del Día
