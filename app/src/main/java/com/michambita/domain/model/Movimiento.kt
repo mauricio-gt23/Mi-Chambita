@@ -1,9 +1,13 @@
 package com.michambita.domain.model
 
 import java.math.BigDecimal
+import java.util.Date
+
 
 data class Movimiento(
     val descripcion: String,
     val monto: BigDecimal,
-    val tipoMovimiento: String
+    val tipoMovimiento: String, // "V" o "G"
+    val fechaRegistro: Date = Date(),
+    val sincronizado: Boolean = false
 )

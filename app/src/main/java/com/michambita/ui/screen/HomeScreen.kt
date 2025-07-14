@@ -1,6 +1,8 @@
 package com.michambita.ui.screen
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -32,7 +34,8 @@ fun HomeScreen() {
         var titulo by remember { mutableStateOf("") }
         var monto by remember { mutableStateOf("") }
 
-        val movimientos = remember { mutableStateListOf<Movimiento>() }
+        // Lista local de movimientos por sincronizar
+        val movimientosPendientes = remember { mutableStateListOf<Movimiento>() }
 
         BottomSheetScaffold(
             scaffoldState = scaffoldState,
@@ -78,14 +81,21 @@ fun HomeScreen() {
 
                     Button(
                         onClick = {
-                            val montoDecimal = monto.trim().toBigDecimal()
                             if (titulo.isNotBlank() && monto.isNotBlank()) {
-                                movimientos.add(0, Movimiento(titulo.trim(), montoDecimal, tipoOperacion))
-                                println("$tipoOperacion -> monto: $monto | desc: $titulo")
-                                scope.launch {
-                                    scaffoldState.bottomSheetState.hide()
-                                    titulo = ""
-                                    monto = ""
+                                val montoDecimal = monto.trim().toBigDecimalOrNull()
+                                if (montoDecimal != null) {
+                                    val nuevoMovimiento = Movimiento(
+                                        descripcion = titulo.trim(),
+                                        monto = montoDecimal,
+                                        tipoMovimiento = tipoOperacion
+                                    )
+                                    movimientosPendientes.add(0, nuevoMovimiento)
+                                    println("Registro local: $nuevoMovimiento")
+                                    scope.launch {
+                                        scaffoldState.bottomSheetState.hide()
+                                        titulo = ""
+                                        monto = ""
+                                    }
                                 }
                             }
                         },
@@ -98,7 +108,7 @@ fun HomeScreen() {
         ) { padding ->
             HomeContentLayoutOnly(
                 modifier = Modifier.padding(padding),
-                movimientos = movimientos,
+                movimientosPendientes = movimientosPendientes,
                 onRegistrarVenta = {
                     tipoOperacion = "V"
                     scope.launch { scaffoldState.bottomSheetState.expand() }
@@ -115,7 +125,7 @@ fun HomeScreen() {
 @Composable
 fun HomeContentLayoutOnly(
     modifier: Modifier = Modifier,
-    movimientos: List<Movimiento>,
+    movimientosPendientes: List<Movimiento>,
     onRegistrarVenta: () -> Unit,
     onRegistrarGasto: () -> Unit
 ) {
@@ -128,6 +138,8 @@ fun HomeContentLayoutOnly(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
+
+        // Resumen diario
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
@@ -148,6 +160,7 @@ fun HomeContentLayoutOnly(
             )
         }
 
+        // Acciones
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -162,10 +175,60 @@ fun HomeContentLayoutOnly(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        Text("Últimos movimientos", style = MaterialTheme.typography.titleMedium)
+        // Título historial + botón sincronizar
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text("Movimientos por sincronizar", style = MaterialTheme.typography.titleMedium)
+            TextButton(onClick = { /* lógica de sincronización */ }) {
+                Icon(Icons.Default.Sync, contentDescription = null)
+                Spacer(modifier = Modifier.width(4.dp))
+                Text("Sincronizar")
+            }
+        }
 
-        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            movimientos.forEach { movimiento -> MovimientoItem(movimiento) }
+        // Historial
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f),
+            elevation = CardDefaults.cardElevation(4.dp),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                if (movimientosPendientes.isEmpty()) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize(),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text("No hay movimientos pendientes.")
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Button(onClick = { /* lógica para ir al historial */ }) {
+                            Icon(Icons.Default.History, contentDescription = null)
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text("Ver historial")
+                        }
+                    }
+                } else {
+                    LazyColumn (
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        items(movimientosPendientes) { movimiento ->
+                            MovimientoItem(movimiento)
+                        }
+                    }
+                }
+            }
         }
     }
 }

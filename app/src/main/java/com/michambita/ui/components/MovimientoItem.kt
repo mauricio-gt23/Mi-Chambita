@@ -20,7 +20,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.michambita.domain.model.Movimiento
-import java.math.BigDecimal
 
 @Composable
 fun MovimientoItem(
@@ -44,10 +43,17 @@ fun MovimientoItem(
         ) {
             Icon(icon, contentDescription = null, tint = color)
             Spacer(Modifier.width(12.dp))
+
             Column(modifier = Modifier.weight(1f)) {
                 Text(movimiento.descripcion, fontWeight = FontWeight.SemiBold)
-                Text("S/ ${movimiento.monto.setScale(2)}", color = color)
+                Text(movimiento.fechaRegistro.toString(), style = MaterialTheme.typography.bodySmall)
             }
+            Spacer(Modifier.width(12.dp))
+            Text(
+                text = "S/ ${movimiento.monto.setScale(2)}",
+                color = color,
+                fontWeight = FontWeight.Bold
+            )
         }
     }
 }
