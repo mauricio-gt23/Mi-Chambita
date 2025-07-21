@@ -29,7 +29,7 @@ fun MainContainer() {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("¡Bienvenido de nuevo, Juan 👋!") },
+                title = { Text("¡Bienvenido de nuevo, M 👋!") },
                 actions = {
                     IconButton(onClick = { /* Acción perfil o logout */ }) {
                         Icon(Icons.Default.AccountCircle, contentDescription = "Perfil")

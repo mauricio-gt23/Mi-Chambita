@@ -5,6 +5,7 @@ import java.util.Date
 
 
 data class Movimiento(
+    val id: Long? = null,
     val descripcion: String,
     val monto: BigDecimal,
     val tipoMovimiento: String, // "V" o "G"

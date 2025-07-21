@@ -65,6 +65,9 @@ dependencies {
     implementation("androidx.activity:activity-compose")
     implementation(libs.androidx.material.icons.extended)
 
+    // Material
+    implementation(libs.androidx.material)
+
     // Room
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)

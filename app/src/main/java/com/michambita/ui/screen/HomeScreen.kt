@@ -16,8 +16,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.michambita.data.enum.EnumModoOperacion
 import com.michambita.domain.model.Movimiento
-import com.michambita.ui.components.MovimientoItem
+import com.michambita.ui.components.SwipeMovimientoItem
 import com.michambita.utils.DismissKeyboardWrapper
 import kotlinx.coroutines.launch
 
@@ -30,12 +31,28 @@ fun HomeScreen() {
         )
         val scope = rememberCoroutineScope()
 
+        // Variables Movimiento
         var tipoOperacion by remember { mutableStateOf("V") } // "V" = venta, "G" = gasto
         var titulo by remember { mutableStateOf("") }
         var monto by remember { mutableStateOf("") }
 
-        // Lista local de movimientos por sincronizar
+        // ModoOperación
+        var modoOperacion by remember { mutableStateOf(EnumModoOperacion.REGISTRAR) }
+        var movimientoEditando by remember { mutableStateOf<Movimiento?>(null) }
+
+        // Lista de movimientos sincronizar
         val movimientosPendientes = remember { mutableStateListOf<Movimiento>() }
+
+        LaunchedEffect(scaffoldState.bottomSheetState.currentValue) {
+            // Precargar datos si está en modo edición
+            if (scaffoldState.bottomSheetState.isVisible && modoOperacion == EnumModoOperacion.EDITAR) {
+                movimientoEditando?.let {
+                    titulo = it.descripcion
+                    monto = it.monto.toPlainString()
+                    tipoOperacion = it.tipoMovimiento
+                }
+            }
+        }
 
         BottomSheetScaffold(
             scaffoldState = scaffoldState,
@@ -56,7 +73,11 @@ fun HomeScreen() {
                         )
                         Spacer(Modifier.width(8.dp))
                         Text(
-                            text = if (tipoOperacion == "V") "Registrar Venta" else "Registrar Gasto",
+                            text = if (modoOperacion == EnumModoOperacion.REGISTRAR) {
+                                if (tipoOperacion == "V") "Registrar Venta" else "Registrar Gasto"
+                            } else {
+                                "Editar Movimiento"
+                            },
                             style = MaterialTheme.typography.titleLarge
                         )
                     }
@@ -84,24 +105,50 @@ fun HomeScreen() {
                             if (titulo.isNotBlank() && monto.isNotBlank()) {
                                 val montoDecimal = monto.trim().toBigDecimalOrNull()
                                 if (montoDecimal != null) {
-                                    val nuevoMovimiento = Movimiento(
-                                        descripcion = titulo.trim(),
-                                        monto = montoDecimal,
-                                        tipoMovimiento = tipoOperacion
-                                    )
-                                    movimientosPendientes.add(0, nuevoMovimiento)
-                                    println("Registro local: $nuevoMovimiento")
+                                    when (modoOperacion) {
+                                        EnumModoOperacion.REGISTRAR -> {
+                                            val nuevoMovimiento = Movimiento(
+                                                descripcion = titulo.trim(),
+                                                monto = montoDecimal,
+                                                tipoMovimiento = tipoOperacion
+                                            )
+                                            movimientosPendientes.add(0, nuevoMovimiento)
+                                            println("Registro local: $nuevoMovimiento")
+                                        }
+                                        EnumModoOperacion.EDITAR -> {
+                                            movimientoEditando?.let { mov ->
+                                                val index = movimientosPendientes.indexOf(mov)
+                                                if (index >= 0) {
+                                                    movimientosPendientes[index] = mov.copy(
+                                                        descripcion = titulo.trim(),
+                                                        monto = montoDecimal,
+                                                        tipoMovimiento = tipoOperacion
+                                                    )
+                                                }
+                                            }
+                                            movimientoEditando = null
+                                        }
+                                    }
+
+                                    // Resetear valores
                                     scope.launch {
                                         scaffoldState.bottomSheetState.hide()
                                         titulo = ""
                                         monto = ""
+                                        modoOperacion = EnumModoOperacion.REGISTRAR
                                     }
                                 }
                             }
                         },
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text(if (tipoOperacion == "V") "Guardar Venta" else "Guardar Gasto")
+                        Text(
+                            when (modoOperacion) {
+                                EnumModoOperacion.REGISTRAR ->
+                                    if (tipoOperacion == "V") "Guardar Venta" else "Guardar Gasto"
+                                EnumModoOperacion.EDITAR -> "Guardar Cambios"
+                            }
+                        )
                     }
                 }
             }
@@ -111,11 +158,24 @@ fun HomeScreen() {
                 movimientosPendientes = movimientosPendientes,
                 onRegistrarVenta = {
                     tipoOperacion = "V"
+                    modoOperacion = EnumModoOperacion.REGISTRAR
                     scope.launch { scaffoldState.bottomSheetState.expand() }
                 },
                 onRegistrarGasto = {
                     tipoOperacion = "G"
+                    modoOperacion = EnumModoOperacion.REGISTRAR
                     scope.launch { scaffoldState.bottomSheetState.expand() }
+                },
+                onEditarMovimiento = { movimiento ->
+                    titulo = movimiento.descripcion
+                    monto = movimiento.monto.toPlainString()
+                    tipoOperacion = movimiento.tipoMovimiento
+                    modoOperacion = EnumModoOperacion.EDITAR
+                    movimientoEditando = movimiento
+                    scope.launch { scaffoldState.bottomSheetState.expand() }
+                },
+                onEliminarMovimiento = { movimiento ->
+                    movimientosPendientes.remove(movimiento)
                 }
             )
         }
@@ -127,7 +187,9 @@ fun HomeContentLayoutOnly(
     modifier: Modifier = Modifier,
     movimientosPendientes: List<Movimiento>,
     onRegistrarVenta: () -> Unit,
-    onRegistrarGasto: () -> Unit
+    onRegistrarGasto: () -> Unit,
+    onEditarMovimiento: (Movimiento) -> Unit,
+    onEliminarMovimiento: (Movimiento) -> Unit
 ) {
     val ventas = "S/ 250.75"
     val gastos = "S/ 85.20"
@@ -194,7 +256,7 @@ fun HomeContentLayoutOnly(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f),
-            elevation = CardDefaults.cardElevation(4.dp),
+            elevation = CardDefaults.cardElevation(6.dp),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
         ) {
             Column(
@@ -219,12 +281,19 @@ fun HomeContentLayoutOnly(
                         }
                     }
                 } else {
-                    LazyColumn (
+                    LazyColumn(
                         modifier = Modifier.fillMaxSize(),
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        items(movimientosPendientes) { movimiento ->
-                            MovimientoItem(movimiento)
+                        items(
+                            items = movimientosPendientes,
+                            key = { it.hashCode() }
+                        ) { movimiento ->
+                            SwipeMovimientoItem(
+                                movimiento = movimiento,
+                                onEditar = onEditarMovimiento,
+                                onEliminar = onEliminarMovimiento,
+                            )
                         }
                     }
                 }
