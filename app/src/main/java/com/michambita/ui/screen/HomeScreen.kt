@@ -16,15 +16,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.michambita.data.enum.EnumModoOperacion
 import com.michambita.domain.model.Movimiento
+import com.michambita.navigation.Screen
 import com.michambita.ui.components.SwipeMovimientoItem
 import com.michambita.utils.DismissKeyboardWrapper
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen() {
+fun HomeScreen(navController: NavController) {
     DismissKeyboardWrapper {
         val scaffoldState = rememberBottomSheetScaffoldState(
             bottomSheetState = rememberStandardBottomSheetState(skipHiddenState = false)
@@ -154,6 +156,7 @@ fun HomeScreen() {
             }
         ) { padding ->
             HomeContentLayoutOnly(
+                navController = navController,
                 modifier = Modifier.padding(padding),
                 movimientosPendientes = movimientosPendientes,
                 onRegistrarVenta = {
@@ -184,6 +187,7 @@ fun HomeScreen() {
 
 @Composable
 fun HomeContentLayoutOnly(
+    navController: NavController,
     modifier: Modifier = Modifier,
     movimientosPendientes: List<Movimiento>,
     onRegistrarVenta: () -> Unit,
@@ -232,7 +236,15 @@ fun HomeContentLayoutOnly(
                 ActionButton("Registrar Gasto", Icons.Filled.Payment, onRegistrarGasto, Modifier.weight(1f))
             }
 
-            ActionButton("Ver Inventario", Icons.Filled.Inventory, onClick = {}, isSecondary = true)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                ActionButton("Productos", Icons.Filled.AddBox, onClick = {
+                    navController.navigate(Screen.Producto.route)
+                }, isSecondary = true)
+                ActionButton("Ver Inventario", Icons.Filled.Inventory, onClick = {}, isSecondary = true)
+            }
         }
 
         Spacer(modifier = Modifier.height(24.dp))
