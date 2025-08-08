@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "714195354061",
+    "project_id": "michambita-4e2e1",
+    "storage_bucket": "michambita-4e2e1.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:714195354061:android:ab098fdc65850e8af70484",
+        "android_client_info": {
+          "package_name": "com.michambita"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAp0nLLZkKtWkI-7PJCNUOJVOy5U2E9zbo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
