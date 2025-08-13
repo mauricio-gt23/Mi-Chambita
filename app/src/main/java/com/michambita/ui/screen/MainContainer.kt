@@ -17,6 +17,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.michambita.navigation.Screen
+import com.michambita.ui.screen.producto.ProductoScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

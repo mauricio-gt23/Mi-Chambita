@@ -125,5 +125,3 @@ Estas directrices tienen como objetivo promover la claridad, mantenibilidad y ro
 *   **Logging:** Usa logging apropiado (`Log.d`, `Log.i`, `Log.e`) para depuración, pero ten cuidado de lanzar apps con logging excesivo. Considera usar una librería de logging como Timber.
 
 ---
-
-Al adoptar estas prácticas, construirás una aplicación "MiChambita" más robusta, escalable y mantenible. Es un proceso continuo, ¡así que revisa y refina tu enfoque regularmente!

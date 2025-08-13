@@ -15,7 +15,7 @@ class ProductoRepositoryImpl @Inject constructor(
 
     override suspend fun saveProducto(producto: Producto): Result<Unit> {
         return try {
-            productoCollection.document(producto.toModel().id!!).set(producto).await()
+            productoCollection.document().set(producto).await()
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
