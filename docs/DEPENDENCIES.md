@@ -6,15 +6,15 @@ Este archivo documenta todas las dependencias y plugins utilizados en el proyect
 
 ## ⚙️ Versiones del entorno
 
-| Herramienta                    | Versión     |
-|-------------------------------|-------------|
-| Kotlin                        | 1.9.23      |
-| Gradle Wrapper                | 8.3         |
-| Android Gradle Plugin (AGP)   | 8.1.1       |
-| Compose BOM                   | 2024.03.00  |
-| Java                          | 17          |
-| Min SDK                       | 23          |
-| Target SDK                    | 34          |
+| Herramienta                    | Versión    |
+|-------------------------------|------------|
+| Kotlin                        | 1.9.23     |
+| Gradle Wrapper                | 8.7        |
+| Android Gradle Plugin (AGP)   | 8.4.1      |
+| Compose BOM                   | 2024.03.00 |
+| Java                          | 17         |
+| Min SDK                       | 23         |
+| Target SDK                    | 34         |
 
 ---
 
