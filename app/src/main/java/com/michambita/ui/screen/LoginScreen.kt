@@ -8,7 +8,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.michambita.domain.viewmodel.AuthViewModel
+import com.michambita.ui.viewmodel.AuthViewModel
 import com.michambita.ui.common.UiState
 import com.michambita.utils.DismissKeyboardWrapper
 

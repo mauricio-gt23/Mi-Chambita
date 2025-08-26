@@ -1,4 +1,4 @@
-package com.michambita.domain.viewmodel
+package com.michambita.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
