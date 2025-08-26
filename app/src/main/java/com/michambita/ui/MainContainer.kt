@@ -1,4 +1,4 @@
-package com.michambita.ui.screen
+package com.michambita.ui
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
@@ -17,6 +17,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.michambita.navigation.Screen
+import com.michambita.ui.screen.HomeScreen
 import com.michambita.ui.screen.producto.ProductoScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
