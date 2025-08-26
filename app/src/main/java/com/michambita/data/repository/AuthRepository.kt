@@ -1,6 +1,6 @@
 package com.michambita.data.repository
 
 interface AuthRepository {
-    suspend fun loginWithEmailLink(email: String): Result<String>
-    suspend fun loginWithPhoneNumber(phone: String): Result<Unit>
+    suspend fun login(email: String, password: String): Result<String>
+    suspend fun register(nombre: String, email: String, password: String): Result<String>
 }
