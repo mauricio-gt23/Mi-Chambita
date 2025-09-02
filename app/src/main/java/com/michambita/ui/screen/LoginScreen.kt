@@ -3,13 +3,16 @@ package com.michambita.ui.screen
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.michambita.ui.viewmodel.AuthViewModel
 import com.michambita.ui.common.UiState
+import com.michambita.ui.components.AlertModal
+import com.michambita.ui.components.ErrorDisplay
+import com.michambita.ui.components.LoadingOverlay
 import com.michambita.utils.DismissKeyboardWrapper
 
 @Composable
@@ -27,27 +30,12 @@ fun LoginScreen(
 
         var isLogin by remember { mutableStateOf(true) }
 
-        when (uiState) {
-            is UiState.Empty -> {}
-            is UiState.Loading -> CircularProgressIndicator()
-            is UiState.Success -> {
-                Text(
-                    text = (uiState as UiState.Success).data,
-                    color = Color.Green
-                )
-                //onLoginSuccess()
-            }
-            is UiState.Error -> Text(
-                text = "Error: ${(uiState as UiState.Error).message}",
-                color = Color.Red
-            )
-        }
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(24.dp),
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
                 text = if (isLogin) "Iniciar Sesión" else "Crear Cuenta",
@@ -107,8 +95,8 @@ fun LoginScreen(
                             if (password == confirmPassword) {
                                 viewModel.register(name, email, password)
                             } else {
-                                // TODO: Mostrar mensaje de error
-                                // Manejar error de contraseñas distintas
+                                // TODO: Mostrar mensaje de error con ErrorDisplay
+                                // viewModel.setError("Las contraseñas no coinciden")
                             }
                         }
                     }
@@ -125,6 +113,45 @@ fun LoginScreen(
             }
 
             Spacer(modifier = Modifier.height(24.dp))
+        }
+
+        when (val state = uiState) {
+            is UiState.Empty -> {}
+            is UiState.Loading -> {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    LoadingOverlay("Cargando...")
+                }
+            }
+            is UiState.Success -> {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    AlertModal(
+                        title = state.data,
+                        message = "",
+                        showDismissButton = false,
+                        onConfirm = {
+                            onLoginSuccess()
+                        },
+                        onDismissRequest = { }
+                    )
+                }
+            }
+            is UiState.Error -> {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    ErrorDisplay(
+                        errorMessage = state.message,
+                        onDismiss = {}
+                    )
+                }
+            }
         }
     }
 }
