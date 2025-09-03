@@ -243,7 +243,9 @@ fun HomeContentLayoutOnly(
                 ActionButton("Productos", Icons.Filled.AddBox, onClick = {
                     navController.navigate(Screen.Producto.route)
                 }, isSecondary = true)
-                ActionButton("Ver Inventario", Icons.Filled.Inventory, onClick = {}, isSecondary = true)
+                ActionButton("Ver Inventario", Icons.Filled.Inventory, onClick = {
+                    navController.navigate(Screen.Inventario.route)
+                }, isSecondary = true)
             }
         }
 

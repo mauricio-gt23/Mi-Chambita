@@ -25,6 +25,7 @@ import com.michambita.ui.screen.HomeScreen
 import com.michambita.ui.screen.producto.ProductoScreen
 import com.michambita.ui.viewmodel.MainViewModel
 import com.michambita.ui.common.UiState
+import com.michambita.ui.screen.inventory.InventoryScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -73,8 +74,8 @@ fun MainContainer(
         ) {
             composable(Screen.MainContainer.route) { HomeScreen(navController) }
             composable(Screen.Producto.route) { ProductoScreen() }
+            composable(Screen.Inventario.route) { InventoryScreen(navController) }
 //            composable(Screen.Gastos.route) { GastosScreen(navController) }
-//            composable(Screen.Inventario.route) { InventarioScreen(navController) }
 //            composable(Screen.Resumen.route) { ResumenScreen(navController) }
         }
     }
