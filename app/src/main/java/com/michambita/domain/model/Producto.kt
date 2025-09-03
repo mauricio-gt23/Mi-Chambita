@@ -12,4 +12,12 @@ data class Producto(
     val esIntangible: Boolean
 )
 
-fun ProductoModel.toModel() = ProductoModel(id, userId, nombre, descripcion, precio, unidadMedida, esIntangible)
+fun ProductoModel.toDomain() = Producto(
+    id,
+    userId,
+    nombre,
+    descripcion,
+    precio,
+    unidadMedida,
+    esIntangible
+)

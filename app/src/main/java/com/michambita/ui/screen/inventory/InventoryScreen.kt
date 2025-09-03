@@ -1,62 +1,65 @@
 package com.michambita.ui.screen.inventory
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Save
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Divider
+import android.annotation.SuppressLint
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.michambita.domain.model.Producto
+import com.michambita.ui.common.UiState
+import com.michambita.ui.components.widget.LoadingOverlay
+import com.michambita.ui.viewmodel.InventoryViewModel
 import com.michambita.utils.DismissKeyboardWrapper
 
+@SuppressLint("MutableCollectionMutableState")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun InventoryScreen(navController: NavController) {
+fun InventoryScreen(
+    navController: NavController,
+    viewModel: InventoryViewModel = hiltViewModel()
+) {
+    val uiState by viewModel.uiStateGetAllProducto.collectAsStateWithLifecycle()
+
+    var productoList by remember { mutableStateOf(mutableListOf<Producto>()) }
+
+    LaunchedEffect(Unit) {
+        viewModel.getAllProducto()
+    }
+
     DismissKeyboardWrapper {
-        val productos = remember {
-            mutableStateListOf(
-                    Producto(nombre="Manzana Roja", precio= Double.MAX_VALUE, unidadMedida = "120", esIntangible = false ),
-            Producto(nombre="Manzana Verde", precio= Double.MAX_VALUE, unidadMedida = "120", esIntangible = false ),
-            Producto(nombre="Manzana Negra", precio= Double.MAX_VALUE, unidadMedida = "120", esIntangible = false ),
-            Producto(nombre="Manzana Azul", precio= Double.MAX_VALUE, unidadMedida = "120", esIntangible = false ),
-            Producto(nombre="Manzana Roja", precio= Double.MAX_VALUE, unidadMedida = "120", esIntangible = false ),
-            Producto(nombre="Manzana Verde", precio= Double.MAX_VALUE, unidadMedida = "120", esIntangible = false ),
-            Producto(nombre="Manzana Negra", precio= Double.MAX_VALUE, unidadMedida = "120", esIntangible = false ),
-            Producto(nombre="Manzana Azul", precio= Double.MAX_VALUE, unidadMedida = "120", esIntangible = false ),
-            Producto(nombre="Manzana Roja", precio= Double.MAX_VALUE, unidadMedida = "120", esIntangible = false ),
-            Producto(nombre="Manzana Verde", precio= Double.MAX_VALUE, unidadMedida = "120", esIntangible = false ),
-            Producto(nombre="Manzana Negra", precio= Double.MAX_VALUE, unidadMedida = "120", esIntangible = false ),
-            Producto(nombre="Manzana Azul", precio= Double.MAX_VALUE, unidadMedida = "120", esIntangible = false ),
-            )
+        when (uiState) {
+            is UiState.Loading -> {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    LoadingOverlay("Cargando...")
+                }
+            }
+            is UiState.Success -> {
+                productoList = (uiState as UiState.Success<List<Producto>>).data as MutableList<Producto>
+            }
+            is UiState.Error -> {}
+            else -> {}
         }
 
         InventoryTable(
-            productos = productos,
+            productos = productoList,
             onEdit = { producto ->
-                // Aquí lógica para editar producto
                 println("Editar: $producto")
             },
             onDelete = { producto ->
-                productos.remove(producto)
+                productoList.remove(producto)
             },
             onSave = {
                 println("Guardar inventario")

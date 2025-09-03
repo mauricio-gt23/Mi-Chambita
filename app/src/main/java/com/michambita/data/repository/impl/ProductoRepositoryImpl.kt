@@ -1,7 +1,9 @@
 package com.michambita.data.repository.impl
 
 import com.google.firebase.firestore.FirebaseFirestore
-import com.michambita.data.model.toModel
+import com.michambita.data.model.ProductoModel
+import com.michambita.data.model.toModel // For saveProducto
+import com.michambita.domain.model.toDomain // For getAllProductosByUserId
 import com.michambita.data.repository.ProductoRepository
 import com.michambita.domain.model.Producto
 import kotlinx.coroutines.tasks.await
@@ -15,6 +17,7 @@ class ProductoRepositoryImpl @Inject constructor(
 
     override suspend fun saveProducto(producto: Producto): Result<Unit> {
         return try {
+            // Assuming producto.toModel() converts domain Producto to data ProductoModel
             productoCollection.document().set(producto.toModel()).await()
             Result.success(Unit)
         } catch (e: Exception) {
@@ -30,7 +33,15 @@ class ProductoRepositoryImpl @Inject constructor(
         TODO("Not yet implemented")
     }
 
-    override suspend fun getAllProductos(): Result<List<Producto>> {
-        TODO("Not yet implemented")
+    override suspend fun getAllProductosByUserId(userId: String): Result<List<Producto>> {
+        return try {
+            val querySnapshot = productoCollection.whereEqualTo("userId", userId).get().await()
+            val productoList = querySnapshot.documents.mapNotNull { document ->
+                document.toObject(ProductoModel::class.java)?.toDomain()
+            }
+            Result.success(productoList)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 }
