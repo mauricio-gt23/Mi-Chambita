@@ -48,17 +48,13 @@ class MainViewModel @Inject constructor(
     fun getUser() {
         viewModelScope.launch {
             _uiStateGetUser.value = UiState.Loading
-            val userId = authRepository.getCurrentUser().firstOrNull()
 
-            if (userId != null) {
-                val result = getUserUseCase.invoke(userId)
-                _uiStateGetUser.value = result.fold(
-                    onSuccess = { user -> UiState.Success(user) },
-                    onFailure = { UiState.Error(it.message ?: "Ocurrió un error al obtener el usuario") }
-                )
-            } else {
-                _uiStateGetUser.value = UiState.Error("Usuario no autenticado")
-            }
+            val result = getUserUseCase.invoke()
+
+            _uiStateGetUser.value = result.fold(
+                onSuccess = { user -> UiState.Success(user) },
+                onFailure = { UiState.Error(it.message ?: "Ocurrió un error al obtener el usuario") }
+            )
         }
     }
 }
