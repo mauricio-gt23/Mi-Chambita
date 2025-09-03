@@ -12,7 +12,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.michambita.domain.model.Producto
 import com.michambita.ui.viewmodel.ProductoViewModel
 import com.michambita.ui.common.UiState
-import com.michambita.ui.components.LoadingOverlay
+import com.michambita.ui.components.widget.LoadingOverlay
 import com.michambita.utils.DismissKeyboardWrapper
 import kotlinx.coroutines.launch
 import java.util.UUID

@@ -1,4 +1,4 @@
-package com.michambita.ui.components
+package com.michambita.ui.components.widget
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row

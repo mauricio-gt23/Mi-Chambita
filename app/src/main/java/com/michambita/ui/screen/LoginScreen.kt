@@ -10,9 +10,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.michambita.ui.viewmodel.AuthViewModel
 import com.michambita.ui.common.UiState
-import com.michambita.ui.components.AlertModal
-import com.michambita.ui.components.ErrorDisplay
-import com.michambita.ui.components.LoadingOverlay
+import com.michambita.ui.components.widget.AlertModal
+import com.michambita.ui.components.widget.ErrorDisplay
+import com.michambita.ui.components.widget.LoadingOverlay
 import com.michambita.utils.DismissKeyboardWrapper
 
 @Composable

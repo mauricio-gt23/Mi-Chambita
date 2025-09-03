@@ -1,4 +1,4 @@
-package com.michambita.ui.components
+package com.michambita.ui.components.widget
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
