@@ -18,6 +18,7 @@ datastore = "1.1.0"
 retrofit = "2.9.0"
 firebase-auth = "22.3.1"
 firebase-firestore = "24.10.3"
+threetenabp = "1.4.6"
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -27,6 +28,7 @@ hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 google-services = { id = "com.google.gms.google-services", version.ref = "googleServices" }
 
 [libraries]
+threetenabp = { module = "com.jakewharton.threetenabp:threetenabp", version.ref = "threetenabp" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
 androidx-lifecycle-runtime-compose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycleRuntimeCompose" }
