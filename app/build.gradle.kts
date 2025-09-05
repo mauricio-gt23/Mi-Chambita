@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.kapt)
     alias(libs.plugins.hilt)
     alias(libs.plugins.google.services)
+    alias(libs.plugins.androidx.room)
 }
 
 android {
@@ -49,6 +50,10 @@ android {
 
     packaging {
         resources.excludes += "/META-INF/{AL2.0,LGPL2.1}"
+    }
+
+    room {
+        schemaDirectory("$projectDir/schemas")
     }
 }
 

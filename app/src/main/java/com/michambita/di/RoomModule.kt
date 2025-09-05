@@ -21,4 +21,10 @@ object RoomModule {
     fun provideSynchronizationRoom(@ApplicationContext context: Context)=
         Room.databaseBuilder(context, SynchronizationDB::class.java, SYNCHRONIZATION_DATABASE_NAME)
             .build()
+
+
+    // ----------------------
+    @Singleton
+    @Provides
+    fun providesSynchronizationDao(db: SynchronizationDB) = db.synchronizationDAO()
 }
