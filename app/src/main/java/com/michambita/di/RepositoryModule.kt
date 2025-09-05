@@ -2,9 +2,11 @@ package com.michambita.di
 
 import com.michambita.data.repository.AuthRepository
 import com.michambita.data.repository.ProductoRepository
+import com.michambita.data.repository.SynchronizationRepository
 import com.michambita.data.repository.UserRepository
 import com.michambita.data.repository.impl.AuthRepositoryImpl
 import com.michambita.data.repository.impl.ProductoRepositoryImpl
+import com.michambita.data.repository.impl.SynchronizationRepositoryImpl
 import com.michambita.data.repository.impl.UserRepositoryImpl
 import dagger.Binds
 import dagger.Module
@@ -35,4 +37,10 @@ abstract class RepositoryModule {
     abstract fun bindUserRepository(
         userRepositoryImpl: UserRepositoryImpl
     ): UserRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindSynchronizationRepository(
+        synchronizationRepositoryImpl: SynchronizationRepositoryImpl
+    ): SynchronizationRepository
 }

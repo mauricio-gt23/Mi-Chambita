@@ -1,5 +1,6 @@
 package com.michambita.domain.model
 
+import com.michambita.data.database.entity.MovimientoEntity
 import java.math.BigDecimal
 import java.util.Date
 
@@ -12,3 +13,5 @@ data class Movimiento(
     val fechaRegistro: Date = Date(),
     val sincronizado: Boolean = false
 )
+
+fun MovimientoEntity.toDomain() = Movimiento(id, userId, descripcion, monto, tipoMovimiento, fechaRegistro, sincronizado)

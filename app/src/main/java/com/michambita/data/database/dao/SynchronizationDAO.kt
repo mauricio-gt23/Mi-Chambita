@@ -5,12 +5,16 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.michambita.data.database.entity.MovimientoEntity
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface SynchronizationDAO {
 
     @Query("SELECT * FROM movimiento WHERE sincronizado = :estado")
-    suspend fun findAllBySincronizado(estado: Boolean): List<MovimientoEntity>
+    fun findAllBySincronizado(estado: Boolean): Flow<List<MovimientoEntity>>
+
+    @Query("DELETE FROM movimiento WHERE id = :id")
+    suspend fun deleteById(id: Long)
 
     @Query("DELETE FROM movimiento")
     suspend fun deleteAll()

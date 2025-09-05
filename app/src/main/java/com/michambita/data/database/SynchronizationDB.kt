@@ -10,5 +10,5 @@ import com.michambita.data.database.entity.MovimientoEntity
 @Database(entities = [MovimientoEntity::class], version = 1)
 @TypeConverters(Converters::class)
 abstract class SynchronizationDB : RoomDatabase() {
-    abstract fun syncronizationDAO(): SynchronizationDAO
+    abstract fun synchronizationDAO(): SynchronizationDAO
 }

@@ -8,6 +8,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -16,34 +17,38 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.michambita.data.enum.EnumModoOperacion
 import com.michambita.domain.model.Movimiento
 import com.michambita.navigation.Screen
 import com.michambita.ui.components.SwipeMovimientoItem
+import com.michambita.ui.viewmodel.HomeViewModel
 import com.michambita.utils.DismissKeyboardWrapper
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(navController: NavController) {
+fun HomeScreen(
+    navController: NavController,
+    viewModel: HomeViewModel = hiltViewModel()
+) {
     DismissKeyboardWrapper {
-        val scaffoldState = rememberBottomSheetScaffoldState(
-            bottomSheetState = rememberStandardBottomSheetState(skipHiddenState = false)
-        )
-        val scope = rememberCoroutineScope()
+        // ModoOperación
+        var modoOperacion by remember { mutableStateOf(EnumModoOperacion.REGISTRAR) }
+        var movimientoEditando by remember { mutableStateOf<Movimiento?>(null) }
 
         // Variables Movimiento
         var tipoOperacion by remember { mutableStateOf("V") } // "V" = venta, "G" = gasto
         var titulo by remember { mutableStateOf("") }
         var monto by remember { mutableStateOf("") }
 
-        // ModoOperación
-        var modoOperacion by remember { mutableStateOf(EnumModoOperacion.REGISTRAR) }
-        var movimientoEditando by remember { mutableStateOf<Movimiento?>(null) }
-
-        // Lista de movimientos sincronizar
-        val movimientosPendientes = remember { mutableStateListOf<Movimiento>() }
+        // Scaffold
+        val scaffoldState = rememberBottomSheetScaffoldState(
+            bottomSheetState = rememberStandardBottomSheetState(skipHiddenState = false)
+        )
+        val scope = rememberCoroutineScope()
 
         LaunchedEffect(scaffoldState.bottomSheetState.currentValue) {
             // Precargar datos si está en modo edición
@@ -55,6 +60,10 @@ fun HomeScreen(navController: NavController) {
                 }
             }
         }
+
+        // 👇 Ahora se consumen directamente los movimientos desde el ViewModel
+        val movimientos by viewModel.movimientos.collectAsStateWithLifecycle()
+        println("MOVIMIENTOS: $movimientos")
 
         BottomSheetScaffold(
             scaffoldState = scaffoldState,
@@ -114,19 +123,17 @@ fun HomeScreen(navController: NavController) {
                                                 monto = montoDecimal,
                                                 tipoMovimiento = tipoOperacion
                                             )
-                                            movimientosPendientes.add(0, nuevoMovimiento)
-                                            println("Registro local: $nuevoMovimiento")
+                                            // 👉 Guardar en DB a través del ViewModel
+                                            //viewModel.registrarMovimiento(nuevoMovimiento)
                                         }
                                         EnumModoOperacion.EDITAR -> {
                                             movimientoEditando?.let { mov ->
-                                                val index = movimientosPendientes.indexOf(mov)
-                                                if (index >= 0) {
-                                                    movimientosPendientes[index] = mov.copy(
-                                                        descripcion = titulo.trim(),
-                                                        monto = montoDecimal,
-                                                        tipoMovimiento = tipoOperacion
-                                                    )
-                                                }
+                                                val actualizado = mov.copy(
+                                                    descripcion = titulo.trim(),
+                                                    monto = montoDecimal,
+                                                    tipoMovimiento = tipoOperacion
+                                                )
+                                                //viewModel.editarMovimiento(actualizado)
                                             }
                                             movimientoEditando = null
                                         }
@@ -158,7 +165,7 @@ fun HomeScreen(navController: NavController) {
             HomeContentLayoutOnly(
                 navController = navController,
                 modifier = Modifier.padding(padding),
-                movimientosPendientes = movimientosPendientes,
+                movimientosPendientes = movimientos,
                 onRegistrarVenta = {
                     tipoOperacion = "V"
                     modoOperacion = EnumModoOperacion.REGISTRAR
@@ -178,7 +185,7 @@ fun HomeScreen(navController: NavController) {
                     scope.launch { scaffoldState.bottomSheetState.expand() }
                 },
                 onEliminarMovimiento = { movimiento ->
-                    movimientosPendientes.remove(movimiento)
+                    //viewModel.eliminarMovimiento(movimiento)
                 }
             )
         }
