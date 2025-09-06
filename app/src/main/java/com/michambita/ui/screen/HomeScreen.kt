@@ -123,8 +123,7 @@ fun HomeScreen(
                                                 monto = montoDecimal,
                                                 tipoMovimiento = tipoOperacion
                                             )
-                                            // 👉 Guardar en DB a través del ViewModel
-                                            //viewModel.registrarMovimiento(nuevoMovimiento)
+                                            viewModel.addMovimiento(nuevoMovimiento)
                                         }
                                         EnumModoOperacion.EDITAR -> {
                                             movimientoEditando?.let { mov ->
@@ -133,7 +132,7 @@ fun HomeScreen(
                                                     monto = montoDecimal,
                                                     tipoMovimiento = tipoOperacion
                                                 )
-                                                //viewModel.editarMovimiento(actualizado)
+                                                viewModel.updateMovimiento(actualizado)
                                             }
                                             movimientoEditando = null
                                         }
@@ -185,7 +184,7 @@ fun HomeScreen(
                     scope.launch { scaffoldState.bottomSheetState.expand() }
                 },
                 onEliminarMovimiento = { movimiento ->
-                    //viewModel.eliminarMovimiento(movimiento)
+                    viewModel.deleteMovimiento(movimiento)
                 }
             )
         }

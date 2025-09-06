@@ -3,6 +3,7 @@ package com.michambita.data.database.entity
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.michambita.domain.model.Movimiento
 import java.math.BigDecimal
 import java.util.Date
 
@@ -29,3 +30,5 @@ data class MovimientoEntity(
     @ColumnInfo(name = "sincronizado")
     val sincronizado: Boolean = false
 )
+
+fun Movimiento.toDataBase() = MovimientoEntity(0, userId!!, descripcion, monto, tipoMovimiento, fechaRegistro, sincronizado)

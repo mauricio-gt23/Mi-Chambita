@@ -1,6 +1,7 @@
 package com.michambita.data.repository.impl
 
 import com.michambita.data.database.dao.SynchronizationDAO
+import com.michambita.data.database.entity.toDataBase
 import com.michambita.data.repository.SynchronizationRepository
 import com.michambita.domain.model.Movimiento
 import com.michambita.domain.model.toDomain
@@ -16,4 +17,30 @@ class SynchronizationRepositoryImpl @Inject constructor(
         return synchronizationDAO.findAllBySincronizado(false).map{list -> list.map { it.toDomain() } }
     }
 
+    override suspend fun addMovimiento(movimiento: Movimiento): Result<Unit> {
+        return try {
+            synchronizationDAO.insert(movimiento.toDataBase())
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun updateMovimiento(movimiento: Movimiento): Result<Unit> {
+        return try {
+            synchronizationDAO.update(movimiento.toDataBase())
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun deleteMovimiento(movimiento: Movimiento): Result<Unit> {
+        return try {
+            synchronizationDAO.deleteById(movimiento.id!!)
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }
