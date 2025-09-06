@@ -127,12 +127,12 @@ fun HomeScreen(
                                         }
                                         EnumModoOperacion.EDITAR -> {
                                             movimientoEditando?.let { mov ->
-                                                val actualizado = mov.copy(
+                                                val movimientoActualizado = mov.copy(
                                                     descripcion = titulo.trim(),
                                                     monto = montoDecimal,
                                                     tipoMovimiento = tipoOperacion
                                                 )
-                                                viewModel.updateMovimiento(actualizado)
+                                                viewModel.updateMovimiento(movimientoActualizado)
                                             }
                                             movimientoEditando = null
                                         }

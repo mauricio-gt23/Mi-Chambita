@@ -14,4 +14,4 @@ data class Movimiento(
     val sincronizado: Boolean = false
 )
 
-fun MovimientoEntity.toDomain() = Movimiento(id, userId, descripcion, monto, tipoMovimiento, fechaRegistro, sincronizado)
+fun MovimientoEntity.toDomain() = Movimiento(this.id, userId, descripcion, monto, tipoMovimiento, fechaRegistro, sincronizado)

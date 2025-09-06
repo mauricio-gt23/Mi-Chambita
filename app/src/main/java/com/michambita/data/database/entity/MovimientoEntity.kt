@@ -31,4 +31,4 @@ data class MovimientoEntity(
     val sincronizado: Boolean = false
 )
 
-fun Movimiento.toDataBase() = MovimientoEntity(0, userId!!, descripcion, monto, tipoMovimiento, fechaRegistro, sincronizado)
+fun Movimiento.toDataBase() = MovimientoEntity(this.id ?: 0, userId!!, descripcion, monto, tipoMovimiento, fechaRegistro, sincronizado)
