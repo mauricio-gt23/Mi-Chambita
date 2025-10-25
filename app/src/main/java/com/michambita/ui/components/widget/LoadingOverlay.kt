@@ -18,8 +18,8 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun LoadingOverlay(
-    mensaje: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    message: String,
 ) {
     Box(
         modifier = modifier
@@ -38,7 +38,7 @@ fun LoadingOverlay(
                 CircularProgressIndicator()
                 Spacer(Modifier.height(12.dp))
                 Text(
-                    text = mensaje,
+                    text = message,
                     style = MaterialTheme.typography.bodyMedium
                 )
             }

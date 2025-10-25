@@ -36,25 +36,6 @@ fun InventoryScreen(
         viewModel.getAllProducto()
     }
 
-    when (uiState) {
-        is UiState.Loading -> {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                LoadingOverlay("Cargando...")
-            }
-        }
-
-        is UiState.Success -> {
-            productoList =
-                (uiState as UiState.Success<List<Producto>>).data as MutableList<Producto>
-        }
-
-        is UiState.Error -> {}
-        else -> {}
-    }
-
     InventoryTable(
         productos = productoList,
         onEdit = { producto ->
@@ -70,4 +51,16 @@ fun InventoryScreen(
             println("Actualizar stock")
         }
     )
+
+    when (uiState) {
+        is UiState.Empty -> {}
+        is UiState.Loading -> {
+            LoadingOverlay(modifier = Modifier, message = "Cargando...")
+        }
+        is UiState.Success -> {
+            productoList =
+                (uiState as UiState.Success<List<Producto>>).data as MutableList<Producto>
+        }
+        is UiState.Error -> {}
+    }
 }

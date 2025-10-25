@@ -112,7 +112,7 @@ fun ProductoScreen(
         }
 
         if (uiState is UiState.Loading) {
-            LoadingOverlay("Guardando Producto...")
+            LoadingOverlay(modifier = Modifier, message = "Guardando Producto...")
         }
     }
 }

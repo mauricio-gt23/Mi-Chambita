@@ -117,41 +117,25 @@ fun LoginScreen(
     when (val state = uiState) {
         is UiState.Empty -> {}
         is UiState.Loading -> {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                LoadingOverlay("Cargando...")
-            }
+            LoadingOverlay(modifier = Modifier, message = "Cargando...")
         }
-
         is UiState.Success -> {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                AlertModal(
-                    title = state.data,
-                    message = "",
-                    showDismissButton = false,
-                    onConfirm = {
-                        onLoginSuccess()
-                    },
-                    onDismissRequest = { }
-                )
-            }
+            AlertModal(
+                modifier = Modifier,
+                title = state.data,
+                message = "",
+                showDismissButton = false,
+                onConfirm = {
+                    onLoginSuccess()
+                },
+                onDismissRequest = { }
+            )
         }
-
         is UiState.Error -> {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                ErrorDisplay(
-                    errorMessage = state.message,
-                    onDismiss = {}
-                )
-            }
+            ErrorDisplay(
+                modifier = Modifier,
+                errorMessage = state.message,
+            )
         }
     }
 }
