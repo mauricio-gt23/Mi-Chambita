@@ -36,37 +36,38 @@ fun InventoryScreen(
         viewModel.getAllProducto()
     }
 
-    DismissKeyboardWrapper {
-        when (uiState) {
-            is UiState.Loading -> {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    LoadingOverlay("Cargando...")
-                }
+    when (uiState) {
+        is UiState.Loading -> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                LoadingOverlay("Cargando...")
             }
-            is UiState.Success -> {
-                productoList = (uiState as UiState.Success<List<Producto>>).data as MutableList<Producto>
-            }
-            is UiState.Error -> {}
-            else -> {}
         }
 
-        InventoryTable(
-            productos = productoList,
-            onEdit = { producto ->
-                println("Editar: $producto")
-            },
-            onDelete = { producto ->
-                productoList.remove(producto)
-            },
-            onSave = {
-                println("Guardar inventario")
-            },
-            onStockClick = {
-                println("Actualizar stock")
-            }
-        )
+        is UiState.Success -> {
+            productoList =
+                (uiState as UiState.Success<List<Producto>>).data as MutableList<Producto>
+        }
+
+        is UiState.Error -> {}
+        else -> {}
     }
+
+    InventoryTable(
+        productos = productoList,
+        onEdit = { producto ->
+            println("Editar: $producto")
+        },
+        onDelete = { producto ->
+            productoList.remove(producto)
+        },
+        onSave = {
+            println("Guardar inventario")
+        },
+        onStockClick = {
+            println("Actualizar stock")
+        }
+    )
 }

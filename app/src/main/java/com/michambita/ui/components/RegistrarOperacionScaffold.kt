@@ -13,7 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.michambita.utils.DismissKeyboardWrapper
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -36,50 +35,48 @@ fun RegistrarOperacionScaffold(
         scaffoldState = scaffoldState,
         sheetPeekHeight = 0.dp,
         sheetContent = {
-            DismissKeyboardWrapper {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(24.dp)
-                        .imePadding(),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(24.dp)
+                    .imePadding(),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        Icon(icono, contentDescription = null)
-                        Text(titulo, style = MaterialTheme.typography.titleLarge)
-                    }
+                    Icon(icono, contentDescription = null)
+                    Text(titulo, style = MaterialTheme.typography.titleLarge)
+                }
 
-                    OutlinedTextField(
-                        value = descripcion,
-                        onValueChange = { descripcion = it },
-                        label = { Text("Descripción") },
-                        placeholder = { Text(placeholderDescripcion) },
-                        modifier = Modifier.fillMaxWidth()
-                    )
+                OutlinedTextField(
+                    value = descripcion,
+                    onValueChange = { descripcion = it },
+                    label = { Text("Descripción") },
+                    placeholder = { Text(placeholderDescripcion) },
+                    modifier = Modifier.fillMaxWidth()
+                )
 
-                    OutlinedTextField(
-                        value = monto,
-                        onValueChange = { monto = it },
-                        label = { Text("Monto") },
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        modifier = Modifier.fillMaxWidth()
-                    )
+                OutlinedTextField(
+                    value = monto,
+                    onValueChange = { monto = it },
+                    label = { Text("Monto") },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    modifier = Modifier.fillMaxWidth()
+                )
 
-                    Button(
-                        onClick = {
-                            onGuardar(monto.trim(), descripcion.trim())
-                            scope.launch {
-                                scaffoldState.bottomSheetState.hide()
-                                onClose()
-                            }
-                        },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text(etiquetaBoton)
-                    }
+                Button(
+                    onClick = {
+                        onGuardar(monto.trim(), descripcion.trim())
+                        scope.launch {
+                            scaffoldState.bottomSheetState.hide()
+                            onClose()
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(etiquetaBoton)
                 }
             }
         }

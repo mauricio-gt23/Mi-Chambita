@@ -34,160 +34,161 @@ fun HomeScreen(
     navController: NavController,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
-    DismissKeyboardWrapper {
-        // ModoOperación
-        var modoOperacion by remember { mutableStateOf(EnumModoOperacion.REGISTRAR) }
-        var movimientoEditando by remember { mutableStateOf<Movimiento?>(null) }
 
-        // Variables Movimiento
-        var tipoOperacion by remember { mutableStateOf("V") } // "V" = venta, "G" = gasto
-        var titulo by remember { mutableStateOf("") }
-        var monto by remember { mutableStateOf("") }
+    // ModoOperación
+    var modoOperacion by remember { mutableStateOf(EnumModoOperacion.REGISTRAR) }
+    var movimientoEditando by remember { mutableStateOf<Movimiento?>(null) }
 
-        // Scaffold
-        val scaffoldState = rememberBottomSheetScaffoldState(
-            bottomSheetState = rememberStandardBottomSheetState(skipHiddenState = false)
-        )
-        val scope = rememberCoroutineScope()
+    // Variables Movimiento
+    var tipoOperacion by remember { mutableStateOf("V") } // "V" = venta, "G" = gasto
+    var titulo by remember { mutableStateOf("") }
+    var monto by remember { mutableStateOf("") }
 
-        LaunchedEffect(scaffoldState.bottomSheetState.currentValue) {
-            // Precargar datos si está en modo edición
-            if (scaffoldState.bottomSheetState.isVisible && modoOperacion == EnumModoOperacion.EDITAR) {
-                movimientoEditando?.let {
-                    titulo = it.descripcion
-                    monto = it.monto.toPlainString()
-                    tipoOperacion = it.tipoMovimiento
-                }
+    // Scaffold
+    val scaffoldState = rememberBottomSheetScaffoldState(
+        bottomSheetState = rememberStandardBottomSheetState(skipHiddenState = false)
+    )
+    val scope = rememberCoroutineScope()
+
+    LaunchedEffect(scaffoldState.bottomSheetState.currentValue) {
+        // Precargar datos si está en modo edición
+        if (scaffoldState.bottomSheetState.isVisible && modoOperacion == EnumModoOperacion.EDITAR) {
+            movimientoEditando?.let {
+                titulo = it.descripcion
+                monto = it.monto.toPlainString()
+                tipoOperacion = it.tipoMovimiento
             }
         }
+    }
 
-        // 👇 Ahora se consumen directamente los movimientos desde el ViewModel
-        val movimientos by viewModel.movimientos.collectAsStateWithLifecycle()
-        println("MOVIMIENTOS: $movimientos")
+    // 👇 Ahora se consumen directamente los movimientos desde el ViewModel
+    val movimientos by viewModel.movimientos.collectAsStateWithLifecycle()
+    println("MOVIMIENTOS: $movimientos")
 
-        BottomSheetScaffold(
-            scaffoldState = scaffoldState,
-            sheetPeekHeight = 0.dp,
-            sheetContent = {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(24.dp)
-                        .navigationBarsPadding()
-                        .imePadding(),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(
-                            imageVector = if (tipoOperacion == "V") Icons.Default.PointOfSale else Icons.Default.MoneyOff,
-                            contentDescription = null
-                        )
-                        Spacer(Modifier.width(8.dp))
-                        Text(
-                            text = if (modoOperacion == EnumModoOperacion.REGISTRAR) {
-                                if (tipoOperacion == "V") "Registrar Venta" else "Registrar Gasto"
-                            } else {
-                                "Editar Movimiento"
-                            },
-                            style = MaterialTheme.typography.titleLarge
-                        )
-                    }
-
-                    OutlinedTextField(
-                        value = titulo,
-                        onValueChange = { titulo = it },
-                        label = { Text("Descripción") },
-                        placeholder = {
-                            Text(if (tipoOperacion == "V") "Ej: venta de jugos" else "Ej: compra de vasos")
+    BottomSheetScaffold(
+        scaffoldState = scaffoldState,
+        sheetPeekHeight = 0.dp,
+        sheetContent = {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(24.dp)
+                    .navigationBarsPadding()
+                    .imePadding(),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = if (tipoOperacion == "V") Icons.Default.PointOfSale else Icons.Default.MoneyOff,
+                        contentDescription = null
+                    )
+                    Spacer(Modifier.width(8.dp))
+                    Text(
+                        text = if (modoOperacion == EnumModoOperacion.REGISTRAR) {
+                            if (tipoOperacion == "V") "Registrar Venta" else "Registrar Gasto"
+                        } else {
+                            "Editar Movimiento"
                         },
-                        modifier = Modifier.fillMaxWidth()
+                        style = MaterialTheme.typography.titleLarge
                     )
+                }
 
-                    OutlinedTextField(
-                        value = monto,
-                        onValueChange = { monto = it },
-                        label = { Text("Monto") },
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        modifier = Modifier.fillMaxWidth()
-                    )
+                OutlinedTextField(
+                    value = titulo,
+                    onValueChange = { titulo = it },
+                    label = { Text("Descripción") },
+                    placeholder = {
+                        Text(if (tipoOperacion == "V") "Ej: venta de jugos" else "Ej: compra de vasos")
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                )
 
-                    Button(
-                        onClick = {
-                            if (titulo.isNotBlank() && monto.isNotBlank()) {
-                                val montoDecimal = monto.trim().toBigDecimalOrNull()
-                                if (montoDecimal != null) {
-                                    when (modoOperacion) {
-                                        EnumModoOperacion.REGISTRAR -> {
-                                            val nuevoMovimiento = Movimiento(
+                OutlinedTextField(
+                    value = monto,
+                    onValueChange = { monto = it },
+                    label = { Text("Monto") },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Button(
+                    onClick = {
+                        if (titulo.isNotBlank() && monto.isNotBlank()) {
+                            val montoDecimal = monto.trim().toBigDecimalOrNull()
+                            if (montoDecimal != null) {
+                                when (modoOperacion) {
+                                    EnumModoOperacion.REGISTRAR -> {
+                                        val nuevoMovimiento = Movimiento(
+                                            descripcion = titulo.trim(),
+                                            monto = montoDecimal,
+                                            tipoMovimiento = tipoOperacion
+                                        )
+                                        viewModel.addMovimiento(nuevoMovimiento)
+                                    }
+
+                                    EnumModoOperacion.EDITAR -> {
+                                        movimientoEditando?.let { mov ->
+                                            val movimientoActualizado = mov.copy(
                                                 descripcion = titulo.trim(),
                                                 monto = montoDecimal,
                                                 tipoMovimiento = tipoOperacion
                                             )
-                                            viewModel.addMovimiento(nuevoMovimiento)
+                                            viewModel.updateMovimiento(movimientoActualizado)
                                         }
-                                        EnumModoOperacion.EDITAR -> {
-                                            movimientoEditando?.let { mov ->
-                                                val movimientoActualizado = mov.copy(
-                                                    descripcion = titulo.trim(),
-                                                    monto = montoDecimal,
-                                                    tipoMovimiento = tipoOperacion
-                                                )
-                                                viewModel.updateMovimiento(movimientoActualizado)
-                                            }
-                                            movimientoEditando = null
-                                        }
-                                    }
-
-                                    // Resetear valores
-                                    scope.launch {
-                                        scaffoldState.bottomSheetState.hide()
-                                        titulo = ""
-                                        monto = ""
-                                        modoOperacion = EnumModoOperacion.REGISTRAR
+                                        movimientoEditando = null
                                     }
                                 }
+
+                                // Resetear valores
+                                scope.launch {
+                                    scaffoldState.bottomSheetState.hide()
+                                    titulo = ""
+                                    monto = ""
+                                    modoOperacion = EnumModoOperacion.REGISTRAR
+                                }
                             }
-                        },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text(
-                            when (modoOperacion) {
-                                EnumModoOperacion.REGISTRAR ->
-                                    if (tipoOperacion == "V") "Guardar Venta" else "Guardar Gasto"
-                                EnumModoOperacion.EDITAR -> "Guardar Cambios"
-                            }
-                        )
-                    }
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        when (modoOperacion) {
+                            EnumModoOperacion.REGISTRAR ->
+                                if (tipoOperacion == "V") "Guardar Venta" else "Guardar Gasto"
+
+                            EnumModoOperacion.EDITAR -> "Guardar Cambios"
+                        }
+                    )
                 }
             }
-        ) { padding ->
-            HomeContentLayoutOnly(
-                navController = navController,
-                modifier = Modifier.padding(padding),
-                movimientosPendientes = movimientos,
-                onRegistrarVenta = {
-                    tipoOperacion = "V"
-                    modoOperacion = EnumModoOperacion.REGISTRAR
-                    scope.launch { scaffoldState.bottomSheetState.expand() }
-                },
-                onRegistrarGasto = {
-                    tipoOperacion = "G"
-                    modoOperacion = EnumModoOperacion.REGISTRAR
-                    scope.launch { scaffoldState.bottomSheetState.expand() }
-                },
-                onEditarMovimiento = { movimiento ->
-                    titulo = movimiento.descripcion
-                    monto = movimiento.monto.toPlainString()
-                    tipoOperacion = movimiento.tipoMovimiento
-                    modoOperacion = EnumModoOperacion.EDITAR
-                    movimientoEditando = movimiento
-                    scope.launch { scaffoldState.bottomSheetState.expand() }
-                },
-                onEliminarMovimiento = { movimiento ->
-                    viewModel.deleteMovimiento(movimiento)
-                }
-            )
         }
+    ) { padding ->
+        HomeContentLayoutOnly(
+            navController = navController,
+            modifier = Modifier.padding(padding),
+            movimientosPendientes = movimientos,
+            onRegistrarVenta = {
+                tipoOperacion = "V"
+                modoOperacion = EnumModoOperacion.REGISTRAR
+                scope.launch { scaffoldState.bottomSheetState.expand() }
+            },
+            onRegistrarGasto = {
+                tipoOperacion = "G"
+                modoOperacion = EnumModoOperacion.REGISTRAR
+                scope.launch { scaffoldState.bottomSheetState.expand() }
+            },
+            onEditarMovimiento = { movimiento ->
+                titulo = movimiento.descripcion
+                monto = movimiento.monto.toPlainString()
+                tipoOperacion = movimiento.tipoMovimiento
+                modoOperacion = EnumModoOperacion.EDITAR
+                movimientoEditando = movimiento
+                scope.launch { scaffoldState.bottomSheetState.expand() }
+            },
+            onEliminarMovimiento = { movimiento ->
+                viewModel.deleteMovimiento(movimiento)
+            }
+        )
     }
 }
 
@@ -238,8 +239,18 @@ fun HomeContentLayoutOnly(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                ActionButton("Registrar Venta", Icons.Filled.AddShoppingCart, onRegistrarVenta, Modifier.weight(1f))
-                ActionButton("Registrar Gasto", Icons.Filled.Payment, onRegistrarGasto, Modifier.weight(1f))
+                ActionButton(
+                    "Registrar Venta",
+                    Icons.Filled.AddShoppingCart,
+                    onRegistrarVenta,
+                    Modifier.weight(1f)
+                )
+                ActionButton(
+                    "Registrar Gasto",
+                    Icons.Filled.Payment,
+                    onRegistrarGasto,
+                    Modifier.weight(1f)
+                )
             }
 
             Row(
@@ -344,7 +355,12 @@ fun SummaryTile(
         ) {
             Icon(icon, contentDescription = title, tint = color, modifier = Modifier.size(36.dp))
             Text(title, style = MaterialTheme.typography.labelMedium)
-            Text(amount, color = color, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleLarge)
+            Text(
+                amount,
+                color = color,
+                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.titleLarge
+            )
         }
     }
 }
@@ -358,7 +374,8 @@ fun ActionButton(
     modifier: Modifier = Modifier,
     isSecondary: Boolean = false
 ) {
-    val colors = if (isSecondary) ButtonDefaults.outlinedButtonColors() else ButtonDefaults.filledTonalButtonColors()
+    val colors =
+        if (isSecondary) ButtonDefaults.outlinedButtonColors() else ButtonDefaults.filledTonalButtonColors()
     val border = if (isSecondary) ButtonDefaults.outlinedButtonBorder else null
 
     Button(

@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
 import com.michambita.navigation.NavigationGraph
 import com.michambita.ui.theme.MiChambitaTheme
+import com.michambita.utils.DismissKeyboardWrapper
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -26,9 +27,11 @@ class MainActivity : ComponentActivity() {
             ) {
                 val navController = rememberNavController()
 
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Box(modifier = Modifier.padding(innerPadding)) {
-                        NavigationGraph(navController = navController)
+                DismissKeyboardWrapper {
+                    Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                        Box(modifier = Modifier.padding(innerPadding)) {
+                            NavigationGraph(navController = navController)
+                        }
                     }
                 }
             }
