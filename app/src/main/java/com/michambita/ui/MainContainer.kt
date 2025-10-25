@@ -67,10 +67,7 @@ fun MainContainer(
         NavHost(
             navController = navController,
             startDestination = Screen.MainContainer.route,
-            modifier = Modifier.padding(PaddingValues(
-                start = 0.dp, top = innerPadding.calculateTopPadding(),
-                end = 0.dp, bottom = 0.dp
-            ))
+            modifier = Modifier.padding(innerPadding)
         ) {
             composable(Screen.MainContainer.route) { HomeScreen(navController) }
             composable(Screen.Producto.route) { ProductoScreen() }

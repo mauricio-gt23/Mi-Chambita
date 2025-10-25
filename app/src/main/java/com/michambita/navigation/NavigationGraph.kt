@@ -16,7 +16,6 @@ import com.michambita.ui.viewmodel.MainViewModel
 import com.michambita.ui.viewmodel.UserSessionState
 
 
-
 @Composable
 fun NavigationGraph(
     navController: NavHostController,
