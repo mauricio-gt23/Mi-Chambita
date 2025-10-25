@@ -1,11 +1,14 @@
 package com.michambita.domain.usecase
 
 import com.michambita.data.repository.AuthRepository
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class AuthUseCase @Inject constructor(
     private val authRepository: AuthRepository
 ) {
+    fun getCurrentUser(): Flow<String?> = authRepository.getCurrentUser()
+
     suspend fun login(email: String, password: String): Result<String> {
         return authRepository.login(email, password)
     }

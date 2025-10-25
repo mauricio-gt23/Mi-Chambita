@@ -12,7 +12,7 @@ import androidx.navigation.compose.composable
 import com.michambita.ui.MainContainer
 import com.michambita.ui.screen.LoginScreen
 import com.michambita.ui.screen.SplashScreen
-import com.michambita.ui.viewmodel.MainViewModel
+import com.michambita.ui.viewmodel.SessionViewModel
 import com.michambita.ui.viewmodel.UserSessionState
 
 
@@ -20,9 +20,9 @@ import com.michambita.ui.viewmodel.UserSessionState
 fun NavigationGraph(
     navController: NavHostController,
     modifier: Modifier = Modifier,
-    mainViewModel: MainViewModel = hiltViewModel()
+    sessionViewModel: SessionViewModel = hiltViewModel()
 ) {
-    val userSessionState by mainViewModel.userSessionState.collectAsState()
+    val userSessionState by sessionViewModel.userSessionState.collectAsState()
 
     NavHost(
         navController = navController,
