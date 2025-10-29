@@ -27,6 +27,8 @@ fun AuthScreen(
 
     var isLogin by remember { mutableStateOf(true) }
 
+    var showError by remember { mutableStateOf(true) }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -83,6 +85,8 @@ fun AuthScreen(
             ErrorDisplay(
                 modifier = Modifier,
                 errorMessage = state.message,
+                isVisible = showError,
+                onDismiss = { showError = false }
             )
         }
     }
