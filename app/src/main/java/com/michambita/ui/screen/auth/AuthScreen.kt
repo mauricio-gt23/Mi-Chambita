@@ -1,11 +1,10 @@
-package com.michambita.ui.screen
+package com.michambita.ui.screen.auth
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.michambita.ui.viewmodel.AuthViewModel
@@ -13,10 +12,9 @@ import com.michambita.ui.common.UiState
 import com.michambita.ui.components.widget.AlertModal
 import com.michambita.ui.components.widget.ErrorDisplay
 import com.michambita.ui.components.widget.LoadingOverlay
-import com.michambita.utils.DismissKeyboardWrapper
 
 @Composable
-fun LoginScreen(
+fun AuthScreen(
     onLoginSuccess: () -> Unit,
     viewModel: AuthViewModel = hiltViewModel()
 ) {
@@ -36,57 +34,17 @@ fun LoginScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            text = if (isLogin) "Iniciar Sesión" else "Crear Cuenta",
-            style = MaterialTheme.typography.headlineMedium
-        )
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        if (!isLogin) {
-            OutlinedTextField(
-                value = name,
-                onValueChange = { name = it },
-                label = { Text("Nombre completo") },
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-        }
-
-        OutlinedTextField(
-            value = email,
-            onValueChange = { email = it },
-            label = { Text("Correo electrónico") },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
-            label = { Text("Contraseña") },
-            visualTransformation = PasswordVisualTransformation(),
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        if (!isLogin) {
-            Spacer(modifier = Modifier.height(16.dp))
-
-            OutlinedTextField(
-                value = confirmPassword,
-                onValueChange = { confirmPassword = it },
-                label = { Text("Confirmar contraseña") },
-                visualTransformation = PasswordVisualTransformation(),
-                modifier = Modifier.fillMaxWidth()
-            )
-        }
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        Button(
-            onClick = {
+        AuthForm(
+            isLogin = isLogin,
+            name = name,
+            email = email,
+            password = password,
+            confirmPassword = confirmPassword,
+            onNameChange = { name = it },
+            onEmailChange = { email = it },
+            onPasswordChange = { password = it },
+            onConfirmPasswordChange = { confirmPassword = it },
+            onSubmit = {
                 if (email.isNotBlank() && password.isNotBlank()) {
                     if (isLogin) {
                         viewModel.login(email, password)
@@ -100,18 +58,8 @@ fun LoginScreen(
                     }
                 }
             },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(if (isLogin) "Iniciar Sesión" else "Registrarse")
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        TextButton(onClick = { isLogin = !isLogin }) {
-            Text(if (isLogin) "¿No tienes cuenta? Regístrate" else "Ya tengo una cuenta")
-        }
-
-        Spacer(modifier = Modifier.height(24.dp))
+            onToggleMode = { isLogin = !isLogin }
+        )
     }
 
     when (val state = uiState) {

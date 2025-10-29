@@ -10,8 +10,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.michambita.ui.MainContainer
-import com.michambita.ui.screen.LoginScreen
 import com.michambita.ui.screen.SplashScreen
+import com.michambita.ui.screen.auth.AuthScreen
 import com.michambita.ui.viewmodel.SessionViewModel
 import com.michambita.ui.viewmodel.UserSessionState
 
@@ -51,7 +51,7 @@ fun NavigationGraph(
         }
 
         composable(Screen.Login.route) {
-            LoginScreen(
+            AuthScreen(
                 onLoginSuccess = {
                     navController.navigate(Screen.MainContainer.route) {
                         popUpTo(Screen.Login.route) { inclusive = true }
