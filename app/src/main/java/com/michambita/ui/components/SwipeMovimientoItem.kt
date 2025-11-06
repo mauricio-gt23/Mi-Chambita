@@ -4,58 +4,56 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.DismissDirection
-import androidx.compose.material.DismissValue
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Icon
-import androidx.compose.material.SwipeToDismiss
-import androidx.compose.material.rememberDismissState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxValue
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.michambita.domain.model.Movimiento
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.runtime.LaunchedEffect
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SwipeMovimientoItem(
     movimiento: Movimiento,
     onEditar: (Movimiento) -> Unit,
     onEliminar: (Movimiento) -> Unit,
 ) {
-    val dismissState = rememberDismissState()
-
-    // Acciones
-    LaunchedEffect(dismissState.currentValue) {
-        when (dismissState.currentValue) {
-            DismissValue.DismissedToStart -> {
-                onEliminar(movimiento)
+    val dismissState = rememberSwipeToDismissBoxState(
+        confirmValueChange = { value ->
+            when (value) {
+                SwipeToDismissBoxValue.EndToStart -> {
+                    onEliminar(movimiento)
+                    true
+                }
+                SwipeToDismissBoxValue.StartToEnd -> {
+                    onEditar(movimiento)
+                    true
+                }
+                else -> true
             }
-            DismissValue.DismissedToEnd -> {
-                onEditar(movimiento)
-            }
-            else -> Unit
         }
-    }
+    )
 
-    SwipeToDismiss(
+    SwipeToDismissBox(
         state = dismissState,
-        directions = setOf(DismissDirection.StartToEnd, DismissDirection.EndToStart),
-        background = {
+        backgroundContent = {
             val direction = dismissState.dismissDirection
             val color = when (direction) {
-                DismissDirection.StartToEnd -> Color(0xFF4CAF50)
-                DismissDirection.EndToStart -> Color(0xFFF44336)
+                SwipeToDismissBoxValue.StartToEnd -> Color(0xFF4CAF50)
+                SwipeToDismissBoxValue.EndToStart -> Color(0xFFF44336)
                 else -> Color.Transparent
             }
             val icon = when (direction) {
-                DismissDirection.StartToEnd -> Icons.Default.Edit
-                DismissDirection.EndToStart -> Icons.Default.Delete
+                SwipeToDismissBoxValue.StartToEnd -> Icons.Default.Edit
+                SwipeToDismissBoxValue.EndToStart -> Icons.Default.Delete
                 else -> null
             }
 
@@ -64,15 +62,14 @@ fun SwipeMovimientoItem(
                     .fillMaxSize()
                     .background(color)
                     .padding(horizontal = 20.dp),
-                contentAlignment = if (direction == DismissDirection.StartToEnd) Alignment.CenterStart else Alignment.CenterEnd
+                contentAlignment = if (direction == SwipeToDismissBoxValue.StartToEnd) Alignment.CenterStart else Alignment.CenterEnd
             ) {
                 icon?.let {
                     Icon(it, contentDescription = null, tint = Color.White)
                 }
             }
-        },
-        dismissContent = {
-            MovimientoItem(movimiento)
         }
-    )
+    ) {
+        MovimientoItem(movimiento)
+    }
 }
