@@ -1,4 +1,4 @@
-package com.michambita.ui.components
+package com.michambita.ui.components.home.historial.movimiento
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions

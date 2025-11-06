@@ -1,7 +1,6 @@
-package com.michambita.ui.screen.auth
+package com.michambita.ui.screen
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -9,6 +8,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.michambita.ui.viewmodel.AuthViewModel
 import com.michambita.ui.common.UiState
+import com.michambita.ui.components.auth.AuthForm
 import com.michambita.ui.components.widget.AlertModal
 import com.michambita.ui.components.widget.ErrorDisplay
 import com.michambita.ui.components.widget.LoadingOverlay

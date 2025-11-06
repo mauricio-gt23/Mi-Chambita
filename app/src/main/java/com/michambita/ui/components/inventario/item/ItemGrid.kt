@@ -1,4 +1,4 @@
-package com.michambita.ui.screen.inventory.item
+package com.michambita.ui.components.inventario.item
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement

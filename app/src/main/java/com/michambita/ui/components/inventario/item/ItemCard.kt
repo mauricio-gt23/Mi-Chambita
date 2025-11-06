@@ -1,4 +1,4 @@
-package com.michambita.ui.screen.inventory.item
+package com.michambita.ui.components.inventario.item
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer

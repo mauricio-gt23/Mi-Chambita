@@ -1,4 +1,4 @@
-package com.michambita.ui.screen.inventory
+package com.michambita.ui.screen
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,15 +16,16 @@ import androidx.navigation.NavController
 import com.michambita.domain.model.Producto
 import com.michambita.navigation.Screen
 import com.michambita.ui.common.UiState
+import com.michambita.ui.components.inventario.InventarioContent
 import com.michambita.ui.components.widget.LoadingOverlay
-import com.michambita.ui.viewmodel.InventoryViewModel
+import com.michambita.ui.viewmodel.InventarioViewModel
 
 @SuppressLint("MutableCollectionMutableState")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun InventoryScreen(
+fun InventarioScreen(
     navController: NavController,
-    viewModel: InventoryViewModel = hiltViewModel()
+    viewModel: InventarioViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiStateGetAllProducto.collectAsStateWithLifecycle()
 
@@ -34,7 +35,7 @@ fun InventoryScreen(
         viewModel.getAllProducto()
     }
 
-    InventoryContent(
+    InventarioContent(
         productos = productoList,
         modifier = Modifier.fillMaxSize(),
         onAddProduct = { navController.navigate(Screen.Producto.route) }

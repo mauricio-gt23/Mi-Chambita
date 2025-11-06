@@ -1,4 +1,4 @@
-package com.michambita.ui.screen.inventory
+package com.michambita.ui.components.inventario
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -11,22 +11,19 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
@@ -36,15 +33,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.michambita.domain.model.Producto
 import com.michambita.ui.components.widget.SearchBar
-import com.michambita.ui.screen.inventory.item.ItemGrid
+import com.michambita.ui.components.inventario.item.ItemGrid
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun InventoryContent(
+fun InventarioContent(
     productos: List<Producto>,
     modifier: Modifier = Modifier,
     onAddProduct: () -> Unit = {}
@@ -125,7 +121,7 @@ private fun AddProductFab(visible: Boolean, onClick: () -> Unit) {
         exit = fadeOut() + scaleOut()
     ) {
         FloatingActionButton(onClick = onClick) {
-            androidx.compose.material3.Icon(Icons.Rounded.Add, contentDescription = "Agregar producto")
+            Icon(Icons.Rounded.Add, contentDescription = "Agregar producto")
         }
     }
 }

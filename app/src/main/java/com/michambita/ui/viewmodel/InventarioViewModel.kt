@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class InventoryViewModel @Inject constructor(
+class InventarioViewModel @Inject constructor(
     private val loadAllProductoByUserId: LoadAllProductoByUserId
 ) : ViewModel() {
 

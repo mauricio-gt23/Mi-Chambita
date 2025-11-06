@@ -1,10 +1,11 @@
-package com.michambita.ui.screen.producto
+package com.michambita.ui.screen
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -13,6 +14,7 @@ import com.michambita.domain.model.Producto
 import com.michambita.ui.viewmodel.ProductoViewModel
 import com.michambita.ui.common.UiState
 import com.michambita.ui.components.widget.LoadingOverlay
+import com.michambita.ui.components.producto.ProductoForm
 import kotlinx.coroutines.launch
 import java.util.UUID
 
@@ -102,7 +104,7 @@ fun ProductoScreen(
         
         SnackbarHost(
             hostState = snackbarHostState,
-            modifier = Modifier.align(androidx.compose.ui.Alignment.BottomCenter)
+            modifier = Modifier.align(Alignment.BottomCenter)
         )
     }
 }

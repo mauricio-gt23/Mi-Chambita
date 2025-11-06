@@ -11,7 +11,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.michambita.ui.MainContainer
 import com.michambita.ui.screen.SplashScreen
-import com.michambita.ui.screen.auth.AuthScreen
+import com.michambita.ui.screen.AuthScreen
 import com.michambita.ui.viewmodel.SessionViewModel
 import com.michambita.ui.viewmodel.UserSessionState
 

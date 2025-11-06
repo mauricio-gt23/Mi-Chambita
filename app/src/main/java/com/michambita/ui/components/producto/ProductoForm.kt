@@ -1,4 +1,4 @@
-package com.michambita.ui.screen.producto
+package com.michambita.ui.components.producto
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons

@@ -1,4 +1,4 @@
-package com.michambita.ui.screen.auth
+package com.michambita.ui.components.auth
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*

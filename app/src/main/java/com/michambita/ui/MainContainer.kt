@@ -1,6 +1,5 @@
 package com.michambita.ui
 
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
@@ -14,7 +13,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
@@ -22,10 +20,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.michambita.navigation.Screen
 import com.michambita.ui.screen.HomeScreen
-import com.michambita.ui.screen.producto.ProductoScreen
+import com.michambita.ui.screen.ProductoScreen
 import com.michambita.ui.viewmodel.MainViewModel
 import com.michambita.ui.common.UiState
-import com.michambita.ui.screen.inventory.InventoryScreen
+import com.michambita.ui.screen.InventarioScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -71,7 +69,7 @@ fun MainContainer(
         ) {
             composable(Screen.MainContainer.route) { HomeScreen(navController) }
             composable(Screen.Producto.route) { ProductoScreen() }
-            composable(Screen.Inventario.route) { InventoryScreen(navController) }
+            composable(Screen.Inventario.route) { InventarioScreen(navController) }
 //            composable(Screen.Gastos.route) { GastosScreen(navController) }
 //            composable(Screen.Resumen.route) { ResumenScreen(navController) }
         }

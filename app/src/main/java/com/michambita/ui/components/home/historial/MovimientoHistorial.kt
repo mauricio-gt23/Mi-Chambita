@@ -1,35 +1,17 @@
-package com.michambita.ui.components
+package com.michambita.ui.components.home.historial
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.History
-import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.michambita.domain.model.Movimiento
-
-@Composable
-fun EncabezadoHistorial(
-    modifier: Modifier = Modifier
-) {
-    Row(
-        modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text("Movimientos por sincronizar", style = MaterialTheme.typography.titleMedium)
-        TextButton(onClick = { /* lógica de sincronización */ }) {
-            Icon(Icons.Default.Sync, contentDescription = null)
-            Spacer(modifier = Modifier.width(4.dp))
-            Text("Sincronizar")
-        }
-    }
-}
+import com.michambita.ui.components.home.historial.movimiento.SwipeMovimientoItem
 
 @Composable
 fun MovimientoHistorial(
