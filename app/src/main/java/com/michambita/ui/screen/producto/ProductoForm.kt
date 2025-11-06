@@ -22,15 +22,22 @@ fun ProductoForm(
     onUnidadMedidaChange: (String) -> Unit,
     onEsIntangibleChange: (Boolean) -> Unit,
     onSeleccionarImagenClick: () -> Unit,
-    onGuardarClick: () -> Unit
+    onGuardarClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = MaterialTheme.shapes.medium,
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text("Datos del producto", style = MaterialTheme.typography.titleMedium)
+        Text("Registro de Producto", style = MaterialTheme.typography.headlineMedium)
+        
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = MaterialTheme.shapes.medium,
+            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+        ) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text("Datos del producto", style = MaterialTheme.typography.titleMedium)
 
             Spacer(Modifier.height(8.dp))
 
@@ -103,6 +110,7 @@ fun ProductoForm(
                 Icon(Icons.Default.Save, contentDescription = null)
                 Spacer(Modifier.width(8.dp))
                 Text("Guardar")
+            }
             }
         }
     }

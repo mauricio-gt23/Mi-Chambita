@@ -33,86 +33,76 @@ fun ProductoScreen(
     var unidadMedida by remember { mutableStateOf("") }
     var esIntangible by remember { mutableStateOf(false) }
 
-    LaunchedEffect(uiState) {
-        when (uiState) {
-            is UiState.Success -> {
-                snackbarHostState.showSnackbar(
-                    message = "Producto guardado correctamente",
-                    duration = SnackbarDuration.Short
+    Box(
+        modifier = modifier.fillMaxSize()
+    ) {
+        ProductoForm(
+            nombre = nombre,
+            descripcion = descripcion,
+            precio = precio,
+            unidadMedida = unidadMedida,
+            esIntangible = esIntangible,
+            onNombreChange = { nombre = it },
+            onDescripcionChange = { descripcion = it },
+            onPrecioChange = { precio = it },
+            onUnidadMedidaChange = { unidadMedida = it },
+            onEsIntangibleChange = { esIntangible = it },
+            onSeleccionarImagenClick = {
+                // TODO: lógica seleccionar imagen
+            },
+            onGuardarClick = {
+                if (nombre.isBlank()) {
+                    coroutineScope.launch {
+                        snackbarHostState.showSnackbar("Ingrese el nombre del producto")
+                    }
+                    return@ProductoForm
+                }
+                val producto = Producto(
+                    id = UUID.randomUUID().toString(),
+                    nombre = nombre.trim(),
+                    descripcion = descripcion.trim().ifEmpty { null },
+                    precio = precio.toDoubleOrNull() ?: 0.0,
+                    unidadMedida = unidadMedida.trim().ifEmpty { "" },
+                    esIntangible = esIntangible
                 )
-                // Reset form
-                nombre = ""
-                descripcion = ""
-                precio = ""
-                unidadMedida = ""
-                esIntangible = false
-            }
-
-            is UiState.Error -> {
-                val msg = (uiState as UiState.Error).message
-                snackbarHostState.showSnackbar(message = msg)
-            }
-
-            else -> {}
-        }
-    }
-
-    Scaffold(
-        modifier = modifier.fillMaxSize(),
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
-    ) { innerPadding ->
-        Box(
+                viewModel.saveProducto(producto)
+            },
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
-        ) {
+                .padding(16.dp)
+                .verticalScroll(rememberScrollState())
+        )
 
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp)
-                    .verticalScroll(rememberScrollState()),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                Text("Registro de Producto", style = MaterialTheme.typography.headlineMedium)
-
-                ProductoForm(
-                    nombre = nombre,
-                    descripcion = descripcion,
-                    precio = precio,
-                    unidadMedida = unidadMedida,
-                    esIntangible = esIntangible,
-                    onNombreChange = { nombre = it },
-                    onDescripcionChange = { descripcion = it },
-                    onPrecioChange = { precio = it },
-                    onUnidadMedidaChange = { unidadMedida = it },
-                    onEsIntangibleChange = { esIntangible = it },
-                    onSeleccionarImagenClick = {
-                        // TODO: lógica seleccionar imagen
-                    },
-                    onGuardarClick = {
-                        if (nombre.isBlank()) {
-                            coroutineScope.launch {
-                                snackbarHostState.showSnackbar("Ingrese el nombre del producto")
-                            }
-                            return@ProductoForm
-                        }
-                        val producto = Producto(
-                            id = UUID.randomUUID().toString(),
-                            nombre = nombre.trim(),
-                            descripcion = descripcion.trim().ifEmpty { null },
-                            precio = precio.toDoubleOrNull() ?: 0.0,
-                            unidadMedida = unidadMedida.trim().ifEmpty { "" },
-                            esIntangible = esIntangible
-                        )
-                        viewModel.saveProducto(producto)
-                    }
-                )
+        when (uiState) {
+            is UiState.Loading -> {
+                LoadingOverlay(modifier = Modifier, message = "Guardando Producto...")
             }
+            is UiState.Success -> {
+                LaunchedEffect(uiState) {
+                    snackbarHostState.showSnackbar(
+                        message = "Producto guardado correctamente",
+                        duration = SnackbarDuration.Short
+                    )
+                    // Reset form
+                    nombre = ""
+                    descripcion = ""
+                    precio = ""
+                    unidadMedida = ""
+                    esIntangible = false
+                }
+            }
+            is UiState.Error -> {
+                LaunchedEffect(uiState) {
+                    val msg = (uiState as UiState.Error).message
+                    snackbarHostState.showSnackbar(message = msg)
+                }
+            }
+            else -> {}
         }
-
-        if (uiState is UiState.Loading) {
-            LoadingOverlay(modifier = Modifier, message = "Guardando Producto...")
-        }
+        
+        SnackbarHost(
+            hostState = snackbarHostState,
+            modifier = Modifier.align(androidx.compose.ui.Alignment.BottomCenter)
+        )
     }
 }
