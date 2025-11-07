@@ -5,6 +5,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.rounded.Inventory2
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -20,11 +21,13 @@ fun ProductoForm(
     precio: String,
     unidadMedida: String,
     esIntangible: Boolean,
+    stock: String,
     onNombreChange: (String) -> Unit,
     onDescripcionChange: (String) -> Unit,
     onPrecioChange: (String) -> Unit,
     onUnidadMedidaChange: (String) -> Unit,
     onEsIntangibleChange: (Boolean) -> Unit,
+    onStockChange: (String) -> Unit,
     onSeleccionarImagenClick: () -> Unit,
     onGuardarClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -45,6 +48,7 @@ fun ProductoForm(
         PrecioUnidadSection(
             precio = precio,
             unidadMedida = unidadMedida,
+            esIntangible = esIntangible,
             onPrecioChange = onPrecioChange,
             onUnidadMedidaChange = onUnidadMedidaChange
         )
@@ -54,6 +58,12 @@ fun ProductoForm(
             onEsIntangibleChange = onEsIntangibleChange,
             onSeleccionarImagenClick = onSeleccionarImagenClick
         )
+        if (!esIntangible) {
+            StockSection(
+                stock = stock,
+                onStockChange = onStockChange
+            )
+        }
         Spacer(Modifier.height(16.dp))
 
         Button(
@@ -63,6 +73,35 @@ fun ProductoForm(
             Icon(Icons.Default.Save, contentDescription = null)
             Spacer(Modifier.width(8.dp))
             Text("Guardar")
+        }
+    }
+}
+
+@Composable
+private fun StockSection(
+    stock: String,
+    onStockChange: (String) -> Unit,
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.medium,
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text("Stock inicial", style = MaterialTheme.typography.titleMedium)
+            Spacer(Modifier.height(8.dp))
+
+            OutlinedTextField(
+                value = stock,
+                onValueChange = { input ->
+                    val sanitized = input.filter { it.isDigit() }
+                    onStockChange(sanitized)
+                },
+                label = { Text("Cantidad disponible") },
+                leadingIcon = { Icon(Icons.Rounded.Inventory2, contentDescription = null) },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
+                modifier = Modifier.fillMaxWidth()
+            )
         }
     }
 }
@@ -125,6 +164,7 @@ private fun DatosBasicosSection(
 private fun PrecioUnidadSection(
     precio: String,
     unidadMedida: String,
+    esIntangible: Boolean,
     onPrecioChange: (String) -> Unit,
     onUnidadMedidaChange: (String) -> Unit,
 ) {
@@ -155,29 +195,31 @@ private fun PrecioUnidadSection(
 
             Spacer(Modifier.height(12.dp))
 
-            Column(modifier = Modifier.fillMaxWidth()) {
-                val unidades = listOf("Unidad", "Kg", "g", "L", "mL", "Caja", "Paquete")
-                Text("Unidad de medida", style = MaterialTheme.typography.labelLarge)
-                Spacer(Modifier.height(6.dp))
-                LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    items(unidades.size) { idx ->
-                        val u = unidades[idx]
-                        AssistChip(
-                            onClick = { onUnidadMedidaChange(u) },
-                            label = { Text(u) },
-                            leadingIcon = { Icon(Icons.Default.Straighten, contentDescription = null) }
-                        )
+            if (!esIntangible) {
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    val unidades = listOf("Unidad", "Kg", "g", "L", "mL", "Caja", "Paquete")
+                    Text("Unidad de medida", style = MaterialTheme.typography.labelLarge)
+                    Spacer(Modifier.height(6.dp))
+                    LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        items(unidades.size) { idx ->
+                            val u = unidades[idx]
+                            AssistChip(
+                                onClick = { onUnidadMedidaChange(u) },
+                                label = { Text(u) },
+                                leadingIcon = { Icon(Icons.Default.Straighten, contentDescription = null) }
+                            )
+                        }
                     }
+                    Spacer(Modifier.height(10.dp))
+                    OutlinedTextField(
+                        value = unidadMedida,
+                        onValueChange = onUnidadMedidaChange,
+                        placeholder = { Text("Ej: Kg, Unidad") },
+                        leadingIcon = { Icon(Icons.Default.Straighten, contentDescription = null) },
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                        modifier = Modifier.fillMaxWidth()
+                    )
                 }
-                Spacer(Modifier.height(10.dp))
-                OutlinedTextField(
-                    value = unidadMedida,
-                    onValueChange = onUnidadMedidaChange,
-                    placeholder = { Text("Ej: Kg, Unidad") },
-                    leadingIcon = { Icon(Icons.Default.Straighten, contentDescription = null) },
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-                    modifier = Modifier.fillMaxWidth()
-                )
             }
         }
     }

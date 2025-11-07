@@ -44,6 +44,15 @@ fun ItemCard(
                 leadingIcon = { Icon(Icons.Rounded.Inventory2, contentDescription = null) },
                 colors = AssistChipDefaults.assistChipColors()
             )
+            if (!producto.esIntangible && producto.stock != null) {
+                Spacer(Modifier.height(6.dp))
+                AssistChip(
+                    onClick = {},
+                    label = { Text("Stock: ${producto.stock}") },
+                    leadingIcon = { Icon(Icons.Rounded.Inventory2, contentDescription = null) },
+                    colors = AssistChipDefaults.assistChipColors()
+                )
+            }
         }
     }
 }

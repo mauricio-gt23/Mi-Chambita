@@ -9,7 +9,8 @@ data class Producto(
     val descripcion: String? = "",
     val precio: Double,
     val unidadMedida: String,
-    val esIntangible: Boolean
+    val esIntangible: Boolean,
+    val stock: Int? = null
 )
 
 fun ProductoModel.toDomain() = Producto(
@@ -19,5 +20,6 @@ fun ProductoModel.toDomain() = Producto(
     descripcion,
     precio,
     unidadMedida,
-    esIntangible
+    esIntangible,
+    stock
 )
