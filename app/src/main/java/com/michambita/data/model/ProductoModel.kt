@@ -1,5 +1,6 @@
 package com.michambita.data.model
 
+import com.michambita.data.enum.EnumTipoProducto
 import com.michambita.domain.model.Producto
 
 data class ProductoModel(
@@ -9,7 +10,7 @@ data class ProductoModel(
     val descripcion: String? = "",
     val precio: Double = 0.0,
     val unidadMedida: String = "",
-    val esIntangible: Boolean = false,
+    val tipoProducto: EnumTipoProducto = EnumTipoProducto.NO_INVENTARIABLE,
     val stock: Int? = null
 )
 
@@ -20,6 +21,6 @@ fun Producto.toModel() = ProductoModel(
     descripcion,
     precio,
     unidadMedida,
-    esIntangible,
+    tipoProducto,
     stock
 )

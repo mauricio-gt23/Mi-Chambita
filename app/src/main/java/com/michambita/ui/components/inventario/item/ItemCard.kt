@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.michambita.domain.model.Producto
+import com.michambita.data.enum.EnumTipoProducto
 
 @Composable
 fun ItemCard(
@@ -44,7 +45,7 @@ fun ItemCard(
                 leadingIcon = { Icon(Icons.Rounded.Inventory2, contentDescription = null) },
                 colors = AssistChipDefaults.assistChipColors()
             )
-            if (!producto.esIntangible && producto.stock != null) {
+            if (producto.tipoProducto == EnumTipoProducto.INVENTARIABLE && producto.stock != null) {
                 Spacer(Modifier.height(6.dp))
                 AssistChip(
                     onClick = {},

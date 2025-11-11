@@ -35,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.michambita.domain.model.Producto
+import com.michambita.data.enum.EnumTipoProducto
 import com.michambita.ui.components.widget.SearchBar
 import com.michambita.ui.components.inventario.item.ItemGrid
 
@@ -93,7 +94,7 @@ fun InventarioContent(
                         it.nombre.contains(query, true) || (it.descripcion?.contains(query, true) == true)
                     }
                     .filter { selectedUnidad?.let { u -> it.unidadMedida == u } ?: true }
-                    .filter { if (onlyIntangibles) it.esIntangible else true }
+                    .filter { if (onlyIntangibles) it.tipoProducto != EnumTipoProducto.INVENTARIABLE else true }
 
                 list = if (sortAsc) list.sortedBy { it.precio } else list.sortedByDescending { it.precio }
                 list

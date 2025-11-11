@@ -37,13 +37,13 @@ fun ProductoScreen(
             descripcion = formState.descripcion,
             precio = formState.precio,
             unidadMedida = formState.unidadMedida,
-            esIntangible = formState.esIntangible,
+            tipoProducto = formState.tipoProducto,
             stock = formState.stock,
             onNombreChange = viewModel::updateNombre,
             onDescripcionChange = viewModel::updateDescripcion,
             onPrecioChange = viewModel::updatePrecio,
             onUnidadMedidaChange = viewModel::updateUnidadMedida,
-            onEsIntangibleChange = viewModel::setEsIntangible,
+            onTipoProductoChange = viewModel::setTipoProducto,
             onStockChange = viewModel::updateStock,
             onSeleccionarImagenClick = {
                 // TODO: lógica seleccionar imagen
