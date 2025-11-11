@@ -64,39 +64,23 @@ fun InventarioContent(
 
             // Búsqueda y filtros
             var query by remember { mutableStateOf("") }
-            var selectedUnidad by remember { mutableStateOf<String?>(null) }
-            var onlyIntangibles by remember { mutableStateOf(false) }
-            var sortAsc by remember { mutableStateOf(true) }
+            var selectedTipo by remember { mutableStateOf<EnumTipoProducto?>(null) }
 
             SearchBar(query = query, onQueryChange = { query = it })
 
-            val unidades = remember(productos) {
-                productos.map { it.unidadMedida }
-                    .filter { it.isNotBlank() }
-                    .distinct()
-            }
-
             FilterChipsRow(
-                unidades = unidades,
-                selectedUnidad = selectedUnidad,
-                onUnidadSelected = { selectedUnidad = if (selectedUnidad == it) null else it },
-                onlyIntangibles = onlyIntangibles,
-                onToggleIntangibles = { onlyIntangibles = !onlyIntangibles },
-                sortAsc = sortAsc,
-                onToggleSort = { sortAsc = !sortAsc }
+                selectedTipo = selectedTipo,
+                onTipoSelected = { selectedTipo = it }
             )
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            val filtered = remember(query, selectedUnidad, onlyIntangibles, sortAsc, productos) {
+            val filtered = remember(query, selectedTipo, productos) {
                 var list = productos
                     .filter {
                         it.nombre.contains(query, true) || (it.descripcion?.contains(query, true) == true)
                     }
-                    .filter { selectedUnidad?.let { u -> it.unidadMedida == u } ?: true }
-                    .filter { if (onlyIntangibles) it.tipoProducto != EnumTipoProducto.INVENTARIABLE else true }
-
-                list = if (sortAsc) list.sortedBy { it.precio } else list.sortedByDescending { it.precio }
+                    .filter { selectedTipo?.let { tp -> it.tipoProducto == tp } ?: true }
                 list
             }
 
@@ -131,13 +115,8 @@ private fun AddProductFab(visible: Boolean, onClick: () -> Unit) {
 
 @Composable
 fun FilterChipsRow(
-    unidades: List<String>,
-    selectedUnidad: String?,
-    onUnidadSelected: (String) -> Unit,
-    onlyIntangibles: Boolean,
-    onToggleIntangibles: () -> Unit,
-    sortAsc: Boolean,
-    onToggleSort: () -> Unit
+    selectedTipo: EnumTipoProducto?,
+    onTipoSelected: (EnumTipoProducto?) -> Unit
 ) {
     LazyRow(
         contentPadding = PaddingValues(horizontal = 4.dp),
@@ -145,34 +124,23 @@ fun FilterChipsRow(
     ) {
         item {
             FilterChip(
-                selected = onlyIntangibles,
-                onClick = onToggleIntangibles,
-                label = { Text("Intangibles") },
+                selected = selectedTipo == null,
+                onClick = { onTipoSelected(null) },
+                label = { Text("Todos") },
                 colors = FilterChipDefaults.filterChipColors()
             )
         }
-        item {
+        items(EnumTipoProducto.values().size) { idx ->
+            val tipo = EnumTipoProducto.values()[idx]
+            val label = when (tipo) {
+                EnumTipoProducto.INVENTARIABLE -> "Inventariable"
+                EnumTipoProducto.NO_INVENTARIABLE -> "No inventariable"
+                EnumTipoProducto.SERVICIO -> "Servicio"
+            }
             FilterChip(
-                selected = !onlyIntangibles,
-                onClick = onToggleIntangibles,
-                label = { Text("Tangibles") },
-                colors = FilterChipDefaults.filterChipColors()
-            )
-        }
-        items(unidades.size) { idx ->
-            val unidad = unidades[idx]
-            FilterChip(
-                selected = selectedUnidad == unidad,
-                onClick = { onUnidadSelected(unidad) },
-                label = { Text(unidad) },
-                colors = FilterChipDefaults.filterChipColors()
-            )
-        }
-        item {
-            FilterChip(
-                selected = true,
-                onClick = onToggleSort,
-                label = { Text(if (sortAsc) "Precio ↑" else "Precio ↓") },
+                selected = selectedTipo == tipo,
+                onClick = { onTipoSelected(tipo) },
+                label = { Text(label) },
                 colors = FilterChipDefaults.filterChipColors()
             )
         }
