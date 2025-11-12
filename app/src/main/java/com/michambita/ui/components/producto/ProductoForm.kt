@@ -172,15 +172,13 @@ private fun TangibleSection(
 ) {
     when (tipoProducto) {
         EnumTipoProducto.INVENTARIABLE -> SectionCard(title = "Inventariable") {
-            Text("Stock inicial", style = MaterialTheme.typography.titleMedium)
-            Spacer(Modifier.height(8.dp))
             OutlinedTextField(
                 value = stock,
                 onValueChange = { input ->
                     val sanitized = input.filter { it.isDigit() }
                     onStockChange(sanitized)
                 },
-                label = { Text("Cantidad disponible") },
+                label = { Text("Stock inicial") },
                 leadingIcon = { Icon(Icons.Rounded.Inventory2, contentDescription = null) },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number,
@@ -240,7 +238,7 @@ private fun TipoProductoSection(
         }
 
         Text(
-            "El tipo define si requiere stock y unidad de medida",
+            "El tipo define si requiere stock o unidad de medida",
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(top = 8.dp)
