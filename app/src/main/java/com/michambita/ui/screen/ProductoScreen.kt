@@ -10,6 +10,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import com.michambita.domain.model.Producto
 import com.michambita.ui.viewmodel.ProductoViewModel
 import com.michambita.ui.common.UiState
@@ -32,6 +34,12 @@ fun ProductoScreen(
     Box(
         modifier = modifier.fillMaxSize()
     ) {
+        val imagePicker = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+            uri?.let {
+                viewModel.subirImagen(it) { /* resultado de subida */ }
+            }
+        }
+
         ProductoForm(
             nombre = formState.nombre,
             descripcion = formState.descripcion,
@@ -39,6 +47,7 @@ fun ProductoScreen(
             unidadMedida = formState.unidadMedida,
             tipoProducto = formState.tipoProducto,
             stock = formState.stock,
+            imagenUrl = formState.imagenUrl,
             onNombreChange = viewModel::updateNombre,
             onDescripcionChange = viewModel::updateDescripcion,
             onPrecioChange = viewModel::updatePrecio,
@@ -46,7 +55,7 @@ fun ProductoScreen(
             onTipoProductoChange = viewModel::setTipoProducto,
             onStockChange = viewModel::updateStock,
             onSeleccionarImagenClick = {
-                // TODO: lógica seleccionar imagen
+                imagePicker.launch("image/*")
             },
             onGuardarClick = {
                 viewModel.guardarProducto()

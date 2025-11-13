@@ -11,7 +11,8 @@ data class Producto(
     val precio: Double,
     val unidadMedida: String,
     val tipoProducto: EnumTipoProducto,
-    val stock: Int? = null
+    val stock: Int? = null,
+    val imagenUrl: String? = null
 )
 
 fun ProductoModel.toDomain() = Producto(
@@ -22,5 +23,6 @@ fun ProductoModel.toDomain() = Producto(
     precio,
     unidadMedida,
     tipoProducto,
-    stock
+    stock,
+    imagenUrl
 )

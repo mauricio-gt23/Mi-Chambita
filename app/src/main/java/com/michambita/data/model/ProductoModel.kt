@@ -11,7 +11,8 @@ data class ProductoModel(
     val precio: Double = 0.0,
     val unidadMedida: String = "",
     val tipoProducto: EnumTipoProducto = EnumTipoProducto.NO_INVENTARIABLE,
-    val stock: Int? = null
+    val stock: Int? = null,
+    val imagenUrl: String? = null
 )
 
 fun Producto.toModel() = ProductoModel(
@@ -22,5 +23,6 @@ fun Producto.toModel() = ProductoModel(
     precio,
     unidadMedida,
     tipoProducto,
-    stock
+    stock,
+    imagenUrl
 )

@@ -88,6 +88,7 @@ dependencies {
     implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
 
     // Firebase
+    implementation(libs.firebase.storage)
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)
 

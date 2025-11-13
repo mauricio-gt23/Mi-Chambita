@@ -23,6 +23,7 @@ fun ProductoForm(
     unidadMedida: String,
     tipoProducto: EnumTipoProducto,
     stock: String,
+    imagenUrl: String?,
     onNombreChange: (String) -> Unit,
     onDescripcionChange: (String) -> Unit,
     onPrecioChange: (String) -> Unit,
@@ -54,6 +55,7 @@ fun ProductoForm(
         )
 
         ImagenSection(
+            imagenUrl = imagenUrl,
             onSeleccionarImagenClick = onSeleccionarImagenClick
         )
 
@@ -248,6 +250,7 @@ private fun TipoProductoSection(
 
 @Composable
 private fun ImagenSection(
+    imagenUrl: String?,
     onSeleccionarImagenClick: () -> Unit,
 ) {
     SectionCard(title = "Imagen del producto") {
@@ -258,6 +261,16 @@ private fun ImagenSection(
             Icon(Icons.Default.CameraAlt, contentDescription = null)
             Spacer(Modifier.width(8.dp))
             Text("Seleccionar foto del producto")
+        }
+
+        Spacer(Modifier.height(8.dp))
+
+        if (imagenUrl != null) {
+            Text("Imagen subida:")
+            Spacer(Modifier.height(4.dp))
+            Text(imagenUrl, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.primary)
+        } else {
+            Text("No hay imagen seleccionada", style = MaterialTheme.typography.bodySmall)
         }
     }
 }

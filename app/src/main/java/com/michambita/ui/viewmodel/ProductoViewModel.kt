@@ -12,6 +12,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import android.net.Uri
+import com.google.firebase.storage.FirebaseStorage
 
 data class ProductoUiState(
     val nombre: String = "",
@@ -19,12 +21,14 @@ data class ProductoUiState(
     val precio: String = "",
     val unidadMedida: String = "",
     val tipoProducto: EnumTipoProducto = EnumTipoProducto.INVENTARIABLE,
-    val stock: String = ""
+    val stock: String = "",
+    val imagenUrl: String? = null
 )
 
 @HiltViewModel
 class ProductoViewModel @Inject constructor(
-    private val saveProductoUseCase: SaveProductoUseCase
+    private val saveProductoUseCase: SaveProductoUseCase,
+    private val firebaseStorage: FirebaseStorage
 ) : ViewModel() {
     private val _formState = MutableStateFlow(ProductoUiState())
     val formState: StateFlow<ProductoUiState> = _formState.asStateFlow()
@@ -39,6 +43,22 @@ class ProductoViewModel @Inject constructor(
     fun setTipoProducto(value: EnumTipoProducto) { _formState.value = _formState.value.copy(tipoProducto = value) }
     fun updateStock(value: String) { _formState.value = _formState.value.copy(stock = value) }
 
+    fun subirImagen(uri: Uri, onResult: (Boolean) -> Unit) {
+        val storageRef = firebaseStorage.reference
+        val imageRef = storageRef.child("productos/${System.currentTimeMillis()}.jpg")
+
+        imageRef.putFile(uri)
+            .addOnSuccessListener {
+                imageRef.downloadUrl.addOnSuccessListener { url ->
+                    _formState.value = _formState.value.copy(imagenUrl = url.toString())
+                    onResult(true)
+                }
+            }
+            .addOnFailureListener {
+                onResult(false)
+            }
+    }
+
     fun guardarProducto() {
         val current = _formState.value
 
@@ -50,7 +70,8 @@ class ProductoViewModel @Inject constructor(
             precio = precioDouble,
             unidadMedida = current.unidadMedida.trim().ifEmpty { "" },
             tipoProducto = current.tipoProducto,
-            stock = stockInt
+            stock = stockInt,
+            imagenUrl = current.imagenUrl
         )
 
         viewModelScope.launch {
