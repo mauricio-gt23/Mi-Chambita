@@ -28,6 +28,7 @@ fun ProductoScreen(
 ) {
     val uiState by viewModel.uiStateSaveProducto.collectAsStateWithLifecycle()
     val formState by viewModel.formState.collectAsStateWithLifecycle()
+    val uiUploadState by viewModel.uiStateUploadImage.collectAsStateWithLifecycle()
 
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -48,6 +49,7 @@ fun ProductoScreen(
             tipoProducto = formState.tipoProducto,
             stock = formState.stock,
             imagenUrl = formState.imagenUrl,
+            isSubiendoImagen = uiUploadState is UiState.Loading,
             onNombreChange = viewModel::updateNombre,
             onDescripcionChange = viewModel::updateDescripcion,
             onPrecioChange = viewModel::updatePrecio,

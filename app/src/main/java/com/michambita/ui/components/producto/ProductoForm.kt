@@ -24,6 +24,7 @@ fun ProductoForm(
     tipoProducto: EnumTipoProducto,
     stock: String,
     imagenUrl: String?,
+    isSubiendoImagen: Boolean,
     onNombreChange: (String) -> Unit,
     onDescripcionChange: (String) -> Unit,
     onPrecioChange: (String) -> Unit,
@@ -56,6 +57,7 @@ fun ProductoForm(
 
         ImagenSection(
             imagenUrl = imagenUrl,
+            isSubiendoImagen = isSubiendoImagen,
             onSeleccionarImagenClick = onSeleccionarImagenClick
         )
 
@@ -251,16 +253,27 @@ private fun TipoProductoSection(
 @Composable
 private fun ImagenSection(
     imagenUrl: String?,
+    isSubiendoImagen: Boolean,
     onSeleccionarImagenClick: () -> Unit,
 ) {
     SectionCard(title = "Imagen del producto") {
         Button(
             onClick = onSeleccionarImagenClick,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            enabled = !isSubiendoImagen
         ) {
-            Icon(Icons.Default.CameraAlt, contentDescription = null)
-            Spacer(Modifier.width(8.dp))
-            Text("Seleccionar foto del producto")
+            if (isSubiendoImagen) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(18.dp),
+                    strokeWidth = 2.dp
+                )
+                Spacer(Modifier.width(8.dp))
+                Text("Subiendo imagen...")
+            } else {
+                Icon(Icons.Default.CameraAlt, contentDescription = null)
+                Spacer(Modifier.width(8.dp))
+                Text("Seleccionar foto del producto")
+            }
         }
 
         Spacer(Modifier.height(8.dp))

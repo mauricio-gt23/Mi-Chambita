@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import android.net.Uri
-import com.google.firebase.storage.FirebaseStorage
+import com.michambita.domain.usecase.UploadProductoImageUseCase
 
 data class ProductoUiState(
     val nombre: String = "",
@@ -28,13 +28,16 @@ data class ProductoUiState(
 @HiltViewModel
 class ProductoViewModel @Inject constructor(
     private val saveProductoUseCase: SaveProductoUseCase,
-    private val firebaseStorage: FirebaseStorage
+    private val uploadProductoImageUseCase: UploadProductoImageUseCase
 ) : ViewModel() {
     private val _formState = MutableStateFlow(ProductoUiState())
     val formState: StateFlow<ProductoUiState> = _formState.asStateFlow()
 
     private val _uiStateSaveProducto = MutableStateFlow<UiState<Boolean>>(UiState.Empty)
     val uiStateSaveProducto : StateFlow<UiState<Boolean>> = _uiStateSaveProducto
+
+    private val _uiStateUploadImage = MutableStateFlow<UiState<Boolean>>(UiState.Empty)
+    val uiStateUploadImage: StateFlow<UiState<Boolean>> = _uiStateUploadImage
 
     fun updateNombre(value: String) { _formState.value = _formState.value.copy(nombre = value) }
     fun updateDescripcion(value: String) { _formState.value = _formState.value.copy(descripcion = value) }
@@ -44,19 +47,23 @@ class ProductoViewModel @Inject constructor(
     fun updateStock(value: String) { _formState.value = _formState.value.copy(stock = value) }
 
     fun subirImagen(uri: Uri, onResult: (Boolean) -> Unit) {
-        val storageRef = firebaseStorage.reference
-        val imageRef = storageRef.child("productos/${System.currentTimeMillis()}.jpg")
+        viewModelScope.launch {
+            _uiStateUploadImage.value = UiState.Loading
 
-        imageRef.putFile(uri)
-            .addOnSuccessListener {
-                imageRef.downloadUrl.addOnSuccessListener { url ->
-                    _formState.value = _formState.value.copy(imagenUrl = url.toString())
+            val result = uploadProductoImageUseCase.invoke(uri)
+
+            _uiStateUploadImage.value = result.fold(
+                onSuccess = { url ->
+                    _formState.value = _formState.value.copy(imagenUrl = url)
                     onResult(true)
+                    UiState.Success(true)
+                },
+                onFailure = { e ->
+                    onResult(false)
+                    UiState.Error(e.message ?: "Error al subir imagen")
                 }
-            }
-            .addOnFailureListener {
-                onResult(false)
-            }
+            )
+        }
     }
 
     fun guardarProducto() {
