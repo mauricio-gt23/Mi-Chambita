@@ -37,7 +37,7 @@ class ProductoRepositoryImpl @Inject constructor(
         return try {
             val querySnapshot = productoCollection.whereEqualTo("userId", userId).get().await()
             val productoList = querySnapshot.documents.mapNotNull { document ->
-                document.toObject(ProductoModel::class.java)?.toDomain()
+                document.toObject(ProductoModel::class.java)?.copy(id = document.id)?.toDomain()
             }
             Result.success(productoList)
         } catch (e: Exception) {
