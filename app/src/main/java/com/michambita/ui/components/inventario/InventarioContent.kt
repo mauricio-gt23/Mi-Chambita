@@ -44,7 +44,8 @@ import com.michambita.ui.components.inventario.item.ItemGrid
 fun InventarioContent(
     productos: List<Producto>,
     modifier: Modifier = Modifier,
-    onAddProduct: () -> Unit = {}
+    onAddProduct: () -> Unit = {},
+    onChangeStock: (String, Int) -> Unit = { _, _ -> }
 ) {
     val gridState = rememberLazyGridState()
     Scaffold(
@@ -84,7 +85,7 @@ fun InventarioContent(
                 list
             }
 
-            ItemGrid(productos = filtered, state = gridState)
+            ItemGrid(productos = filtered, state = gridState, onChangeStock = onChangeStock)
         }
     }
 }

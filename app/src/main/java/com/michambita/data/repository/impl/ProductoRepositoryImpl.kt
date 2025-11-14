@@ -44,4 +44,13 @@ class ProductoRepositoryImpl @Inject constructor(
             Result.failure(e)
         }
     }
+
+    override suspend fun updateProductoStock(id: String, stock: Int): Result<Unit> {
+        return try {
+            productoCollection.document(id).update("stock", stock).await()
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }

@@ -38,7 +38,10 @@ fun InventarioScreen(
     InventarioContent(
         productos = productoList,
         modifier = Modifier.fillMaxSize(),
-        onAddProduct = { navController.navigate(Screen.Producto.route) }
+        onAddProduct = { navController.navigate(Screen.Producto.route) },
+        onChangeStock = { id, stock ->
+            viewModel.updateStock(id, stock)
+        }
     )
 
     when (uiState) {

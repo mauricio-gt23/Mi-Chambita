@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.michambita.domain.model.Producto
 import com.michambita.domain.usecase.LoadAllProductoByUserId
+import com.michambita.domain.usecase.UpdateProductoStockUseCase
 import com.michambita.ui.common.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,7 +14,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class InventarioViewModel @Inject constructor(
-    private val loadAllProductoByUserId: LoadAllProductoByUserId
+    private val loadAllProductoByUserId: LoadAllProductoByUserId,
+    private val updateProductoStockUseCase: UpdateProductoStockUseCase
 ) : ViewModel() {
 
     private val _uiStateGetAllProducto = MutableStateFlow<UiState<List<Producto>>>(UiState.Empty)
@@ -28,6 +30,16 @@ class InventarioViewModel @Inject constructor(
             _uiStateGetAllProducto.value = result.fold(
                 onSuccess = { UiState.Success(result.getOrNull()!!) },
                 onFailure = { UiState.Error(it.message!!) }
+            )
+        }
+    }
+
+    fun updateStock(productoId: String, newStock: Int) {
+        viewModelScope.launch {
+            val result = updateProductoStockUseCase.invoke(productoId, newStock)
+            result.fold(
+                onSuccess = { getAllProducto() },
+                onFailure = { /* noop */ }
             )
         }
     }
