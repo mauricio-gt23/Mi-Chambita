@@ -11,10 +11,12 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import com.michambita.domain.usecase.UploadProductoImageUseCase
+import com.michambita.domain.usecase.DeleteProductoImageUseCase
 
 @HiltViewModel
 class ImagenViewModel @Inject constructor(
-    private val uploadProductoImageUseCase: UploadProductoImageUseCase
+    private val uploadProductoImageUseCase: UploadProductoImageUseCase,
+    private val deleteProductoImageUseCase: DeleteProductoImageUseCase
 ) : ViewModel() {
     private val _imageUrl = MutableStateFlow<String?>(null)
     val imageUrl: StateFlow<String?> = _imageUrl.asStateFlow()
@@ -43,7 +45,23 @@ class ImagenViewModel @Inject constructor(
     }
 
     fun borrarImagen() {
-        _imageUrl.value = null
-        _uiStateUploadImage.value = UiState.Empty
+        val currentUrl = _imageUrl.value
+        if (currentUrl.isNullOrEmpty()) {
+            _uiStateUploadImage.value = UiState.Empty
+            return
+        }
+        viewModelScope.launch {
+            _uiStateUploadImage.value = UiState.Loading
+            val result = deleteProductoImageUseCase.invoke(currentUrl)
+            _uiStateUploadImage.value = result.fold(
+                onSuccess = {
+                    _imageUrl.value = null
+                    UiState.Empty
+                },
+                onFailure = { e ->
+                    UiState.Error(e.message ?: "Error al borrar imagen")
+                }
+            )
+        }
     }
 }

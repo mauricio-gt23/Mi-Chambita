@@ -21,4 +21,14 @@ class ProductoImageRepositoryImpl @Inject constructor(
             Result.failure(e)
         }
     }
+
+    override suspend fun deleteProductoImage(url: String): Result<Unit> {
+        return try {
+            val ref = firebaseStorage.getReferenceFromUrl(url)
+            ref.delete().await()
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }
