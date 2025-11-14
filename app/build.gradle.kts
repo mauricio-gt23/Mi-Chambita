@@ -92,6 +92,10 @@ dependencies {
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)
 
+    // Coil (imagery)
+    implementation(libs.coil)
+    implementation(libs.coil.compose)
+
     // Retrofit (preparado para futuro backend)
     implementation(libs.retrofit)
     implementation(libs.retrofit.gson)

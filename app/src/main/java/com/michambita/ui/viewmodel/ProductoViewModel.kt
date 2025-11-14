@@ -48,6 +48,7 @@ class ProductoViewModel @Inject constructor(
 
     fun subirImagen(uri: Uri, onResult: (Boolean) -> Unit) {
         viewModelScope.launch {
+            _formState.value = _formState.value.copy(imagenUrl = uri.toString())
             _uiStateUploadImage.value = UiState.Loading
 
             val result = uploadProductoImageUseCase.invoke(uri)
@@ -59,6 +60,7 @@ class ProductoViewModel @Inject constructor(
                     UiState.Success(true)
                 },
                 onFailure = { e ->
+                    _formState.value = _formState.value.copy(imagenUrl = null)
                     onResult(false)
                     UiState.Error(e.message ?: "Error al subir imagen")
                 }
@@ -94,6 +96,11 @@ class ProductoViewModel @Inject constructor(
                 onFailure = { UiState.Error(it.message ?: "Ocurrió un error al guardar el producto") }
             )
         }
+    }
+
+    fun borrarImagen() {
+        _formState.value = _formState.value.copy(imagenUrl = null)
+        _uiStateUploadImage.value = UiState.Empty
     }
 
     fun resetForm() { _formState.value = ProductoUiState() }
