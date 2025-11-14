@@ -2,7 +2,7 @@ package com.michambita.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.michambita.data.enum.EnumModoOperacion
+import com.michambita.data.enums.EnumModoOperacion
 import com.michambita.domain.model.Movimiento
 import com.michambita.domain.usecase.AddMovimientoUseCase
 import com.michambita.domain.usecase.DeleteMovimientoUseCase

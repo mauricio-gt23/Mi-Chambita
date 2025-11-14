@@ -1,6 +1,6 @@
 package com.michambita.data.model
 
-import com.michambita.data.enum.EnumTipoProducto
+import com.michambita.data.enums.EnumTipoProducto
 import com.michambita.domain.model.Producto
 
 data class ProductoModel(

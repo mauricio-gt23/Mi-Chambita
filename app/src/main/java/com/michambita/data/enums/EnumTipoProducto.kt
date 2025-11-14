@@ -1,4 +1,4 @@
-package com.michambita.data.enum
+package com.michambita.data.enums
 
 enum class EnumTipoProducto {
     INVENTARIABLE,
