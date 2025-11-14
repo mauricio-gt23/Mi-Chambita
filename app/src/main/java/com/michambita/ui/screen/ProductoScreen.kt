@@ -16,6 +16,7 @@ import androidx.compose.ui.platform.LocalContext
 import com.michambita.di.image.ImageLoaderEntryPoint
 import dagger.hilt.android.EntryPointAccessors
 import com.michambita.ui.viewmodel.ProductoViewModel
+import com.michambita.ui.viewmodel.ImagenViewModel
 import com.michambita.ui.common.UiState
 import com.michambita.ui.components.widget.LoadingOverlay
 import com.michambita.ui.components.producto.ProductoForm
@@ -24,11 +25,14 @@ import com.michambita.ui.components.producto.ProductoForm
 @Composable
 fun ProductoScreen(
     modifier: Modifier = Modifier,
-    viewModel: ProductoViewModel = hiltViewModel()
+    productoViewModel: ProductoViewModel = hiltViewModel(),
+    imagenViewModel: ImagenViewModel = hiltViewModel()
 ) {
-    val uiState by viewModel.uiStateSaveProducto.collectAsStateWithLifecycle()
-    val formState by viewModel.formState.collectAsStateWithLifecycle()
-    val uiUploadState by viewModel.uiStateUploadImage.collectAsStateWithLifecycle()
+    val uiState by productoViewModel.uiStateSaveProducto.collectAsStateWithLifecycle()
+    val uiFormState by productoViewModel.uiFormState.collectAsStateWithLifecycle()
+
+    val imageUrl by imagenViewModel.imageUrl.collectAsStateWithLifecycle()
+    val uiImageState by imagenViewModel.uiStateUploadImage.collectAsStateWithLifecycle()
 
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -43,35 +47,33 @@ fun ProductoScreen(
             entryPoint.imageLoader()
         }
         val imagePicker = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
-            uri?.let {
-                viewModel.subirImagen(it) { /* resultado de subida */ }
-            }
+            uri?.let { imagenViewModel.subirImagen(it) }
         }
 
         ProductoForm(
-            nombre = formState.nombre,
-            descripcion = formState.descripcion,
-            precio = formState.precio,
-            unidadMedida = formState.unidadMedida,
-            tipoProducto = formState.tipoProducto,
-            stock = formState.stock,
-            imagenUrl = formState.imagenUrl,
+            nombre = uiFormState.nombre,
+            descripcion = uiFormState.descripcion,
+            precio = uiFormState.precio,
+            unidadMedida = uiFormState.unidadMedida,
+            tipoProducto = uiFormState.tipoProducto,
+            stock = uiFormState.stock,
+            imagenUrl = imageUrl,
             imageLoader = imageLoader,
-            isSubiendoImagen = uiUploadState is UiState.Loading,
-            isImagenCargadaExitosa = uiUploadState is UiState.Success,
-            onBorrarImagenClick = { viewModel.borrarImagen() },
+            isSubiendoImagen = uiImageState is UiState.Loading,
+            isImagenCargadaExitosa = uiImageState is UiState.Success,
+            onBorrarImagenClick = { imagenViewModel.borrarImagen() },
             onPreviewLoadingChange = { previewLoading = it },
-            onNombreChange = viewModel::updateNombre,
-            onDescripcionChange = viewModel::updateDescripcion,
-            onPrecioChange = viewModel::updatePrecio,
-            onUnidadMedidaChange = viewModel::updateUnidadMedida,
-            onTipoProductoChange = viewModel::setTipoProducto,
-            onStockChange = viewModel::updateStock,
+            onNombreChange = productoViewModel::updateNombre,
+            onDescripcionChange = productoViewModel::updateDescripcion,
+            onPrecioChange = productoViewModel::updatePrecio,
+            onUnidadMedidaChange = productoViewModel::updateUnidadMedida,
+            onTipoProductoChange = productoViewModel::setTipoProducto,
+            onStockChange = productoViewModel::updateStock,
             onSeleccionarImagenClick = {
                 imagePicker.launch("image/*")
             },
             onGuardarClick = {
-                viewModel.guardarProducto()
+                productoViewModel.guardarProducto(imageUrl)
             },
             modifier = Modifier
                 .fillMaxSize()
