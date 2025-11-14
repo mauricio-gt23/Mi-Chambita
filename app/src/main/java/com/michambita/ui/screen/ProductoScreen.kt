@@ -20,21 +20,31 @@ import com.michambita.ui.viewmodel.ImagenViewModel
 import com.michambita.ui.common.UiState
 import com.michambita.ui.components.widget.LoadingOverlay
 import com.michambita.ui.components.producto.ProductoForm
+import com.michambita.data.enums.EnumModoOperacion
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProductoScreen(
     modifier: Modifier = Modifier,
+    productId: String? = null,
+    onSaveSuccess: () -> Unit = {},
     productoViewModel: ProductoViewModel = hiltViewModel(),
     imagenViewModel: ImagenViewModel = hiltViewModel()
 ) {
     val uiState by productoViewModel.uiStateSaveProducto.collectAsStateWithLifecycle()
     val uiFormState by productoViewModel.uiFormState.collectAsStateWithLifecycle()
+    val modo by productoViewModel.modoOperacion.collectAsStateWithLifecycle()
 
     val imageUrl by imagenViewModel.imageUrl.collectAsStateWithLifecycle()
     val uiImageState by imagenViewModel.uiStateUploadImage.collectAsStateWithLifecycle()
 
     val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(productId) {
+        if (!productId.isNullOrBlank()) {
+            productoViewModel.cargarProducto(productId)
+        }
+    }
 
     Box(
         modifier = modifier.fillMaxSize()
@@ -50,7 +60,9 @@ fun ProductoScreen(
             uri?.let { imagenViewModel.subirImagen(it) }
         }
 
+        val titulo = if (modo == EnumModoOperacion.EDITAR) "Editar Producto" else "Registrar Producto"
         ProductoForm(
+            titulo = titulo,
             nombre = uiFormState.nombre,
             descripcion = uiFormState.descripcion,
             precio = uiFormState.precio,
@@ -92,6 +104,9 @@ fun ProductoScreen(
                         message = "Producto guardado correctamente",
                         duration = SnackbarDuration.Short
                     )
+                    if (!productId.isNullOrBlank()) {
+                        onSaveSuccess()
+                    }
                 }
             }
 

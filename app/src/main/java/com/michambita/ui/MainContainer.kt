@@ -68,7 +68,11 @@ fun MainContainer(
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(Screen.MainContainer.route) { HomeScreen(navController) }
-            composable(Screen.Producto.route) { ProductoScreen() }
+            composable(Screen.Producto.route) { ProductoScreen(onSaveSuccess = { navController.popBackStack() }) }
+            composable("${Screen.Producto.route}/{id}") { backStackEntry ->
+                val id = backStackEntry.arguments?.getString("id")
+                ProductoScreen(productId = id, onSaveSuccess = { navController.popBackStack() })
+            }
             composable(Screen.Inventario.route) { InventarioScreen(navController) }
 //            composable(Screen.Gastos.route) { GastosScreen(navController) }
 //            composable(Screen.Resumen.route) { ResumenScreen(navController) }

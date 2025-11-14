@@ -17,8 +17,12 @@ class ProductoRepositoryImpl @Inject constructor(
 
     override suspend fun saveProducto(producto: Producto): Result<Unit> {
         return try {
-            // Assuming producto.toModel() converts domain Producto to data ProductoModel
-            productoCollection.document().set(producto.toModel()).await()
+            val id = producto.id
+            if (id.isNullOrBlank()) {
+                productoCollection.document().set(producto.toModel()).await()
+            } else {
+                productoCollection.document(id).set(producto.toModel()).await()
+            }
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
@@ -26,7 +30,17 @@ class ProductoRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getProducto(id: String): Result<Producto> {
-        TODO("Not yet implemented")
+        return try {
+            val doc = productoCollection.document(id).get().await()
+            val model = doc.toObject(ProductoModel::class.java)
+            if (model != null) {
+                Result.success(model.copy(id = doc.id).toDomain())
+            } else {
+                Result.failure(IllegalStateException("Producto no encontrado"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 
     override suspend fun deleteProducto(id: String): Result<Unit> {

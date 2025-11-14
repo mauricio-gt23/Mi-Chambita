@@ -1,23 +1,14 @@
 package com.michambita.ui.components.producto
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.background
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
-import androidx.compose.material.icons.rounded.Inventory2
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.michambita.data.enum.EnumTipoProducto
+import com.michambita.data.enums.EnumTipoProducto
 import coil.ImageLoader
-import coil.compose.AsyncImage
 import com.michambita.ui.components.producto.section.DatosBasicosSection
 import com.michambita.ui.components.producto.section.ImagenSection
 import com.michambita.ui.components.producto.section.TangibleSection
@@ -25,6 +16,7 @@ import com.michambita.ui.components.producto.section.TipoProductoSection
 
 @Composable
 fun ProductoForm(
+    titulo: String,
     nombre: String,
     descripcion: String,
     precio: String,
@@ -51,7 +43,7 @@ fun ProductoForm(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Text("Registro de Producto", style = MaterialTheme.typography.headlineMedium)
+        Text(titulo, style = MaterialTheme.typography.headlineMedium)
 
         DatosBasicosSection(
             nombre = nombre,

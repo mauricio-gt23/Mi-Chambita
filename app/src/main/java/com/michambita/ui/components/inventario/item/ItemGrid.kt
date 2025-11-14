@@ -20,6 +20,7 @@ fun ItemGrid(
     productos: List<Producto>,
     state: LazyGridState,
     onRequestEditStock: (Producto) -> Unit,
+    onOpenEditProduct: (Producto) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyVerticalGrid(
@@ -34,7 +35,7 @@ fun ItemGrid(
             val id = item.id
             if (id != null && id.isNotBlank()) id else "pos_$index"
         }) { _, producto ->
-            ItemCard(producto = producto, onRequestEditStock = onRequestEditStock)
+            ItemCard(producto = producto, onRequestEditStock = onRequestEditStock, onOpenEditProduct = onOpenEditProduct)
         }
     }
 }

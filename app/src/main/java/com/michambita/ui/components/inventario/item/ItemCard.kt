@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.clickable
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Inventory2
 import androidx.compose.material.icons.filled.Straighten
@@ -19,15 +20,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.michambita.domain.model.Producto
-import com.michambita.data.enum.EnumTipoProducto
+import com.michambita.data.enums.EnumTipoProducto
 
 @Composable
 fun ItemCard(
     producto: Producto,
     onRequestEditStock: (Producto) -> Unit,
+    onOpenEditProduct: (Producto) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    ElevatedCard(modifier = modifier) {
+    ElevatedCard(modifier = modifier.clickable { onOpenEditProduct(producto) }) {
         Column(modifier = Modifier.padding(12.dp)) {
             Text(
                 text = producto.nombre,

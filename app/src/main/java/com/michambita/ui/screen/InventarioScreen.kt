@@ -41,6 +41,12 @@ fun InventarioScreen(
         onAddProduct = { navController.navigate(Screen.Producto.route) },
         onChangeStock = { id, stock ->
             viewModel.updateStock(id, stock)
+        },
+        onOpenEditProduct = { p ->
+            val id = p.id
+            if (!id.isNullOrBlank()) {
+                navController.navigate("${Screen.Producto.route}/$id")
+            }
         }
     )
 

@@ -18,9 +18,6 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.FloatingActionButton
@@ -28,9 +25,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -41,7 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.michambita.domain.model.Producto
-import com.michambita.data.enum.EnumTipoProducto
+import com.michambita.data.enums.EnumTipoProducto
 import com.michambita.ui.components.widget.SearchBar
 import com.michambita.ui.components.inventario.item.ItemGrid
 import com.michambita.ui.components.inventario.item.StockDialog
@@ -52,7 +46,8 @@ fun InventarioContent(
     productos: List<Producto>,
     modifier: Modifier = Modifier,
     onAddProduct: () -> Unit = {},
-    onChangeStock: (String, Int) -> Unit = { _, _ -> }
+    onChangeStock: (String, Int) -> Unit = { _, _ -> },
+    onOpenEditProduct: (Producto) -> Unit = {}
 ) {
     val gridState = rememberLazyGridState()
     var stockDialogOpen by remember { mutableStateOf(false) }
@@ -103,7 +98,8 @@ fun InventarioContent(
                     selectedProductId = p.id
                     inputStock = (p.stock ?: 0).toString()
                     stockDialogOpen = true
-                }
+                },
+                onOpenEditProduct = onOpenEditProduct
             )
 
             if (stockDialogOpen) {
