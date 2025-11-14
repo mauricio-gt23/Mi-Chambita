@@ -18,6 +18,9 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.FloatingActionButton
@@ -25,6 +28,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -38,6 +44,7 @@ import com.michambita.domain.model.Producto
 import com.michambita.data.enum.EnumTipoProducto
 import com.michambita.ui.components.widget.SearchBar
 import com.michambita.ui.components.inventario.item.ItemGrid
+import com.michambita.ui.components.inventario.item.StockDialog
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -48,6 +55,10 @@ fun InventarioContent(
     onChangeStock: (String, Int) -> Unit = { _, _ -> }
 ) {
     val gridState = rememberLazyGridState()
+    var stockDialogOpen by remember { mutableStateOf(false) }
+    var selectedProductId by remember { mutableStateOf<String?>(null) }
+    var inputStock by remember { mutableStateOf("") }
+
     Scaffold(
         floatingActionButton = {
             val fabVisible by remember { derivedStateOf { !gridState.isScrollInProgress } }
@@ -85,7 +96,27 @@ fun InventarioContent(
                 list
             }
 
-            ItemGrid(productos = filtered, state = gridState, onChangeStock = onChangeStock)
+            ItemGrid(
+                productos = filtered,
+                state = gridState,
+                onRequestEditStock = { p ->
+                    selectedProductId = p.id
+                    inputStock = (p.stock ?: 0).toString()
+                    stockDialogOpen = true
+                }
+            )
+
+            if (stockDialogOpen) {
+                StockDialog(
+                    selectedProductId = selectedProductId,
+                    inputStock = inputStock,
+                    onInputStockChange = { inputStock = it },
+                    onConfirm = { id, ns ->
+                        onChangeStock(id, ns)
+                    },
+                    onDismiss = { stockDialogOpen = false }
+                )
+            }
         }
     }
 }

@@ -7,14 +7,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Inventory2
-import androidx.compose.material.icons.rounded.Add
-import androidx.compose.material.icons.rounded.Remove
 import androidx.compose.material.icons.filled.Straighten
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,7 +24,7 @@ import com.michambita.data.enum.EnumTipoProducto
 @Composable
 fun ItemCard(
     producto: Producto,
-    onChangeStock: (String, Int) -> Unit,
+    onRequestEditStock: (Producto) -> Unit,
     modifier: Modifier = Modifier
 ) {
     ElevatedCard(modifier = modifier) {
@@ -49,7 +46,7 @@ fun ItemCard(
                 EnumTipoProducto.INVENTARIABLE -> {
                     Row {
                         AssistChip(
-                            onClick = {},
+                            onClick = { onRequestEditStock(producto) },
                             label = { Text("Stock: ${(producto.stock ?: 0)}") },
                             leadingIcon = { Icon(Icons.Rounded.Inventory2, contentDescription = null) },
                             colors = AssistChipDefaults.assistChipColors(
@@ -58,20 +55,7 @@ fun ItemCard(
                                 leadingIconContentColor = MaterialTheme.colorScheme.onPrimaryContainer
                             )
                         )
-                        if (!producto.id.isNullOrBlank()) {
-                            IconButton(onClick = {
-                                val ns = (producto.stock ?: 0) - 1
-                                onChangeStock(producto.id!!, ns.coerceAtLeast(0))
-                            }) {
-                                Icon(Icons.Rounded.Remove, contentDescription = "Disminuir stock")
-                            }
-                            IconButton(onClick = {
-                                val ns = (producto.stock ?: 0) + 1
-                                onChangeStock(producto.id!!, ns)
-                            }) {
-                                Icon(Icons.Rounded.Add, contentDescription = "Aumentar stock")
-                            }
-                        }
+                        
                     }
                 }
                 EnumTipoProducto.NO_INVENTARIABLE -> {
