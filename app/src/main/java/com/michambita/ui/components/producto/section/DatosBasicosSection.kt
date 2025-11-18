@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AttachMoney
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Inventory
@@ -16,7 +15,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.michambita.ui.components.producto.SectionCard
 
@@ -24,10 +22,8 @@ import com.michambita.ui.components.producto.SectionCard
 fun DatosBasicosSection(
     nombre: String,
     descripcion: String,
-    precio: String,
     onNombreChange: (String) -> Unit,
     onDescripcionChange: (String) -> Unit,
-    onPrecioChange: (String) -> Unit,
 ) {
     SectionCard(title = "Datos básicos") {
         OutlinedTextField(
@@ -43,27 +39,6 @@ fun DatosBasicosSection(
                 }
             },
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(Modifier.height(12.dp))
-
-        OutlinedTextField(
-            value = precio,
-            onValueChange = onPrecioChange,
-            label = { Text("Precio por unidad") },
-            leadingIcon = { Icon(Icons.Default.AttachMoney, contentDescription = null) },
-            trailingIcon = {
-                if (precio.isNotEmpty()) {
-                    IconButton(onClick = { onPrecioChange("") }) {
-                        Icon(Icons.Default.Clear, contentDescription = "Limpiar precio")
-                    }
-                }
-            },
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Decimal,
-                imeAction = ImeAction.Next
-            ),
             modifier = Modifier.fillMaxWidth()
         )
 

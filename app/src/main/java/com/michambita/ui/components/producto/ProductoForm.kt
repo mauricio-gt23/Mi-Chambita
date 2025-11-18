@@ -11,7 +11,6 @@ import com.michambita.data.enums.EnumTipoProducto
 import coil.ImageLoader
 import com.michambita.ui.components.producto.section.DatosBasicosSection
 import com.michambita.ui.components.producto.section.ImagenSection
-import com.michambita.ui.components.producto.section.TangibleSection
 import com.michambita.ui.components.producto.section.TipoProductoSection
 
 @Composable
@@ -48,23 +47,19 @@ fun ProductoForm(
         DatosBasicosSection(
             nombre = nombre,
             descripcion = descripcion,
-            precio = precio,
             onNombreChange = onNombreChange,
-            onDescripcionChange = onDescripcionChange,
-            onPrecioChange = onPrecioChange
+            onDescripcionChange = onDescripcionChange
         )
 
         TipoProductoSection(
             tipoProducto = tipoProducto,
-            onTipoProductoChange = onTipoProductoChange
-        )
-
-        TangibleSection(
-            tipoProducto = tipoProducto,
+            precio = precio,
             unidadMedida = unidadMedida,
-            onUnidadMedidaChange = onUnidadMedidaChange,
             stock = stock,
-            onStockChange = onStockChange
+            onPrecioChange = onPrecioChange,
+            onUnidadMedidaChange = onUnidadMedidaChange,
+            onStockChange = onStockChange,
+            onTipoProductoChange = onTipoProductoChange
         )
 
         ImagenSection(
