@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.michambita.domain.model.Movimiento
 import com.michambita.ui.components.home.historial.movimiento.SwipeMovimientoItem
+import com.michambita.utils.DateUtils
 
 @Composable
 fun MovimientoHistorial(
@@ -72,19 +73,46 @@ fun ListaMovimientos(
     onEliminarMovimiento: (Movimiento) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val movimientosHoy = movimientos.filter { DateUtils.isToday(it.fechaRegistro) }
+        .sortedByDescending { it.fechaRegistro.time }
+
+    val movimientosAnteriores = movimientos.filter { !DateUtils.isToday(it.fechaRegistro) }
+        .sortedByDescending { it.fechaRegistro.time }
+
     LazyColumn(
         modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        items(
-            items = movimientos,
-            key = { it.hashCode() }
-        ) { movimiento ->
-            SwipeMovimientoItem(
-                movimiento = movimiento,
-                onEditar = onEditarMovimiento,
-                onEliminar = onEliminarMovimiento,
-            )
+        if (movimientosHoy.isNotEmpty()) {
+            item {
+                Text("Hoy", style = MaterialTheme.typography.titleSmall)
+            }
+            items(
+                items = movimientosHoy,
+                key = { it.hashCode() }
+            ) { movimiento ->
+                SwipeMovimientoItem(
+                    movimiento = movimiento,
+                    onEditar = onEditarMovimiento,
+                    onEliminar = onEliminarMovimiento,
+                )
+            }
+        }
+
+        if (movimientosAnteriores.isNotEmpty()) {
+            item {
+                Text("Anteriores", style = MaterialTheme.typography.titleSmall)
+            }
+            items(
+                items = movimientosAnteriores,
+                key = { it.hashCode() }
+            ) { movimiento ->
+                SwipeMovimientoItem(
+                    movimiento = movimiento,
+                    onEditar = onEditarMovimiento,
+                    onEliminar = onEliminarMovimiento,
+                )
+            }
         }
     }
 }

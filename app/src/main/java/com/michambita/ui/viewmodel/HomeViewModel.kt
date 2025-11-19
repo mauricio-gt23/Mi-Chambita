@@ -18,6 +18,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
 import javax.inject.Inject
+import java.util.Calendar
+import com.michambita.utils.DateUtils
 
 data class HomeUiState(
     val modoOperacion: EnumModoOperacion = EnumModoOperacion.REGISTRAR,
@@ -52,14 +54,16 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun actualizarResumen(movimientos: List<Movimiento>) {
-        val totalVentas = movimientos
+        val movimientosHoy = movimientos.filter { DateUtils.isToday(it.fechaRegistro) }
+
+        val totalVentas = movimientosHoy
             .filter { it.tipoMovimiento == "V" }
             .sumOf { it.monto }
-        
-        val totalGastos = movimientos
+
+        val totalGastos = movimientosHoy
             .filter { it.tipoMovimiento == "G" }
             .sumOf { it.monto }
-        
+
         _uiState.update { currentState ->
             currentState.copy(
                 ventas = "S/ ${totalVentas.toPlainString()}",
