@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.michambita.domain.model.Movimiento
+import com.michambita.utils.DateUtils
 
 @Composable
 fun MovimientoItem(
@@ -46,7 +47,7 @@ fun MovimientoItem(
 
             Column(modifier = Modifier.weight(1f)) {
                 Text(movimiento.descripcion, fontWeight = FontWeight.SemiBold)
-                Text(movimiento.fechaRegistro.toString(), style = MaterialTheme.typography.bodySmall)
+                Text(DateUtils.formatDate(movimiento.fechaRegistro), style = MaterialTheme.typography.bodySmall)
             }
             Spacer(Modifier.width(12.dp))
             Text(
