@@ -1,7 +1,7 @@
 package com.michambita.ui.screen
 
-import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.*
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -19,35 +19,35 @@ fun HomeScreen(
     navController: NavController,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
-    // Obtener estado del ViewModel
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val movimientos by viewModel.movimientos.collectAsStateWithLifecycle()
 
-    // Configuración del BottomSheet
-    val scaffoldState = rememberBottomSheetScaffoldState(
-        bottomSheetState = rememberStandardBottomSheetState(skipHiddenState = false)
-    )
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false)
 
-    // Controlar la visibilidad del BottomSheet basado en el estado del ViewModel
     LaunchedEffect(uiState.bottomSheetVisible) {
         if (uiState.bottomSheetVisible) {
-            scaffoldState.bottomSheetState.expand()
-        } else {
-            scaffoldState.bottomSheetState.hide()
+            sheetState.partialExpand()
         }
     }
 
-    // Cuando el BottomSheet se cierra manualmente, actualizar el estado en el ViewModel
-    LaunchedEffect(scaffoldState.bottomSheetState.currentValue) {
-        if (!scaffoldState.bottomSheetState.isVisible && uiState.bottomSheetVisible) {
-            viewModel.hideBottomSheet()
-        }
-    }
+    HomeContent(
+        uiState = uiState,
+        navController = navController,
+        modifier = Modifier,
+        movimientosPendientes = movimientos,
+        onRegistrarVenta = viewModel::onRegistrarVenta,
+        onRegistrarGasto = viewModel::onRegistrarGasto,
+        onEditarMovimiento = viewModel::onEditarMovimiento,
+        onEliminarMovimiento = viewModel::deleteMovimiento
+    )
 
-    BottomSheetScaffold(
-        scaffoldState = scaffoldState,
-        sheetPeekHeight = 0.dp,
-        sheetContent = {
+    if (uiState.bottomSheetVisible) {
+        ModalBottomSheet(
+            onDismissRequest = { viewModel.hideBottomSheet() },
+            sheetState = sheetState,
+            shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp, bottomStart = 0.dp, bottomEnd = 0.dp),
+            dragHandle = { BottomSheetDefaults.DragHandle() }
+        ) {
             MovimientoSheet(
                 modoOperacion = uiState.modoOperacion,
                 tipoOperacion = uiState.tipoMovimiento,
@@ -58,16 +58,5 @@ fun HomeScreen(
                 onGuardarClick = viewModel::onGuardarMovimiento
             )
         }
-    ) { padding ->
-        HomeContent(
-            uiState = uiState,
-            navController = navController,
-            modifier = Modifier.padding(padding),
-            movimientosPendientes = movimientos,
-            onRegistrarVenta = viewModel::onRegistrarVenta,
-            onRegistrarGasto = viewModel::onRegistrarGasto,
-            onEditarMovimiento = viewModel::onEditarMovimiento,
-            onEliminarMovimiento = viewModel::deleteMovimiento
-        )
     }
 }
