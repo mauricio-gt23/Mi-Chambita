@@ -27,7 +27,8 @@ data class HomeUiState(
     val tipoMovimiento: String = "V", // "V" = venta, "G" = gasto
     val ventas: String = "S/ 0.00",
     val gastos: String = "S/ 0.00",
-    val bottomSheetVisible: Boolean = false
+    val bottomSheetVisible: Boolean = false,
+    val ventaRapida: Boolean = true
 )
 
 @HiltViewModel
@@ -103,7 +104,8 @@ class HomeViewModel @Inject constructor(
                     monto = BigDecimal.ZERO,
                     tipoMovimiento = "V"
                 ),
-                bottomSheetVisible = true
+                bottomSheetVisible = true,
+                ventaRapida = true
             ) 
         }
     }
@@ -118,7 +120,8 @@ class HomeViewModel @Inject constructor(
                     monto = BigDecimal.ZERO,
                     tipoMovimiento = "G"
                 ),
-                bottomSheetVisible = true
+                bottomSheetVisible = true,
+                ventaRapida = true
             ) 
         }
     }
@@ -161,6 +164,10 @@ class HomeViewModel @Inject constructor(
 
     fun hideBottomSheet() {
         _uiState.update { it.copy(bottomSheetVisible = false) }
+    }
+
+    fun setVentaRapida(value: Boolean) {
+        _uiState.update { it.copy(ventaRapida = value) }
     }
 
     fun addMovimiento(movimiento: Movimiento) {

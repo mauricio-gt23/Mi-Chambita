@@ -19,8 +19,10 @@ fun MovimientoSheet(
     tipoOperacion: String,
     titulo: String,
     monto: String,
+    ventaRapida: Boolean,
     onTituloChange: (String) -> Unit,
     onMontoChange: (String) -> Unit,
+    onVentaRapidaChange: (Boolean) -> Unit,
     onGuardarClick: () -> Unit
 ) {
     Column(
@@ -31,20 +33,31 @@ fun MovimientoSheet(
             .imePadding(),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(
-                imageVector = if (tipoOperacion == "V") Icons.Default.PointOfSale else Icons.Default.MoneyOff,
-                contentDescription = null
-            )
-            Spacer(Modifier.width(8.dp))
-            Text(
-                text = if (modoOperacion == EnumModoOperacion.REGISTRAR) {
-                    if (tipoOperacion == "V") "Registrar Venta" else "Registrar Gasto"
-                } else {
-                    "Editar Movimiento"
-                },
-                style = MaterialTheme.typography.titleLarge
-            )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = if (tipoOperacion == "V") Icons.Default.PointOfSale else Icons.Default.MoneyOff,
+                    contentDescription = null
+                )
+                Spacer(Modifier.width(8.dp))
+                Text(
+                    text = if (modoOperacion == EnumModoOperacion.REGISTRAR) {
+                        if (tipoOperacion == "V") "Registrar Venta" else "Registrar Gasto"
+                    } else {
+                        "Editar Movimiento"
+                    },
+                    style = MaterialTheme.typography.titleLarge
+                )
+            }
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text("Venta rapida", style = MaterialTheme.typography.bodyLarge)
+                Spacer(Modifier.width(8.dp))
+                Switch(checked = ventaRapida, onCheckedChange = onVentaRapidaChange)
+            }
         }
 
         OutlinedTextField(
@@ -64,6 +77,8 @@ fun MovimientoSheet(
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             modifier = Modifier.fillMaxWidth()
         )
+
+        
 
         Button(
             onClick = onGuardarClick,
