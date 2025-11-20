@@ -6,6 +6,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.michambita.ui.viewmodel.AuthViewModel
 import com.michambita.ui.common.UiState
 import com.michambita.ui.components.auth.AuthForm
@@ -18,14 +19,8 @@ fun AuthScreen(
     onLoginSuccess: () -> Unit,
     viewModel: AuthViewModel = hiltViewModel()
 ) {
-    val uiState by viewModel.uiState.collectAsState()
-
-    var name by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var confirmPassword by remember { mutableStateOf("") }
-
-    var isLogin by remember { mutableStateOf(true) }
+    val authUiSate by viewModel.authUiState.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     var showError by remember { mutableStateOf(true) }
 
@@ -37,30 +32,17 @@ fun AuthScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         AuthForm(
-            isLogin = isLogin,
-            name = name,
-            email = email,
-            password = password,
-            confirmPassword = confirmPassword,
-            onNameChange = { name = it },
-            onEmailChange = { email = it },
-            onPasswordChange = { password = it },
-            onConfirmPasswordChange = { confirmPassword = it },
-            onSubmit = {
-                if (email.isNotBlank() && password.isNotBlank()) {
-                    if (isLogin) {
-                        viewModel.login(email, password)
-                    } else {
-                        if (password == confirmPassword) {
-                            viewModel.register(name, email, password)
-                        } else {
-                            // TODO: Mostrar mensaje de error con ErrorDisplay
-                            // viewModel.setError("Las contraseñas no coinciden")
-                        }
-                    }
-                }
-            },
-            onToggleMode = { isLogin = !isLogin }
+            isLogin = authUiSate.isLogin,
+            name = authUiSate.name,
+            email = authUiSate.email,
+            password = authUiSate.password,
+            confirmPassword = authUiSate.confirmPassword,
+            onNameChange = viewModel::updateNombre ,
+            onEmailChange = viewModel::updateEmail,
+            onPasswordChange = viewModel::updatePassword,
+            onConfirmPasswordChange = viewModel::updateConfirmPassword,
+            onSubmit = { viewModel.submit() },
+            onToggleMode = viewModel::updateIsLogin
         )
     }
 
