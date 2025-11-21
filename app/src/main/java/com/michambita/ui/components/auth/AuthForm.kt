@@ -6,6 +6,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.focus.onFocusChanged
 
 @Composable
 fun AuthForm(
@@ -21,6 +22,22 @@ fun AuthForm(
     onSubmit: () -> Unit,
     onToggleMode: () -> Unit
 ) {
+    val emailError = email.isBlank()
+    val passwordError = password.isBlank()
+    val nameError = !isLogin && name.isBlank()
+    val confirmError = !isLogin && confirmPassword.isBlank()
+    val formValid = if (isLogin) !emailError && !passwordError else !nameError && !emailError && !passwordError && !confirmError
+
+    var emailWasFocused by remember(isLogin) { mutableStateOf(false) }
+    var passwordWasFocused by remember(isLogin) { mutableStateOf(false) }
+    var nameWasFocused by remember(isLogin) { mutableStateOf(false) }
+    var confirmWasFocused by remember(isLogin) { mutableStateOf(false) }
+
+    var emailShowError by remember(isLogin) { mutableStateOf(false) }
+    var passwordShowError by remember(isLogin) { mutableStateOf(false) }
+    var nameShowError by remember(isLogin) { mutableStateOf(false) }
+    var confirmShowError by remember(isLogin) { mutableStateOf(false) }
+    
     Text(
         text = if (isLogin) "Iniciar Sesión" else "Crear Cuenta",
         style = MaterialTheme.typography.headlineMedium
@@ -32,8 +49,17 @@ fun AuthForm(
         OutlinedTextField(
             value = name,
             onValueChange = onNameChange,
-            label = { Text("Nombre completo") },
-            modifier = Modifier.fillMaxWidth()
+            label = { Text("Nombre completo *") },
+            isError = nameShowError && nameError,
+            modifier = Modifier
+                .fillMaxWidth()
+                .onFocusChanged { f ->
+                    if (f.isFocused) {
+                        nameWasFocused = true
+                    } else if (nameWasFocused) {
+                        nameShowError = true
+                    }
+                }
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -42,8 +68,17 @@ fun AuthForm(
     OutlinedTextField(
         value = email,
         onValueChange = onEmailChange,
-        label = { Text("Correo electrónico") },
-        modifier = Modifier.fillMaxWidth()
+        label = { Text("Correo electrónico *") },
+        isError = emailShowError && emailError,
+        modifier = Modifier
+            .fillMaxWidth()
+            .onFocusChanged { f ->
+                if (f.isFocused) {
+                    emailWasFocused = true
+                } else if (emailWasFocused) {
+                    emailShowError = true
+                }
+            }
     )
 
     Spacer(modifier = Modifier.height(16.dp))
@@ -51,9 +86,18 @@ fun AuthForm(
     OutlinedTextField(
         value = password,
         onValueChange = onPasswordChange,
-        label = { Text("Contraseña") },
+        label = { Text("Contraseña *") },
         visualTransformation = PasswordVisualTransformation(),
-        modifier = Modifier.fillMaxWidth()
+        isError = passwordShowError && passwordError,
+        modifier = Modifier
+            .fillMaxWidth()
+            .onFocusChanged { f ->
+                if (f.isFocused) {
+                    passwordWasFocused = true
+                } else if (passwordWasFocused) {
+                    passwordShowError = true
+                }
+            }
     )
 
     if (!isLogin) {
@@ -62,9 +106,18 @@ fun AuthForm(
         OutlinedTextField(
             value = confirmPassword,
             onValueChange = onConfirmPasswordChange,
-            label = { Text("Confirmar contraseña") },
+            label = { Text("Confirmar contraseña *") },
             visualTransformation = PasswordVisualTransformation(),
-            modifier = Modifier.fillMaxWidth()
+            isError = confirmShowError && confirmError,
+            modifier = Modifier
+                .fillMaxWidth()
+                .onFocusChanged { f ->
+                    if (f.isFocused) {
+                        confirmWasFocused = true
+                    } else if (confirmWasFocused) {
+                        confirmShowError = true
+                    }
+                }
         )
     }
 
@@ -72,6 +125,7 @@ fun AuthForm(
 
     Button(
         onClick = onSubmit,
+        enabled = formValid,
         modifier = Modifier.fillMaxWidth()
     ) {
         Text(if (isLogin) "Iniciar Sesión" else "Registrarse")
