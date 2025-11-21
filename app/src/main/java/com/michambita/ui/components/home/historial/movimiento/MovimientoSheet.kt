@@ -15,6 +15,7 @@ import com.michambita.data.enums.EnumModoOperacion
 
 @Composable
 fun MovimientoSheet(
+    modifier: Modifier,
     modoOperacion: EnumModoOperacion,
     tipoOperacion: String,
     titulo: String,
@@ -25,12 +26,12 @@ fun MovimientoSheet(
     onVentaRapidaChange: (Boolean) -> Unit,
     onGuardarClick: () -> Unit
 ) {
+    val heighSheet = if (!ventaRapida) modifier.fillMaxHeight() else Modifier.height(320.dp)
+
     Column(
-        modifier = Modifier
+        modifier = heighSheet
             .fillMaxWidth()
-            .padding(24.dp)
-            .navigationBarsPadding()
-            .imePadding(),
+            .padding(24.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Row(

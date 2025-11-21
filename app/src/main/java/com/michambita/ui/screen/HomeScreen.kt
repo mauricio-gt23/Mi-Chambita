@@ -1,5 +1,6 @@
 package com.michambita.ui.screen
 
+import android.util.Log
 import androidx.compose.material3.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.*
@@ -16,19 +17,14 @@ import com.michambita.ui.viewmodel.HomeViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    navController: NavController,
-    viewModel: HomeViewModel = hiltViewModel()
+    navController: NavController, viewModel: HomeViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val movimientos by viewModel.movimientos.collectAsStateWithLifecycle()
 
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false)
-
-    LaunchedEffect(uiState.bottomSheetVisible) {
-        if (uiState.bottomSheetVisible) {
-            sheetState.partialExpand()
-        }
-    }
+    val sheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true
+    )
 
     HomeContent(
         uiState = uiState,
@@ -41,14 +37,21 @@ fun HomeScreen(
         onEliminarMovimiento = viewModel::deleteMovimiento
     )
 
+    LaunchedEffect(uiState.bottomSheetVisible) {
+        if (uiState.bottomSheetVisible) sheetState.expand()
+        else sheetState.hide()
+    }
+
     if (uiState.bottomSheetVisible) {
         ModalBottomSheet(
-            onDismissRequest = { viewModel.hideBottomSheet() },
             sheetState = sheetState,
-            shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp, bottomStart = 0.dp, bottomEnd = 0.dp),
-            dragHandle = { BottomSheetDefaults.DragHandle() }
-        ) {
+            onDismissRequest = { viewModel.hideBottomSheet() },
+            shape = RoundedCornerShape(
+                topStart = 28.dp, topEnd = 28.dp, bottomStart = 0.dp, bottomEnd = 0.dp
+            ),
+            dragHandle = { BottomSheetDefaults.DragHandle() }) {
             MovimientoSheet(
+                modifier = Modifier,
                 modoOperacion = uiState.modoOperacion,
                 tipoOperacion = uiState.tipoMovimiento,
                 titulo = uiState.movimientoRegEdit?.descripcion ?: "",
