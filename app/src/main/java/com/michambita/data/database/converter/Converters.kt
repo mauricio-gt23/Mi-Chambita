@@ -9,6 +9,7 @@ import org.threeten.bp.LocalDateTime
 import org.threeten.bp.format.DateTimeFormatter
 import java.util.Date
 import com.michambita.data.enums.EnumTipoMovimiento
+import com.michambita.domain.model.MovimientoItem
 
 class Converters {
 
@@ -87,5 +88,16 @@ class Converters {
             "G", "GASTO" -> EnumTipoMovimiento.GASTO
             else -> null
         }
+    }
+
+    @TypeConverter
+    fun fromMovimientoItemList(list: List<MovimientoItem>?): String? {
+        return gson.toJson(list)
+    }
+
+    @TypeConverter
+    fun toMovimientoItemList(value: String?): List<MovimientoItem>? {
+        val listType = object : TypeToken<List<MovimientoItem>>() {}.type
+        return gson.fromJson(value, listType)
     }
 }

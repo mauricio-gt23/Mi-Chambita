@@ -17,4 +17,4 @@ data class Movimiento(
 )
 
 fun MovimientoEntity.toDomain(): Movimiento =
-    Movimiento(this.id, userId, descripcion, monto, tipoMovimiento, fechaRegistro, sincronizado, emptyList())
+    Movimiento(this.id, userId, descripcion, monto, tipoMovimiento, fechaRegistro, sincronizado, items)
