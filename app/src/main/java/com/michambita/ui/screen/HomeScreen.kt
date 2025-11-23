@@ -1,6 +1,5 @@
 package com.michambita.ui.screen
 
-import android.util.Log
 import androidx.compose.material3.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.*
@@ -47,21 +46,30 @@ fun HomeScreen(
         navController = navController,
         modifier = Modifier,
         movimientosPendientes = movimientos,
-        onRegistrarVenta = movimientoViewModel::onRegistrarVenta,
-        onRegistrarGasto = movimientoViewModel::onRegistrarGasto,
-        onEditarMovimiento = movimientoViewModel::onEditarMovimiento,
+        onRegistrarVenta = {
+            movimientoViewModel.onRegistrarVenta()
+            homeViewModel.showBottomSheet()
+        },
+        onRegistrarGasto = {
+            movimientoViewModel.onRegistrarGasto()
+            homeViewModel.showBottomSheet()
+        },
+        onEditarMovimiento = {
+            movimientoViewModel.onEditarMovimiento(it)
+            homeViewModel.showBottomSheet()
+        },
         onEliminarMovimiento = movimientoViewModel::deleteMovimiento
     )
 
-    LaunchedEffect(movimientoUiState.bottomSheetVisible) {
-        if (movimientoUiState.bottomSheetVisible) sheetState.expand()
+    LaunchedEffect(homeUiState.bottomSheetVisible) {
+        if (homeUiState.bottomSheetVisible) sheetState.expand()
         else sheetState.hide()
     }
 
-    if (movimientoUiState.bottomSheetVisible) {
+    if (homeUiState.bottomSheetVisible) {
         ModalBottomSheet(
             sheetState = sheetState,
-            onDismissRequest = { movimientoViewModel.hideBottomSheet() },
+            onDismissRequest = { homeViewModel.hideBottomSheet() },
             shape = RoundedCornerShape(
                 topStart = 28.dp, topEnd = 28.dp, bottomStart = 0.dp, bottomEnd = 0.dp
             ),

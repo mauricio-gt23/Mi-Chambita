@@ -21,7 +21,6 @@ data class MovimientoUiState(
         val modoOperacion: EnumModoOperacion = EnumModoOperacion.REGISTRAR,
         val movimientoRegEdit: Movimiento? = null,
         val tipoMovimiento: String = "V", // "V" = venta, "G" = gasto
-        val bottomSheetVisible: Boolean = false,
         val ventaRapida: Boolean = true
 )
 
@@ -66,7 +65,6 @@ class MovimientoViewModel @Inject constructor(
                     monto = BigDecimal.ZERO,
                     tipoMovimiento = "V"
                 ),
-                bottomSheetVisible = true,
                 ventaRapida = true
             )
         }
@@ -82,7 +80,6 @@ class MovimientoViewModel @Inject constructor(
                     monto = BigDecimal.ZERO,
                     tipoMovimiento = "G"
                 ),
-                bottomSheetVisible = true,
                 ventaRapida = true
             )
         }
@@ -93,8 +90,7 @@ class MovimientoViewModel @Inject constructor(
             it.copy(
                 tipoMovimiento = movimiento.tipoMovimiento,
                 modoOperacion = EnumModoOperacion.EDITAR,
-                movimientoRegEdit = movimiento,
-                bottomSheetVisible = true
+                movimientoRegEdit = movimiento
             )
         }
     }
@@ -118,14 +114,9 @@ class MovimientoViewModel @Inject constructor(
                 it.copy(
                     modoOperacion = EnumModoOperacion.REGISTRAR,
                     movimientoRegEdit = null,
-                    bottomSheetVisible = false
                 )
             }
         }
-    }
-
-    fun hideBottomSheet() {
-        _uiState.update { it.copy(bottomSheetVisible = false) }
     }
 
     fun setVentaRapida(value: Boolean) {

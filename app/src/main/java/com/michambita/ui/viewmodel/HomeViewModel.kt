@@ -18,6 +18,7 @@ import com.michambita.utils.DateUtils
 data class HomeUiState(
     val ventas: String = "S/ 0.00",
     val gastos: String = "S/ 0.00",
+    val bottomSheetVisible: Boolean = false
 )
 
 @HiltViewModel
@@ -57,5 +58,13 @@ class HomeViewModel @Inject constructor(
                 gastos = "S/ ${totalGastos.toPlainString()}"
             )
         }
+    }
+
+    fun showBottomSheet() {
+        _uiState.update { it.copy(bottomSheetVisible = true) }
+    }
+
+    fun hideBottomSheet() {
+        _uiState.update { it.copy(bottomSheetVisible = false) }
     }
 }
