@@ -75,14 +75,17 @@ fun HomeScreen(
                 topStart = 28.dp, topEnd = 28.dp, bottomStart = 0.dp, bottomEnd = 0.dp
             ),
             dragHandle = { BottomSheetDefaults.DragHandle() }) {
-            MovimientoSheet(
-                modifier = Modifier,
-                modoOperacion = movimientoUiState.modoOperacion,
-                movimiento = movimientoUiState.movimientoRegEdit,
-                productos = productos,
-                onMovimientoChange = movimientoViewModel::onMovimientoChange,
-                onGuardarClick = movimientoViewModel::onGuardarMovimiento,
-            )
+                MovimientoSheet(
+                    modifier = Modifier,
+                    modoOperacion = movimientoUiState.modoOperacion,
+                    movimiento = movimientoUiState.movimientoRegEdit,
+                    productos = productos,
+                    onMovimientoChange = movimientoViewModel::onMovimientoChange,
+                    onGuardarClick = {
+                        movimientoViewModel.onGuardarMovimiento()
+                        homeViewModel.hideBottomSheet()
+                    }
+                )
         }
     }
 }
