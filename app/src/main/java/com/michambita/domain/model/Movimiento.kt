@@ -11,7 +11,8 @@ data class Movimiento(
     val monto: BigDecimal,
     val tipoMovimiento: String, // "V" o "G"
     val fechaRegistro: Date = Date(),
-    val sincronizado: Boolean = false
+    val sincronizado: Boolean = false,
+    val items: List<MovimientoItem> = emptyList()
 )
 
-fun MovimientoEntity.toDomain() = Movimiento(this.id, userId, descripcion, monto, tipoMovimiento, fechaRegistro, sincronizado)
+fun MovimientoEntity.toDomain() = Movimiento(this.id, userId, descripcion, monto, tipoMovimiento, fechaRegistro, sincronizado, emptyList())

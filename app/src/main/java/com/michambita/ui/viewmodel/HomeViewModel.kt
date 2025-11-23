@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.michambita.data.enums.EnumModoOperacion
 import com.michambita.domain.model.Movimiento
+import com.michambita.domain.model.MovimientoItem
 import com.michambita.domain.usecase.AddMovimientoUseCase
 import com.michambita.domain.usecase.DeleteMovimientoUseCase
 import com.michambita.domain.usecase.GetAllMovimientoUseCase
@@ -18,7 +19,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
 import javax.inject.Inject
-import java.util.Calendar
 import com.michambita.utils.DateUtils
 
 data class HomeUiState(
@@ -28,7 +28,8 @@ data class HomeUiState(
     val ventas: String = "S/ 0.00",
     val gastos: String = "S/ 0.00",
     val bottomSheetVisible: Boolean = false,
-    val ventaRapida: Boolean = true
+    val ventaRapida: Boolean = true,
+    val itemsMovimiento: List<MovimientoItem> = emptyList()
 )
 
 @HiltViewModel
@@ -105,7 +106,8 @@ class HomeViewModel @Inject constructor(
                     tipoMovimiento = "V"
                 ),
                 bottomSheetVisible = true,
-                ventaRapida = true
+                ventaRapida = true,
+                itemsMovimiento = emptyList()
             ) 
         }
     }
@@ -121,7 +123,8 @@ class HomeViewModel @Inject constructor(
                     tipoMovimiento = "G"
                 ),
                 bottomSheetVisible = true,
-                ventaRapida = true
+                ventaRapida = true,
+                itemsMovimiento = emptyList()
             ) 
         }
     }
@@ -142,12 +145,13 @@ class HomeViewModel @Inject constructor(
         val movimiento = currentState.movimientoRegEdit
         
         if (movimiento != null && movimiento.descripcion.isNotBlank() && movimiento.monto > BigDecimal.ZERO) {
+            val movimientoConItems = movimiento.copy(items = currentState.itemsMovimiento)
             when (currentState.modoOperacion) {
                 EnumModoOperacion.REGISTRAR -> {
-                    addMovimiento(movimiento)
+                    addMovimiento(movimientoConItems)
                 }
                 EnumModoOperacion.EDITAR -> {
-                    updateMovimiento(movimiento)
+                    updateMovimiento(movimientoConItems)
                 }
             }
 
@@ -156,7 +160,8 @@ class HomeViewModel @Inject constructor(
                 it.copy(
                     modoOperacion = EnumModoOperacion.REGISTRAR,
                     movimientoRegEdit = null,
-                    bottomSheetVisible = false
+                    bottomSheetVisible = false,
+                    itemsMovimiento = emptyList()
                 )
             }
         }
@@ -168,6 +173,10 @@ class HomeViewModel @Inject constructor(
 
     fun setVentaRapida(value: Boolean) {
         _uiState.update { it.copy(ventaRapida = value) }
+    }
+
+    fun setItemsMovimiento(items: List<MovimientoItem>) {
+        _uiState.update { it.copy(itemsMovimiento = items) }
     }
 
     fun addMovimiento(movimiento: Movimiento) {

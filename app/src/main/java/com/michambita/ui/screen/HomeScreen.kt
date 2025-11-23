@@ -13,14 +13,26 @@ import androidx.navigation.NavController
 import com.michambita.ui.components.home.HomeContent
 import com.michambita.ui.components.home.historial.movimiento.MovimientoSheet
 import com.michambita.ui.viewmodel.HomeViewModel
+import com.michambita.ui.viewmodel.InventarioViewModel
+import com.michambita.ui.common.UiState
+import com.michambita.domain.model.Producto
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    navController: NavController, viewModel: HomeViewModel = hiltViewModel()
+    navController: NavController,
+    homeViewModel: HomeViewModel = hiltViewModel(),
+    inventarioViewModel: InventarioViewModel = hiltViewModel()
 ) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val movimientos by viewModel.movimientos.collectAsStateWithLifecycle()
+    val uiState by homeViewModel.uiState.collectAsStateWithLifecycle()
+    val movimientos by homeViewModel.movimientos.collectAsStateWithLifecycle()
+
+    val uiStateProductos by inventarioViewModel.uiStateGetAllProducto.collectAsStateWithLifecycle()
+    LaunchedEffect(Unit) { inventarioViewModel.getAllProducto() }
+    val productos: List<Producto> = when (val s = uiStateProductos) {
+        is UiState.Success -> s.data
+        else -> emptyList()
+    }
 
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
@@ -31,10 +43,10 @@ fun HomeScreen(
         navController = navController,
         modifier = Modifier,
         movimientosPendientes = movimientos,
-        onRegistrarVenta = viewModel::onRegistrarVenta,
-        onRegistrarGasto = viewModel::onRegistrarGasto,
-        onEditarMovimiento = viewModel::onEditarMovimiento,
-        onEliminarMovimiento = viewModel::deleteMovimiento
+        onRegistrarVenta = homeViewModel::onRegistrarVenta,
+        onRegistrarGasto = homeViewModel::onRegistrarGasto,
+        onEditarMovimiento = homeViewModel::onEditarMovimiento,
+        onEliminarMovimiento = homeViewModel::deleteMovimiento
     )
 
     LaunchedEffect(uiState.bottomSheetVisible) {
@@ -45,7 +57,7 @@ fun HomeScreen(
     if (uiState.bottomSheetVisible) {
         ModalBottomSheet(
             sheetState = sheetState,
-            onDismissRequest = { viewModel.hideBottomSheet() },
+            onDismissRequest = { homeViewModel.hideBottomSheet() },
             shape = RoundedCornerShape(
                 topStart = 28.dp, topEnd = 28.dp, bottomStart = 0.dp, bottomEnd = 0.dp
             ),
@@ -57,10 +69,14 @@ fun HomeScreen(
                 titulo = uiState.movimientoRegEdit?.descripcion ?: "",
                 monto = uiState.movimientoRegEdit?.monto?.toPlainString() ?: "",
                 ventaRapida = uiState.ventaRapida,
-                onTituloChange = { viewModel.onMovimientoChange("titulo", it) },
-                onMontoChange = { viewModel.onMovimientoChange("monto", it) },
-                onVentaRapidaChange = viewModel::setVentaRapida,
-                onGuardarClick = viewModel::onGuardarMovimiento
+                productos = productos,
+                onTituloChange = { homeViewModel.onMovimientoChange("titulo", it) },
+                onMontoChange = { homeViewModel.onMovimientoChange("monto", it) },
+                onVentaRapidaChange = homeViewModel::setVentaRapida,
+                onGuardarClick = homeViewModel::onGuardarMovimiento,
+                onItemsChange = { itemsDomain ->
+                    homeViewModel.setItemsMovimiento(itemsDomain)
+                }
             )
         }
     }
