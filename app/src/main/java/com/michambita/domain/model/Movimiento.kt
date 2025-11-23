@@ -13,8 +13,9 @@ data class Movimiento(
     val tipoMovimiento: EnumTipoMovimiento,
     val fechaRegistro: Date = Date(),
     val sincronizado: Boolean = false,
+    val esMovimientoRapido: Boolean = true,
     val items: List<MovimientoItem> = emptyList()
 )
 
 fun MovimientoEntity.toDomain(): Movimiento =
-    Movimiento(this.id, userId, descripcion, monto, tipoMovimiento, fechaRegistro, sincronizado, items)
+    Movimiento(this.id, userId, descripcion, monto, tipoMovimiento, fechaRegistro, sincronizado, esMovimientoRapido, items)

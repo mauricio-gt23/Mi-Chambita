@@ -81,11 +81,11 @@ fun HomeScreen(
                 tipoOperacion = movimientoUiState.tipoMovimiento,
                 titulo = movimientoUiState.movimientoRegEdit?.descripcion ?: "",
                 monto = movimientoUiState.movimientoRegEdit?.monto?.toPlainString() ?: "",
-                ventaRapida = movimientoUiState.ventaRapida,
+                esMovimientoRapido = movimientoUiState.movimientoRegEdit?.esMovimientoRapido ?: true,
                 productos = productos,
                 onTituloChange = { movimientoViewModel.onMovimientoChange("titulo", it) },
                 onMontoChange = { movimientoViewModel.onMovimientoChange("monto", it) },
-                onVentaRapidaChange = movimientoViewModel::setVentaRapida,
+                onMovimientoRapidoChange = movimientoViewModel::setEsMovimientoRapido,
                 onGuardarClick = movimientoViewModel::onGuardarMovimiento,
                 onItemsChange = { items ->
                     movimientoViewModel.setItemsMovimiento(items)

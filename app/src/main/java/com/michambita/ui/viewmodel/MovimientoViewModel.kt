@@ -21,8 +21,7 @@ import javax.inject.Inject
 data class MovimientoUiState(
         val modoOperacion: EnumModoOperacion = EnumModoOperacion.REGISTRAR,
         val movimientoRegEdit: Movimiento? = null,
-        val tipoMovimiento: EnumTipoMovimiento = EnumTipoMovimiento.VENTA,
-        val ventaRapida: Boolean = true
+        val tipoMovimiento: EnumTipoMovimiento = EnumTipoMovimiento.VENTA
 )
 
 @HiltViewModel
@@ -40,7 +39,8 @@ class MovimientoViewModel @Inject constructor(
             val currentMovimiento = currentState.movimientoRegEdit ?: Movimiento(
                 descripcion = "",
                 monto = BigDecimal.ZERO,
-                tipoMovimiento = currentState.tipoMovimiento
+                tipoMovimiento = currentState.tipoMovimiento,
+                esMovimientoRapido = true
             )
 
             val movimientoActualizado = when (campo) {
@@ -64,9 +64,9 @@ class MovimientoViewModel @Inject constructor(
                 movimientoRegEdit = Movimiento(
                     descripcion = "",
                     monto = BigDecimal.ZERO,
-                    tipoMovimiento = EnumTipoMovimiento.VENTA
-                ),
-                ventaRapida = true
+                    tipoMovimiento = EnumTipoMovimiento.VENTA,
+                    esMovimientoRapido = true
+                )
             )
         }
     }
@@ -79,9 +79,9 @@ class MovimientoViewModel @Inject constructor(
                 movimientoRegEdit = Movimiento(
                     descripcion = "",
                     monto = BigDecimal.ZERO,
-                    tipoMovimiento = EnumTipoMovimiento.GASTO
-                ),
-                ventaRapida = true
+                    tipoMovimiento = EnumTipoMovimiento.GASTO,
+                    esMovimientoRapido = true
+                )
             )
         }
     }
@@ -101,13 +101,12 @@ class MovimientoViewModel @Inject constructor(
         val movimiento = currentState.movimientoRegEdit
 
         if (movimiento != null && movimiento.descripcion.isNotBlank() && movimiento.monto > BigDecimal.ZERO) {
-            val movimientoConItems = movimiento
             when (currentState.modoOperacion) {
                 EnumModoOperacion.REGISTRAR -> {
-                    addMovimiento(movimientoConItems)
+                    addMovimiento(movimiento)
                 }
                 EnumModoOperacion.EDITAR -> {
-                    updateMovimiento(movimientoConItems)
+                    updateMovimiento(movimiento)
                 }
             }
 
@@ -120,8 +119,10 @@ class MovimientoViewModel @Inject constructor(
         }
     }
 
-    fun setVentaRapida(value: Boolean) {
-        _uiState.update { it.copy(ventaRapida = value) }
+    fun setEsMovimientoRapido(value: Boolean) {
+        _uiState.update { state ->
+            state.copy(movimientoRegEdit = state.movimientoRegEdit?.copy(esMovimientoRapido = value))
+        }
     }
 
     fun setItemsMovimiento(items: List<MovimientoItem>) {

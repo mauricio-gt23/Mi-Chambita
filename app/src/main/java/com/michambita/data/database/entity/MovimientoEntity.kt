@@ -33,8 +33,11 @@ data class MovimientoEntity(
     val sincronizado: Boolean = false,
 
     @ColumnInfo(name = "items")
-    val items: List<MovimientoItem> = emptyList()
+    val items: List<MovimientoItem> = emptyList(),
+
+    @ColumnInfo(name = "es_movimiento_rapido")
+    val esMovimientoRapido: Boolean = true
 )
 
 fun Movimiento.toDataBase(): MovimientoEntity =
-    MovimientoEntity(this.id ?: 0, userId!!, descripcion, monto, tipoMovimiento, fechaRegistro, sincronizado, items)
+    MovimientoEntity(this.id ?: 0, userId!!, descripcion, monto, tipoMovimiento, fechaRegistro, sincronizado, items, esMovimientoRapido)

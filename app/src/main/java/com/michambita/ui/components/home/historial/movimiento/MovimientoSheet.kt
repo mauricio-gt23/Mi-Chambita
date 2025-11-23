@@ -33,15 +33,15 @@ fun MovimientoSheet(
     tipoOperacion: EnumTipoMovimiento,
     titulo: String,
     monto: String,
-    ventaRapida: Boolean,
+    esMovimientoRapido: Boolean,
     productos: List<Producto> = emptyList(),
     onTituloChange: (String) -> Unit,
     onMontoChange: (String) -> Unit,
-    onVentaRapidaChange: (Boolean) -> Unit,
+    onMovimientoRapidoChange: (Boolean) -> Unit,
     onGuardarClick: () -> Unit,
     onItemsChange: (List<MovimientoItem>) -> Unit = {}
 ) {
-    val heighSheet = if (!ventaRapida) modifier.fillMaxHeight() else Modifier.height(320.dp)
+    val heighSheet = if (!esMovimientoRapido) modifier.fillMaxHeight() else Modifier.height(320.dp)
 
     Column(
         modifier = heighSheet
@@ -49,11 +49,11 @@ fun MovimientoSheet(
             .padding(24.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        HeaderRow(modoOperacion, tipoOperacion, ventaRapida, onVentaRapidaChange)
+        HeaderRow(modoOperacion, tipoOperacion, esMovimientoRapido, onMovimientoRapidoChange)
 
         DescriptionField(titulo, onTituloChange, tipoOperacion)
 
-        if (!ventaRapida && tipoOperacion == EnumTipoMovimiento.VENTA) {
+        if (!esMovimientoRapido && tipoOperacion == EnumTipoMovimiento.VENTA) {
             VentaDetalleSection(productos, onMontoChange, onItemsChange)
         } else {
             MontoField(monto, onMontoChange)
@@ -61,7 +61,7 @@ fun MovimientoSheet(
 
         Spacer(Modifier.weight(1f))
 
-        if (!ventaRapida && tipoOperacion == EnumTipoMovimiento.VENTA) {
+        if (!esMovimientoRapido && tipoOperacion == EnumTipoMovimiento.VENTA) {
             FooterDetailed(monto, onGuardarClick, modoOperacion, tipoOperacion)
         } else {
             FooterSimple(onGuardarClick, modoOperacion, tipoOperacion)
@@ -73,7 +73,7 @@ fun MovimientoSheet(
 private fun HeaderRow(
     modoOperacion: EnumModoOperacion,
     tipoOperacion: EnumTipoMovimiento,
-    ventaRapida: Boolean,
+    esMovimientoRapido: Boolean,
     onVentaRapidaChange: (Boolean) -> Unit
 ) {
     Row(
@@ -100,7 +100,7 @@ private fun HeaderRow(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text("Venta rapida", style = MaterialTheme.typography.bodyLarge)
                 Spacer(Modifier.width(8.dp))
-                Switch(checked = ventaRapida, onCheckedChange = onVentaRapidaChange)
+                Switch(checked = esMovimientoRapido, onCheckedChange = onVentaRapidaChange)
             }
         }
 }
