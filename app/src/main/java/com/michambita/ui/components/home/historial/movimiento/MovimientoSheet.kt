@@ -18,6 +18,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.michambita.data.enums.EnumModoOperacion
 import com.michambita.data.enums.EnumTipoProducto
+import com.michambita.data.enums.EnumTipoMovimiento
 import com.michambita.domain.model.Producto
 import com.michambita.domain.model.MovimientoItem
 import java.math.BigDecimal
@@ -29,7 +30,7 @@ import java.math.RoundingMode
 fun MovimientoSheet(
     modifier: Modifier,
     modoOperacion: EnumModoOperacion,
-    tipoOperacion: String,
+    tipoOperacion: EnumTipoMovimiento,
     titulo: String,
     monto: String,
     ventaRapida: Boolean,
@@ -52,7 +53,7 @@ fun MovimientoSheet(
 
         DescriptionField(titulo, onTituloChange, tipoOperacion)
 
-        if (!ventaRapida && tipoOperacion == "V") {
+        if (!ventaRapida && tipoOperacion == EnumTipoMovimiento.VENTA) {
             VentaDetalleSection(productos, onMontoChange, onItemsChange)
         } else {
             MontoField(monto, onMontoChange)
@@ -60,7 +61,7 @@ fun MovimientoSheet(
 
         Spacer(Modifier.weight(1f))
 
-        if (!ventaRapida && tipoOperacion == "V") {
+        if (!ventaRapida && tipoOperacion == EnumTipoMovimiento.VENTA) {
             FooterDetailed(monto, onGuardarClick, modoOperacion, tipoOperacion)
         } else {
             FooterSimple(onGuardarClick, modoOperacion, tipoOperacion)
@@ -71,7 +72,7 @@ fun MovimientoSheet(
 @Composable
 private fun HeaderRow(
     modoOperacion: EnumModoOperacion,
-    tipoOperacion: String,
+    tipoOperacion: EnumTipoMovimiento,
     ventaRapida: Boolean,
     onVentaRapidaChange: (Boolean) -> Unit
 ) {
@@ -82,40 +83,40 @@ private fun HeaderRow(
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(
-                imageVector = if (tipoOperacion == "V") Icons.Default.PointOfSale else Icons.Default.MoneyOff,
+                imageVector = if (tipoOperacion == EnumTipoMovimiento.VENTA) Icons.Default.PointOfSale else Icons.Default.MoneyOff,
                 contentDescription = null
             )
             Spacer(Modifier.width(8.dp))
             Text(
                 text = if (modoOperacion == EnumModoOperacion.REGISTRAR) {
-                    if (tipoOperacion == "V") "Registrar Venta" else "Registrar Gasto"
+                    if (tipoOperacion == EnumTipoMovimiento.VENTA) "Registrar Venta" else "Registrar Gasto"
                 } else {
                     "Editar Movimiento"
                 },
                 style = MaterialTheme.typography.titleLarge
             )
         }
-        if (modoOperacion == EnumModoOperacion.REGISTRAR && tipoOperacion == "V") {
+        if (modoOperacion == EnumModoOperacion.REGISTRAR && tipoOperacion == EnumTipoMovimiento.VENTA) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text("Venta rapida", style = MaterialTheme.typography.bodyLarge)
                 Spacer(Modifier.width(8.dp))
                 Switch(checked = ventaRapida, onCheckedChange = onVentaRapidaChange)
             }
         }
-    }
+}
 }
 
 @Composable
 private fun DescriptionField(
     titulo: String,
     onTituloChange: (String) -> Unit,
-    tipoOperacion: String
+    tipoOperacion: EnumTipoMovimiento
 ) {
     OutlinedTextField(
         value = titulo,
         onValueChange = onTituloChange,
         label = { Text("Descripción") },
-        placeholder = { Text(if (tipoOperacion == "V") "Ej: venta de jugos" else "Ej: compra de vasos") },
+        placeholder = { Text(if (tipoOperacion == EnumTipoMovimiento.VENTA) "Ej: venta de jugos" else "Ej: compra de vasos") },
         modifier = Modifier.fillMaxWidth()
     )
 }
@@ -312,7 +313,7 @@ private fun FooterDetailed(
     monto: String,
     onGuardarClick: () -> Unit,
     modoOperacion: EnumModoOperacion,
-    tipoOperacion: String
+    tipoOperacion: EnumTipoMovimiento
 ) {
     Row(horizontalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.fillMaxWidth()) {
         OutlinedTextField(
@@ -331,20 +332,20 @@ private fun FooterDetailed(
             Text(
                 when (modoOperacion) {
                     EnumModoOperacion.REGISTRAR ->
-                        if (tipoOperacion == "V") "Guardar Venta" else "Guardar Gasto"
+                        if (tipoOperacion == EnumTipoMovimiento.VENTA) "Guardar Venta" else "Guardar Gasto"
 
                     EnumModoOperacion.EDITAR -> "Guardar Cambios"
                 }
             )
         }
-    }
+}
 }
 
 @Composable
 private fun FooterSimple(
     onGuardarClick: () -> Unit,
     modoOperacion: EnumModoOperacion,
-    tipoOperacion: String
+    tipoOperacion: EnumTipoMovimiento
 ) {
     Button(
         onClick = onGuardarClick,
@@ -353,7 +354,7 @@ private fun FooterSimple(
         Text(
             when (modoOperacion) {
                 EnumModoOperacion.REGISTRAR ->
-                    if (tipoOperacion == "V") "Guardar Venta" else "Guardar Gasto"
+                    if (tipoOperacion == EnumTipoMovimiento.VENTA) "Guardar Venta" else "Guardar Gasto"
 
                 EnumModoOperacion.EDITAR -> "Guardar Cambios"
             }

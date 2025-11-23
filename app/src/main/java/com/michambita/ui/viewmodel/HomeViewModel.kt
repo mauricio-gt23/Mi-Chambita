@@ -3,6 +3,7 @@ package com.michambita.ui.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.michambita.domain.model.Movimiento
+import com.michambita.data.enums.EnumTipoMovimiento
 import com.michambita.domain.usecase.GetAllMovimientoUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -45,11 +46,11 @@ class HomeViewModel @Inject constructor(
         val movimientosHoy = movimientos.filter { DateUtils.isToday(it.fechaRegistro) }
 
         val totalVentas = movimientosHoy
-            .filter { it.tipoMovimiento == "V" }
+            .filter { it.tipoMovimiento == EnumTipoMovimiento.VENTA }
             .sumOf { it.monto }
 
         val totalGastos = movimientosHoy
-            .filter { it.tipoMovimiento == "G" }
+            .filter { it.tipoMovimiento == EnumTipoMovimiento.GASTO }
             .sumOf { it.monto }
 
         _uiState.update { currentState ->

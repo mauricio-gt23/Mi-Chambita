@@ -3,6 +3,7 @@ package com.michambita.ui.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.michambita.data.enums.EnumModoOperacion
+import com.michambita.data.enums.EnumTipoMovimiento
 import com.michambita.domain.model.Movimiento
 import com.michambita.domain.model.MovimientoItem
 import com.michambita.domain.usecase.AddMovimientoUseCase
@@ -20,7 +21,7 @@ import javax.inject.Inject
 data class MovimientoUiState(
         val modoOperacion: EnumModoOperacion = EnumModoOperacion.REGISTRAR,
         val movimientoRegEdit: Movimiento? = null,
-        val tipoMovimiento: String = "V", // "V" = venta, "G" = gasto
+        val tipoMovimiento: EnumTipoMovimiento = EnumTipoMovimiento.VENTA,
         val ventaRapida: Boolean = true
 )
 
@@ -58,12 +59,12 @@ class MovimientoViewModel @Inject constructor(
     fun onRegistrarVenta() {
         _uiState.update {
             it.copy(
-                tipoMovimiento = "V",
+                tipoMovimiento = EnumTipoMovimiento.VENTA,
                 modoOperacion = EnumModoOperacion.REGISTRAR,
                 movimientoRegEdit = Movimiento(
                     descripcion = "",
                     monto = BigDecimal.ZERO,
-                    tipoMovimiento = "V"
+                    tipoMovimiento = EnumTipoMovimiento.VENTA
                 ),
                 ventaRapida = true
             )
@@ -73,12 +74,12 @@ class MovimientoViewModel @Inject constructor(
     fun onRegistrarGasto() {
         _uiState.update {
             it.copy(
-                tipoMovimiento = "G",
+                tipoMovimiento = EnumTipoMovimiento.GASTO,
                 modoOperacion = EnumModoOperacion.REGISTRAR,
                 movimientoRegEdit = Movimiento(
                     descripcion = "",
                     monto = BigDecimal.ZERO,
-                    tipoMovimiento = "G"
+                    tipoMovimiento = EnumTipoMovimiento.GASTO
                 ),
                 ventaRapida = true
             )

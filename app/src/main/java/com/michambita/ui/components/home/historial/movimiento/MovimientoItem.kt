@@ -21,12 +21,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.michambita.domain.model.Movimiento
 import com.michambita.utils.DateUtils
+import com.michambita.data.enums.EnumTipoMovimiento
 
 @Composable
 fun MovimientoItem(
     movimiento: Movimiento,
 ) {
-    val esVenta = movimiento.tipoMovimiento == "V"
+    val esVenta = movimiento.tipoMovimiento == EnumTipoMovimiento.VENTA
     val color = if (esVenta) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
     val icon = if (esVenta) Icons.Filled.PointOfSale else Icons.Filled.Receipt
 

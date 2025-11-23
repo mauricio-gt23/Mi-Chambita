@@ -1,6 +1,7 @@
 package com.michambita.domain.model
 
 import com.michambita.data.database.entity.MovimientoEntity
+import com.michambita.data.enums.EnumTipoMovimiento
 import java.math.BigDecimal
 import java.util.Date
 
@@ -9,10 +10,11 @@ data class Movimiento(
     var userId: String? = "",
     val descripcion: String,
     val monto: BigDecimal,
-    val tipoMovimiento: String, // "V" o "G"
+    val tipoMovimiento: EnumTipoMovimiento,
     val fechaRegistro: Date = Date(),
     val sincronizado: Boolean = false,
     val items: List<MovimientoItem> = emptyList()
 )
 
-fun MovimientoEntity.toDomain() = Movimiento(this.id, userId, descripcion, monto, tipoMovimiento, fechaRegistro, sincronizado, emptyList())
+fun MovimientoEntity.toDomain(): Movimiento =
+    Movimiento(this.id, userId, descripcion, monto, tipoMovimiento, fechaRegistro, sincronizado, emptyList())

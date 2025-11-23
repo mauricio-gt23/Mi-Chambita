@@ -4,6 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.michambita.domain.model.Movimiento
+import com.michambita.data.enums.EnumTipoMovimiento
 import java.math.BigDecimal
 import java.util.Date
 
@@ -22,7 +23,7 @@ data class MovimientoEntity(
     val monto: BigDecimal = BigDecimal.ZERO,
 
     @ColumnInfo(name = "tipo_movimiento")
-    val tipoMovimiento: String = "",
+    val tipoMovimiento: EnumTipoMovimiento = EnumTipoMovimiento.GASTO,
 
     @ColumnInfo(name = "fecha_registro")
     val fechaRegistro: Date = Date(),
@@ -31,4 +32,5 @@ data class MovimientoEntity(
     val sincronizado: Boolean = false
 )
 
-fun Movimiento.toDataBase() = MovimientoEntity(this.id ?: 0, userId!!, descripcion, monto, tipoMovimiento, fechaRegistro, sincronizado)
+fun Movimiento.toDataBase(): MovimientoEntity =
+    MovimientoEntity(this.id ?: 0, userId!!, descripcion, monto, tipoMovimiento, fechaRegistro, sincronizado)

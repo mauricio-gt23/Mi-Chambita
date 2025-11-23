@@ -16,6 +16,7 @@ import com.michambita.ui.viewmodel.InventarioViewModel
 import com.michambita.ui.common.UiState
 import com.michambita.domain.model.Producto
 import com.michambita.ui.viewmodel.MovimientoViewModel
+import com.michambita.data.enums.EnumTipoMovimiento
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
