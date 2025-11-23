@@ -34,6 +34,7 @@ fun MovimientoSheet(
     titulo: String,
     monto: String,
     esMovimientoRapido: Boolean,
+    itemsIniciales: List<MovimientoItem> = emptyList(),
     productos: List<Producto> = emptyList(),
     onTituloChange: (String) -> Unit,
     onMontoChange: (String) -> Unit,
@@ -41,7 +42,10 @@ fun MovimientoSheet(
     onGuardarClick: () -> Unit,
     onItemsChange: (List<MovimientoItem>) -> Unit = {}
 ) {
-    val heighSheet = if (!esMovimientoRapido) modifier.fillMaxHeight() else Modifier.height(320.dp)
+    val showDetalleVenta = tipoOperacion == EnumTipoMovimiento.VENTA &&
+            (modoOperacion == EnumModoOperacion.EDITAR || !esMovimientoRapido)
+
+    val heighSheet = if (showDetalleVenta) modifier.fillMaxHeight() else Modifier.height(320.dp)
 
     Column(
         modifier = heighSheet
@@ -53,15 +57,15 @@ fun MovimientoSheet(
 
         DescriptionField(titulo, onTituloChange, tipoOperacion)
 
-        if (!esMovimientoRapido && tipoOperacion == EnumTipoMovimiento.VENTA) {
-            VentaDetalleSection(productos, onMontoChange, onItemsChange)
+        if (showDetalleVenta) {
+            VentaDetalleSection(itemsIniciales, productos, onMontoChange, onItemsChange, modoOperacion)
         } else {
             MontoField(monto, onMontoChange)
         }
 
         Spacer(Modifier.weight(1f))
 
-        if (!esMovimientoRapido && tipoOperacion == EnumTipoMovimiento.VENTA) {
+        if (showDetalleVenta) {
             FooterDetailed(monto, onGuardarClick, modoOperacion, tipoOperacion)
         } else {
             FooterSimple(onGuardarClick, modoOperacion, tipoOperacion)
@@ -96,7 +100,7 @@ private fun HeaderRow(
                 style = MaterialTheme.typography.titleLarge
             )
         }
-        if (modoOperacion == EnumModoOperacion.REGISTRAR && tipoOperacion == EnumTipoMovimiento.VENTA) {
+        if (tipoOperacion == EnumTipoMovimiento.VENTA) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text("Venta rapida", style = MaterialTheme.typography.bodyLarge)
                 Spacer(Modifier.width(8.dp))
@@ -137,16 +141,25 @@ private fun MontoField(
 
 @Composable
 private fun VentaDetalleSection(
+    itemsIniciales: List<MovimientoItem>,
     productos: List<Producto>,
     onMontoChange: (String) -> Unit,
     onItemsChange: (List<MovimientoItem>) -> Unit,
+    modoOperacion: EnumModoOperacion,
 ) {
     var cantidad by remember { mutableStateOf("") }
     var precioUnitario by remember { mutableStateOf("") }
     var expanded by remember { mutableStateOf(false) }
     var selectedProducto by remember { mutableStateOf<Producto?>(null) }
-    var itemsVenta by remember { mutableStateOf(listOf<MovimientoItem>()) }
-    var showDetalle by remember { mutableStateOf(false) }
+    var itemsVenta by remember { mutableStateOf(itemsIniciales) }
+    var showDetalle by remember { mutableStateOf(modoOperacion == EnumModoOperacion.EDITAR || itemsIniciales.isNotEmpty()) }
+
+    LaunchedEffect(Unit) {
+        if (itemsIniciales.isNotEmpty()) {
+            val total = itemsIniciales.fold(BigDecimal.ZERO) { acc, item -> acc + item.precioTotal }
+            onMontoChange(total.toPlainString())
+        }
+    }
 
     Box(modifier = Modifier.fillMaxWidth()) {
         OutlinedTextField(
@@ -268,7 +281,7 @@ private fun VentaDetalleList(
         ) {
             Text("Productos en la venta", style = MaterialTheme.typography.titleMedium)
             LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                itemsIndexed(itemsVenta, key = { idx, item -> "${item.productoId}:${item.cantidad}:$idx" }) { _, item ->
+                itemsIndexed(itemsVenta, key = { idx, item -> "${item.productoId}:${item.cantidad}:${item.precioTotal.toPlainString()}:$idx" }) { index, item ->
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically,
@@ -292,12 +305,13 @@ private fun VentaDetalleList(
                             style = MaterialTheme.typography.bodyLarge
                         )
                         IconButton(onClick = {
-                            val updated = itemsVenta.filterNot { it == item }
-                            onItemsUpdate(updated)
-                            val total = updated.fold(BigDecimal.ZERO) { acc, it2 ->
-                                acc + it2.precioTotal
+                            val updated = itemsVenta.toMutableList()
+                            if (index in 0 until updated.size) {
+                                updated.removeAt(index)
+                                onItemsUpdate(updated)
+                                val total = updated.fold(BigDecimal.ZERO) { acc, it2 -> acc + it2.precioTotal }
+                                onMontoChange(total.toPlainString())
                             }
-                            onMontoChange(total.toPlainString())
                         }) {
                             Icon(Icons.Default.Delete, contentDescription = null)
                         }

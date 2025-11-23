@@ -75,22 +75,23 @@ fun HomeScreen(
                 topStart = 28.dp, topEnd = 28.dp, bottomStart = 0.dp, bottomEnd = 0.dp
             ),
             dragHandle = { BottomSheetDefaults.DragHandle() }) {
-            MovimientoSheet(
-                modifier = Modifier,
-                modoOperacion = movimientoUiState.modoOperacion,
-                tipoOperacion = movimientoUiState.tipoMovimiento,
-                titulo = movimientoUiState.movimientoRegEdit?.descripcion ?: "",
-                monto = movimientoUiState.movimientoRegEdit?.monto?.toPlainString() ?: "",
-                esMovimientoRapido = movimientoUiState.movimientoRegEdit?.esMovimientoRapido ?: true,
-                productos = productos,
-                onTituloChange = { movimientoViewModel.onMovimientoChange("titulo", it) },
-                onMontoChange = { movimientoViewModel.onMovimientoChange("monto", it) },
-                onMovimientoRapidoChange = movimientoViewModel::setEsMovimientoRapido,
-                onGuardarClick = movimientoViewModel::onGuardarMovimiento,
-                onItemsChange = { items ->
-                    movimientoViewModel.setItemsMovimiento(items)
-                }
-            )
+                MovimientoSheet(
+                    modifier = Modifier,
+                    modoOperacion = movimientoUiState.modoOperacion,
+                    tipoOperacion = movimientoUiState.tipoMovimiento,
+                    titulo = movimientoUiState.movimientoRegEdit?.descripcion ?: "",
+                    monto = movimientoUiState.movimientoRegEdit?.monto?.toPlainString() ?: "",
+                    esMovimientoRapido = movimientoUiState.movimientoRegEdit?.esMovimientoRapido ?: true,
+                    itemsIniciales = movimientoUiState.movimientoRegEdit?.items ?: emptyList(),
+                    productos = productos,
+                    onTituloChange = { movimientoViewModel.onMovimientoChange("titulo", it) },
+                    onMontoChange = { movimientoViewModel.onMovimientoChange("monto", it) },
+                    onMovimientoRapidoChange = movimientoViewModel::setEsMovimientoRapido,
+                    onGuardarClick = movimientoViewModel::onGuardarMovimiento,
+                    onItemsChange = { items ->
+                        movimientoViewModel.setItemsMovimiento(items)
+                    }
+                )
         }
     }
 }
