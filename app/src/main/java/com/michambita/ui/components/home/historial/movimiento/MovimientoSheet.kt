@@ -21,29 +21,32 @@ import com.michambita.data.enums.EnumTipoProducto
 import com.michambita.data.enums.EnumTipoMovimiento
 import com.michambita.domain.model.Producto
 import com.michambita.domain.model.MovimientoItem
+import com.michambita.domain.model.Movimiento
 import java.math.BigDecimal
 import java.math.RoundingMode
 
- 
 
 @Composable
 fun MovimientoSheet(
     modifier: Modifier,
     modoOperacion: EnumModoOperacion,
-    tipoOperacion: EnumTipoMovimiento,
-    titulo: String,
-    monto: String,
-    esMovimientoRapido: Boolean,
-    itemsIniciales: List<MovimientoItem> = emptyList(),
+    movimiento: Movimiento?,
     productos: List<Producto> = emptyList(),
-    onTituloChange: (String) -> Unit,
-    onMontoChange: (String) -> Unit,
-    onMovimientoRapidoChange: (Boolean) -> Unit,
+    onMovimientoChange: (Movimiento) -> Unit,
     onGuardarClick: () -> Unit,
-    onItemsChange: (List<MovimientoItem>) -> Unit = {}
 ) {
+    val m = movimiento ?: Movimiento(
+        descripcion = "",
+        monto = BigDecimal.ZERO,
+        tipoMovimiento = EnumTipoMovimiento.VENTA,
+        esMovimientoRapido = true,
+        items = emptyList()
+    )
+
+    val tipoOperacion = m.tipoMovimiento
+
     val showDetalleVenta = tipoOperacion == EnumTipoMovimiento.VENTA &&
-            (modoOperacion == EnumModoOperacion.EDITAR || !esMovimientoRapido)
+            (modoOperacion == EnumModoOperacion.EDITAR || !m.esMovimientoRapido)
 
     val heighSheet = if (showDetalleVenta) modifier.fillMaxHeight() else Modifier.height(320.dp)
 
@@ -53,24 +56,43 @@ fun MovimientoSheet(
             .padding(24.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        HeaderRow(modoOperacion, tipoOperacion, esMovimientoRapido, onMovimientoRapidoChange)
+        HeaderRow(modoOperacion, tipoOperacion, m.esMovimientoRapido) { checked ->
+            onMovimientoChange(m.copy(esMovimientoRapido = checked))
+        }
 
-        DescriptionField(titulo, onTituloChange, tipoOperacion)
+        DescriptionField(m.descripcion, { nuevoTitulo ->
+            onMovimientoChange(m.copy(descripcion = nuevoTitulo))
+        }, tipoOperacion)
 
         if (showDetalleVenta) {
-            VentaDetalleSection(itemsIniciales, productos, onMontoChange, onItemsChange, modoOperacion)
+            VentaDetalleSection(
+                itemsIniciales = m.items,
+                productos = productos,
+                onMontoChange = { nuevoMontoStr ->
+                    val nuevoMonto = nuevoMontoStr.trim().toBigDecimalOrNull() ?: BigDecimal.ZERO
+                    onMovimientoChange(m.copy(monto = nuevoMonto))
+                },
+                onItemsChange = { nuevosItems ->
+                    val total = nuevosItems.fold(BigDecimal.ZERO) { acc, it -> acc + it.precioTotal }
+                    onMovimientoChange(m.copy(items = nuevosItems, monto = total))
+                },
+                modoOperacion = modoOperacion
+            )
         } else {
-            MontoField(monto, onMontoChange)
+            MontoField(m.monto.toPlainString()) { nuevoMontoStr ->
+                val nuevoMonto = nuevoMontoStr.trim().toBigDecimalOrNull() ?: BigDecimal.ZERO
+                onMovimientoChange(m.copy(monto = nuevoMonto))
+            }
         }
 
         Spacer(Modifier.weight(1f))
 
         if (showDetalleVenta) {
-            FooterDetailed(monto, onGuardarClick, modoOperacion, tipoOperacion)
+            FooterDetailed(m.monto.toPlainString(), onGuardarClick, modoOperacion, tipoOperacion)
         } else {
             FooterSimple(onGuardarClick, modoOperacion, tipoOperacion)
         }
-    }
+}
 }
 
 @Composable

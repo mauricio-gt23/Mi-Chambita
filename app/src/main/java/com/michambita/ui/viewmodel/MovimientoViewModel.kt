@@ -34,28 +34,6 @@ class MovimientoViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(MovimientoUiState())
     val uiState: StateFlow<MovimientoUiState> = _uiState.asStateFlow()
 
-    fun onMovimientoChange(campo: String, valor: String) {
-        _uiState.update { currentState ->
-            val currentMovimiento = currentState.movimientoRegEdit ?: Movimiento(
-                descripcion = "",
-                monto = BigDecimal.ZERO,
-                tipoMovimiento = currentState.tipoMovimiento,
-                esMovimientoRapido = true
-            )
-
-            val movimientoActualizado = when (campo) {
-                "titulo" -> currentMovimiento.copy(descripcion = valor)
-                "monto" -> {
-                    val montoDecimal = valor.trim().toBigDecimalOrNull() ?: BigDecimal.ZERO
-                    currentMovimiento.copy(monto = montoDecimal)
-                }
-                else -> currentMovimiento
-            }
-
-            currentState.copy(movimientoRegEdit = movimientoActualizado)
-        }
-    }
-
     fun onRegistrarVenta() {
         _uiState.update {
             it.copy(
@@ -119,10 +97,8 @@ class MovimientoViewModel @Inject constructor(
         }
     }
 
-    fun setEsMovimientoRapido(value: Boolean) {
-        _uiState.update { state ->
-            state.copy(movimientoRegEdit = state.movimientoRegEdit?.copy(esMovimientoRapido = value))
-        }
+    fun onMovimientoChange(movimiento: Movimiento) {
+        _uiState.update { it.copy(movimientoRegEdit = movimiento) }
     }
 
     fun setItemsMovimiento(items: List<MovimientoItem>) {
