@@ -6,13 +6,14 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.michambita.domain.model.Movimiento
 import com.michambita.ui.components.home.historial.movimiento.SwipeMovimientoItem
 import com.michambita.utils.DateUtils
+import kotlinx.coroutines.delay
 
 @Composable
 fun MovimientoHistorial(
@@ -21,6 +22,17 @@ fun MovimientoHistorial(
     onEliminarMovimiento: (Movimiento) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    var spinnerVisible by remember { mutableStateOf(true) }
+    LaunchedEffect(movimientosPendientes) {
+        if (movimientosPendientes.isEmpty()) {
+            spinnerVisible = true
+        } else {
+            spinnerVisible = true
+            delay(2000)
+            spinnerVisible = false
+        }
+    }
+
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -34,14 +46,26 @@ fun MovimientoHistorial(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            if (movimientosPendientes.isEmpty()) {
-                EstadoVacio()
+            if (spinnerVisible) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(
+                        color = MaterialTheme.colorScheme.primaryContainer,
+                        strokeWidth = 4.dp
+                    )
+                }
             } else {
-                ListaMovimientos(
-                    movimientos = movimientosPendientes,
-                    onEditarMovimiento = onEditarMovimiento,
-                    onEliminarMovimiento = onEliminarMovimiento
-                )
+                if (movimientosPendientes.isEmpty()) {
+                    EstadoVacio()
+                } else {
+                    ListaMovimientos(
+                        movimientos = movimientosPendientes,
+                        onEditarMovimiento = onEditarMovimiento,
+                        onEliminarMovimiento = onEliminarMovimiento
+                    )
+                }
             }
         }
     }
