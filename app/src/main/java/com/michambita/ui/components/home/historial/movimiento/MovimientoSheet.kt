@@ -56,7 +56,13 @@ fun MovimientoSheet(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         HeaderRow(modoOperacion, tipoOperacion, m.esMovimientoRapido) { checked ->
-            onMovimientoChange(m.copy(esMovimientoRapido = checked))
+            onMovimientoChange(
+                m.copy(
+                    esMovimientoRapido = checked,
+                    monto = BigDecimal.ZERO,
+                    items = emptyList()
+                )
+            )
         }
 
         DescriptionField(m.descripcion, { nuevoTitulo ->
