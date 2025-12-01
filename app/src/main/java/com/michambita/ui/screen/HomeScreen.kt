@@ -16,7 +16,9 @@ import com.michambita.ui.viewmodel.InventarioViewModel
 import com.michambita.ui.common.UiState
 import com.michambita.domain.model.Producto
 import com.michambita.ui.viewmodel.MovimientoViewModel
-import com.michambita.data.enums.EnumTipoMovimiento
+import com.michambita.ui.components.widget.AlertModal
+import com.michambita.ui.components.widget.ErrorDisplay
+import com.michambita.ui.components.widget.LoadingOverlay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -26,7 +28,8 @@ fun HomeScreen(
     inventarioViewModel: InventarioViewModel = hiltViewModel(),
     movimientoViewModel: MovimientoViewModel = hiltViewModel()
 ) {
-    val homeUiState by homeViewModel.uiState.collectAsStateWithLifecycle()
+    val uiState by homeViewModel.uiState.collectAsStateWithLifecycle()
+    val homeUiState by homeViewModel.homeUiState.collectAsStateWithLifecycle()
     val movimientos by homeViewModel.movimientos.collectAsStateWithLifecycle()
 
     val movimientoUiState by movimientoViewModel.uiState.collectAsStateWithLifecycle()
@@ -41,6 +44,8 @@ fun HomeScreen(
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
     )
+
+    var showError by remember { mutableStateOf(true) }
 
     HomeContent(
         uiState = homeUiState,
@@ -59,7 +64,8 @@ fun HomeScreen(
             movimientoViewModel.onEditarMovimiento(it)
             homeViewModel.showBottomSheet()
         },
-        onEliminarMovimiento = movimientoViewModel::deleteMovimiento
+        onEliminarMovimiento = movimientoViewModel::deleteMovimiento,
+        onSincronizarMovimiento = homeViewModel::onSincronizarMovimientos
     )
 
     LaunchedEffect(homeUiState.bottomSheetVisible) {
@@ -86,6 +92,31 @@ fun HomeScreen(
                         homeViewModel.hideBottomSheet()
                     }
                 )
+        }
+    }
+
+    when (val state = uiState) {
+        is UiState.Empty -> {}
+        is UiState.Loading -> {
+            LoadingOverlay(modifier = Modifier, message = "Sincronizando...")
+        }
+        is UiState.Success -> {
+            AlertModal(
+                modifier = Modifier,
+                title = state.data,
+                message = "",
+                showDismissButton = false,
+                onConfirm = { homeViewModel.clearUiState() },
+                onDismissRequest = { homeViewModel.clearUiState() }
+            )
+        }
+        is UiState.Error -> {
+            ErrorDisplay(
+                modifier = Modifier,
+                errorMessage = state.message,
+                isVisible = showError,
+                onDismiss = { showError = false }
+            )
         }
     }
 }

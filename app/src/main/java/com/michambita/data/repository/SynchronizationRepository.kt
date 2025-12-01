@@ -11,4 +11,6 @@ interface SynchronizationRepository {
     suspend fun updateMovimiento(movimiento: Movimiento): Result<Unit>
 
     suspend fun deleteMovimiento(movimiento: Movimiento): Result<Unit>
+
+    suspend fun deleteAllMovimientoPendientes(): Result<Unit>
 }

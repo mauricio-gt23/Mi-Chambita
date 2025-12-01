@@ -43,4 +43,13 @@ class SynchronizationRepositoryImpl @Inject constructor(
             Result.failure(e)
         }
     }
+
+    override suspend fun deleteAllMovimientoPendientes(): Result<Unit> {
+        return try {
+            synchronizationDAO.deleteAll()
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }

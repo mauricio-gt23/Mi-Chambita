@@ -1,11 +1,13 @@
 package com.michambita.di
 
 import com.michambita.data.repository.AuthRepository
+import com.michambita.data.repository.MovimientoRepository
 import com.michambita.data.repository.ProductoImageRepository
 import com.michambita.data.repository.ProductoRepository
 import com.michambita.data.repository.SynchronizationRepository
 import com.michambita.data.repository.UserRepository
 import com.michambita.data.repository.impl.AuthRepositoryImpl
+import com.michambita.data.repository.impl.MovimientoRepositoryImpl
 import com.michambita.data.repository.impl.ProductoImageRepositoryImpl
 import com.michambita.data.repository.impl.ProductoRepositoryImpl
 import com.michambita.data.repository.impl.SynchronizationRepositoryImpl
@@ -51,4 +53,10 @@ abstract class RepositoryModule {
     abstract fun bindSynchronizationRepository(
         synchronizationRepositoryImpl: SynchronizationRepositoryImpl
     ): SynchronizationRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindMovimientoRepository(
+        movimientoRepositoryImpl: MovimientoRepositoryImpl
+    ): MovimientoRepository
 }

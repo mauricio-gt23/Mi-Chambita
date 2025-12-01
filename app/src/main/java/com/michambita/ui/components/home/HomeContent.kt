@@ -25,7 +25,8 @@ fun HomeContent(
     onRegistrarVenta: () -> Unit,
     onRegistrarGasto: () -> Unit,
     onEditarMovimiento: (Movimiento) -> Unit,
-    onEliminarMovimiento: (Movimiento) -> Unit
+    onEliminarMovimiento: (Movimiento) -> Unit,
+    onSincronizarMovimiento: () -> Unit
 ) {
     Column(
         modifier = modifier
@@ -44,7 +45,7 @@ fun HomeContent(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        EncabezadoHistorial()
+        EncabezadoHistorial(modifier, movimientosPendientes, onSincronizarMovimiento)
         MovimientoHistorial(
             movimientosPendientes = movimientosPendientes,
             onEditarMovimiento = onEditarMovimiento,

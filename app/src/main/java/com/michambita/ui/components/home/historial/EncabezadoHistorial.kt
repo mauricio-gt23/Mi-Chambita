@@ -15,18 +15,23 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.michambita.domain.model.Movimiento
 
 @Composable
 fun EncabezadoHistorial(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    movimientosPendientes: List<Movimiento>,
+    onSincronizarMovimiento: () -> Unit
 ) {
+    val isValid = movimientosPendientes.isNotEmpty()
+
     Row(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text("Movimientos por sincronizar", style = MaterialTheme.typography.titleMedium)
-        TextButton(onClick = { /* lógica de sincronización */ }) {
+        TextButton(onClick = onSincronizarMovimiento, enabled = isValid) {
             Icon(Icons.Default.Sync, contentDescription = null)
             Spacer(modifier = Modifier.width(4.dp))
             Text("Sincronizar")
