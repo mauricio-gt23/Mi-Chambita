@@ -25,10 +25,10 @@ fun MovimientoHistorial(
     var spinnerVisible by remember { mutableStateOf(true) }
     LaunchedEffect(movimientosPendientes) {
         if (movimientosPendientes.isEmpty()) {
-            spinnerVisible = true
+            spinnerVisible = false
         } else {
             spinnerVisible = true
-            delay(2000)
+            delay(1000)
             spinnerVisible = false
         }
     }

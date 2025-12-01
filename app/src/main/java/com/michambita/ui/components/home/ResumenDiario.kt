@@ -13,6 +13,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
+import java.math.BigDecimal
 
 @Composable
 fun ResumenDiario(
@@ -51,11 +52,13 @@ fun SummaryTile(
 ) {
     var spinnerVisible by remember { mutableStateOf(true) }
     LaunchedEffect(amount) {
-        if (amount.isBlank()) {
-            spinnerVisible = true
+        val numeric = amount.filter { it.isDigit() || it == '.' || it == '-' }
+        val isZero = try { numeric.toBigDecimal().compareTo(BigDecimal.ZERO) == 0 } catch (_: Exception) { amount.isBlank() }
+        if (isZero) {
+            spinnerVisible = false
         } else {
             spinnerVisible = true
-            delay(2000)
+            delay(1000)
             spinnerVisible = false
         }
     }
