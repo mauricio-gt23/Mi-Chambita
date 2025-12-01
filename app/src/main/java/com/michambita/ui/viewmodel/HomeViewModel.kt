@@ -14,14 +14,17 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import com.michambita.utils.DateUtils
+import kotlinx.coroutines.delay
 
 data class HomeUiState(
     val ventas: String = "S/ 0.00",
     val gastos: String = "S/ 0.00",
-    val bottomSheetVisible: Boolean = false
+    val bottomSheetVisible: Boolean = false,
+    val isInitialLoading: Boolean = true
 )
 
 @HiltViewModel
@@ -45,6 +48,12 @@ class HomeViewModel @Inject constructor(
             movimientos.collect { listaMovimientos ->
                 actualizarResumen(listaMovimientos)
             }
+        }
+
+        viewModelScope.launch {
+            val firstData = getAllMovimientoUseCase().first()
+            delay(1000)
+            _homeUiState.update { it.copy(isInitialLoading = false) }
         }
     }
 

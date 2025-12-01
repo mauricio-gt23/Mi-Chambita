@@ -34,7 +34,7 @@ fun HomeContent(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
-        ResumenDiario(ventas = uiState.ventas, gastos = uiState.gastos)
+        ResumenDiario(ventas = uiState.ventas, gastos = uiState.gastos, isInitialLoading = uiState.isInitialLoading)
 
         HomeAcciones(
             onRegistrarVenta = onRegistrarVenta,
@@ -49,7 +49,8 @@ fun HomeContent(
         MovimientoHistorial(
             movimientosPendientes = movimientosPendientes,
             onEditarMovimiento = onEditarMovimiento,
-            onEliminarMovimiento = onEliminarMovimiento
+            onEliminarMovimiento = onEliminarMovimiento,
+            isInitialLoading = uiState.isInitialLoading
         )
     }
 }

@@ -12,31 +12,33 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.delay
-import java.math.BigDecimal
+ 
 
 @Composable
 fun ResumenDiario(
     ventas: String,
     gastos: String,
+    isInitialLoading: Boolean,
     modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        SummaryTile(
-            title = "Ventas de Hoy",
-            icon = Icons.Filled.AttachMoney,
-            amount = ventas,
-            color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.weight(1f)
-        )
+            SummaryTile(
+                title = "Ventas de Hoy",
+                icon = Icons.Filled.AttachMoney,
+                amount = ventas,
+                color = MaterialTheme.colorScheme.primary,
+                isInitialLoading = isInitialLoading,
+                modifier = Modifier.weight(1f)
+            )
         SummaryTile(
             title = "Gastos de Hoy",
             icon = Icons.Filled.MoneyOff,
             amount = gastos,
             color = MaterialTheme.colorScheme.error,
+            isInitialLoading = isInitialLoading,
             modifier = Modifier.weight(1f)
         )
     }
@@ -48,20 +50,10 @@ fun SummaryTile(
     icon: ImageVector,
     amount: String,
     color: Color,
+    isInitialLoading: Boolean,
     modifier: Modifier = Modifier
 ) {
-    var spinnerVisible by remember { mutableStateOf(true) }
-    LaunchedEffect(amount) {
-        val numeric = amount.filter { it.isDigit() || it == '.' || it == '-' }
-        val isZero = try { numeric.toBigDecimal().compareTo(BigDecimal.ZERO) == 0 } catch (_: Exception) { amount.isBlank() }
-        if (isZero) {
-            spinnerVisible = false
-        } else {
-            spinnerVisible = true
-            delay(1000)
-            spinnerVisible = false
-        }
-    }
+    val spinnerVisible = isInitialLoading
 
     Card(
         modifier = modifier,

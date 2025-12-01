@@ -13,25 +13,17 @@ import androidx.compose.ui.unit.dp
 import com.michambita.domain.model.Movimiento
 import com.michambita.ui.components.home.historial.movimiento.SwipeMovimientoItem
 import com.michambita.utils.DateUtils
-import kotlinx.coroutines.delay
+ 
 
 @Composable
 fun MovimientoHistorial(
     movimientosPendientes: List<Movimiento>,
     onEditarMovimiento: (Movimiento) -> Unit,
     onEliminarMovimiento: (Movimiento) -> Unit,
+    isInitialLoading: Boolean,
     modifier: Modifier = Modifier
 ) {
-    var spinnerVisible by remember { mutableStateOf(true) }
-    LaunchedEffect(movimientosPendientes) {
-        if (movimientosPendientes.isEmpty()) {
-            spinnerVisible = false
-        } else {
-            spinnerVisible = true
-            delay(1000)
-            spinnerVisible = false
-        }
-    }
+    val spinnerVisible = isInitialLoading
 
     Card(
         modifier = modifier
