@@ -1,25 +1,27 @@
 package com.michambita.ui.screen
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.michambita.ui.viewmodel.AuthViewModel
 import com.michambita.ui.common.UiState
-import com.michambita.ui.components.auth.AuthForm
+import com.michambita.ui.components.auth.login.LoginForm
 import com.michambita.ui.components.widget.AlertModal
 import com.michambita.ui.components.widget.ErrorDisplay
 import com.michambita.ui.components.widget.LoadingOverlay
+import com.michambita.ui.viewmodel.LoginViewModel
 
 @Composable
-fun AuthScreen(
+fun LoginScreen(
     onLoginSuccess: () -> Unit,
-    viewModel: AuthViewModel = hiltViewModel()
+    onNavigateToRegistro: () -> Unit,
+    viewModel: LoginViewModel = hiltViewModel()
 ) {
-    val authUiSate by viewModel.authUiState.collectAsStateWithLifecycle()
+    val authUiState by viewModel.authUiState.collectAsStateWithLifecycle()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     var showError by remember { mutableStateOf(true) }
@@ -31,19 +33,28 @@ fun AuthScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        AuthForm(
-            isLogin = authUiSate.isLogin,
-            name = authUiSate.name,
-            email = authUiSate.email,
-            password = authUiSate.password,
-            confirmPassword = authUiSate.confirmPassword,
-            onNameChange = viewModel::updateNombre ,
+        Text(
+            text = "Iniciar Sesión",
+            style = MaterialTheme.typography.headlineMedium
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        LoginForm(
+            email = authUiState.email,
+            password = authUiState.password,
             onEmailChange = viewModel::updateEmail,
             onPasswordChange = viewModel::updatePassword,
-            onConfirmPasswordChange = viewModel::updateConfirmPassword,
-            onSubmit = { viewModel.submit() },
-            onToggleMode = viewModel::updateIsLogin
+            onSubmit = { 
+                viewModel.login(authUiState.email, authUiState.password)
+            }
         )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        TextButton(onClick = onNavigateToRegistro) {
+            Text("¿No tienes cuenta? Regístrate")
+        }
     }
 
     when (val state = uiState) {

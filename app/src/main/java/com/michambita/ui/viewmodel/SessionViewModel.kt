@@ -2,7 +2,7 @@ package com.michambita.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.michambita.domain.usecase.AuthUseCase
+import com.michambita.domain.usecase.LoginUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -12,9 +12,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SessionViewModel @Inject constructor(
-    private val authUseCase: AuthUseCase
+    private val loginUseCase: LoginUseCase
 ) : ViewModel() {
-    val userSessionState: StateFlow<UserSessionState> = authUseCase.getCurrentUser()
+    val userSessionState: StateFlow<UserSessionState> = loginUseCase.getCurrentUser()
         .map { userUid ->
             if (userUid != null) {
                 UserSessionState.Authenticated
