@@ -3,6 +3,7 @@ package com.michambita.ui.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.michambita.domain.usecase.LoginUseCase
+import com.michambita.domain.usecase.RegisterUseCase
 import com.michambita.ui.common.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,7 +24,7 @@ data class RegistroUiState(
 
 @HiltViewModel
 class RegistroViewModel @Inject constructor(
-    private val loginUseCase: LoginUseCase
+    private val registerUseCase: RegisterUseCase
 ) : ViewModel() {
 
     private val _registroUiState = MutableStateFlow(RegistroUiState())
@@ -36,7 +37,7 @@ class RegistroViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.value = UiState.Loading
 
-            val result = loginUseCase.register(name, email, password)
+            val result = registerUseCase.invoke(name, email, password)
 
             _uiState.value = result.fold(
                 onSuccess = { UiState.Success("Registro exitoso") },

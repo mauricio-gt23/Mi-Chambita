@@ -30,7 +30,7 @@ class LoginViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.value = UiState.Loading
 
-            val result = loginUseCase.login(email, password)
+            val result = loginUseCase.invoke(email, password)
 
             _uiState.value = result.fold(
                 onSuccess = { UiState.Success("Inicio de sesión exitoso") },

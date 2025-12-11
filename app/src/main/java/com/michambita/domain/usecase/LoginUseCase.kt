@@ -9,11 +9,8 @@ class LoginUseCase @Inject constructor(
 ) {
     fun getCurrentUser(): Flow<String?> = authRepository.getCurrentUser()
 
-    suspend fun login(email: String, password: String): Result<String> {
+    suspend operator fun invoke(email: String, password: String): Result<String> {
         return authRepository.login(email, password)
     }
 
-    suspend fun register(name: String, email: String, password: String): Result<String> {
-        return authRepository.register(name, email, password)
-    }
 }
