@@ -2,6 +2,8 @@ package com.michambita.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.michambita.domain.model.Empresa
+import com.michambita.domain.model.User
 import com.michambita.domain.usecase.LoginUseCase
 import com.michambita.domain.usecase.RegisterUseCase
 import com.michambita.ui.common.UiState
@@ -12,14 +14,10 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class RegistroUiState(
-    val name: String = "",
-    val email: String = "",
-    val password: String = "",
-    val confirmPassword: String = "",
+    val usuario: User = User(),
     val currentStep: Int = 1,
     val empresaOption: String = "crear",
-    val empresaNombre: String = "",
-    val empresaCodigo: String = ""
+    val empresa: Empresa = Empresa(nombre = "", idUserAdm = 0L)
 )
 
 @HiltViewModel
@@ -33,11 +31,16 @@ class RegistroViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<UiState<String>>(UiState.Empty)
     val uiState: StateFlow<UiState<String>> = _uiState
 
-    fun register(name: String, email: String, password: String) {
+    fun register() {
         viewModelScope.launch {
             _uiState.value = UiState.Loading
 
-            val result = registerUseCase.invoke(name, email, password)
+            val usuario = _registroUiState.value.usuario
+            val result = registerUseCase.invoke(
+                usuario.name ?: "",
+                usuario.email ?: "",
+                usuario.password ?: ""
+            )
 
             _uiState.value = result.fold(
                 onSuccess = { UiState.Success("Registro exitoso") },
@@ -47,19 +50,27 @@ class RegistroViewModel @Inject constructor(
     }
 
     fun updateNombre(value: String) {
-        _registroUiState.value = _registroUiState.value.copy(name = value)
+        _registroUiState.value = _registroUiState.value.copy(
+            usuario = _registroUiState.value.usuario.copy(name = value)
+        )
     }
 
     fun updateEmail(value: String) {
-        _registroUiState.value = _registroUiState.value.copy(email = value)
+        _registroUiState.value = _registroUiState.value.copy(
+            usuario = _registroUiState.value.usuario.copy(email = value)
+        )
     }
 
     fun updatePassword(value: String) {
-        _registroUiState.value = _registroUiState.value.copy(password = value)
+        _registroUiState.value = _registroUiState.value.copy(
+            usuario = _registroUiState.value.usuario.copy(password = value)
+        )
     }
 
     fun updateConfirmPassword(value: String) {
-        _registroUiState.value = _registroUiState.value.copy(confirmPassword = value)
+        _registroUiState.value = _registroUiState.value.copy(
+            usuario = _registroUiState.value.usuario.copy(confirmPassword = value)
+        )
     }
 
     fun updateCurrentStep(step: Int) {
@@ -71,10 +82,14 @@ class RegistroViewModel @Inject constructor(
     }
 
     fun updateEmpresaNombre(nombre: String) {
-        _registroUiState.value = _registroUiState.value.copy(empresaNombre = nombre)
+        _registroUiState.value = _registroUiState.value.copy(
+            empresa = _registroUiState.value.empresa.copy(nombre = nombre)
+        )
     }
 
     fun updateEmpresaCodigo(codigo: String) {
-        _registroUiState.value = _registroUiState.value.copy(empresaCodigo = codigo)
+        _registroUiState.value = _registroUiState.value.copy(
+            empresa = _registroUiState.value.empresa.copy(id = codigo)
+        )
     }
 }

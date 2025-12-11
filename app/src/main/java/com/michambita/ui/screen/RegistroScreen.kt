@@ -57,14 +57,13 @@ fun RegistroScreen(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Multi-step registration form
         when (registroUiState.currentStep) {
             1 -> {
                 RegistroPaso1(
-                    name = registroUiState.name,
-                    email = registroUiState.email,
-                    password = registroUiState.password,
-                    confirmPassword = registroUiState.confirmPassword,
+                    name = registroUiState.usuario.name ?: "",
+                    email = registroUiState.usuario.email ?: "",
+                    password = registroUiState.usuario.password ?: "",
+                    confirmPassword = registroUiState.usuario.confirmPassword ?: "",
                     onNameChange = viewModel::updateNombre,
                     onEmailChange = viewModel::updateEmail,
                     onPasswordChange = viewModel::updatePassword,
@@ -75,17 +74,13 @@ fun RegistroScreen(
             2 -> {
                 RegistroPaso2(
                     empresaOption = registroUiState.empresaOption,
-                    empresaNombre = registroUiState.empresaNombre,
-                    empresaCodigo = registroUiState.empresaCodigo,
+                    empresaNombre = registroUiState.empresa.nombre,
+                    empresaCodigo = registroUiState.empresa.id ?: "",
                     onEmpresaOptionChange = viewModel::updateEmpresaOption,
                     onEmpresaNombreChange = viewModel::updateEmpresaNombre,
                     onEmpresaCodigoChange = viewModel::updateEmpresaCodigo,
                     onBack = { viewModel.updateCurrentStep(1) },
-                    onSubmit = { viewModel.register(
-                        registroUiState.name,
-                        registroUiState.email,
-                        registroUiState.password
-                    ) }
+                    onSubmit = { viewModel.register() }
                 )
             }
         }
