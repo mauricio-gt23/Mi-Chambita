@@ -25,8 +25,6 @@ fun RegistroScreen(
     val registroUiState by viewModel.registroUiState.collectAsStateWithLifecycle()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    var showError by remember { mutableStateOf(true) }
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -34,11 +32,11 @@ fun RegistroScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Title with step indicator
         Column {
             Text(
                 text = "Crear Cuenta",
-                style = MaterialTheme.typography.headlineMedium
+                style = MaterialTheme.typography.headlineMedium,
+                modifier = Modifier.align(Alignment.CenterHorizontally)
             )
             
             Spacer(modifier = Modifier.height(8.dp))
@@ -92,7 +90,6 @@ fun RegistroScreen(
         }
     }
 
-    // Handle UI states
     when (val state = uiState) {
         is UiState.Empty -> {}
         is UiState.Loading -> {
@@ -101,8 +98,8 @@ fun RegistroScreen(
         is UiState.Success -> {
             AlertModal(
                 modifier = Modifier,
-                title = state.data,
-                message = "",
+                title = "Registro exitoso",
+                message = state.data,
                 showDismissButton = false,
                 onConfirm = {
                     onRegistroSuccess()
@@ -114,8 +111,7 @@ fun RegistroScreen(
             ErrorDisplay(
                 modifier = Modifier,
                 errorMessage = state.message,
-                isVisible = showError,
-                onDismiss = { showError = false }
+                onDismiss = { viewModel.clearError() }
             )
         }
     }

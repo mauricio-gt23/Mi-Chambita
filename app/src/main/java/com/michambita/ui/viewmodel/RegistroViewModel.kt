@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.michambita.domain.model.Empresa
 import com.michambita.domain.model.User
-import com.michambita.domain.usecase.LoginUseCase
 import com.michambita.domain.usecase.RegisterUseCase
 import com.michambita.ui.common.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,7 +16,7 @@ data class RegistroUiState(
     val usuario: User = User(),
     val currentStep: Int = 1,
     val empresaOption: String = "crear",
-    val empresa: Empresa = Empresa(nombre = "", idUserAdm = 0L)
+    val empresa: Empresa = Empresa(nombre = "")
 )
 
 @HiltViewModel
@@ -36,15 +35,21 @@ class RegistroViewModel @Inject constructor(
             _uiState.value = UiState.Loading
 
             val usuario = _registroUiState.value.usuario
-            val result = registerUseCase.invoke(
-                usuario.name ?: "",
-                usuario.email ?: "",
-                usuario.password ?: ""
+            val empresaOption = _registroUiState.value.empresaOption
+            val empresa = _registroUiState.value.empresa
+            
+            val result = registerUseCase(
+                name = usuario.name ?: "",
+                email = usuario.email ?: "",
+                password = usuario.password ?: "",
+                empresaOption = empresaOption,
+                empresaNombre = if (empresaOption == "crear") empresa.nombre else null,
+                empresaCodigo = if (empresaOption == "asociar") empresa.id else null
             )
 
             _uiState.value = result.fold(
-                onSuccess = { UiState.Success("Registro exitoso") },
-                onFailure = { UiState.Error(it.message!!) }
+                onSuccess = { UiState.Success(it) },
+                onFailure = { UiState.Error(it.message ?: "Error desconocido") }
             )
         }
     }
@@ -91,5 +96,9 @@ class RegistroViewModel @Inject constructor(
         _registroUiState.value = _registroUiState.value.copy(
             empresa = _registroUiState.value.empresa.copy(id = codigo)
         )
+    }
+
+    fun clearError() {
+        _uiState.value = UiState.Empty
     }
 }

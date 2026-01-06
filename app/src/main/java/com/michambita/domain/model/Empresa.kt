@@ -5,13 +5,11 @@ import com.michambita.data.model.EmpresaModel
 data class Empresa(
     val id: String? = null,
     val nombre: String,
-    val descripcion: String? = "",
-    val idUserAdm: Long
+    val descripcion: String? = ""
 )
 
 fun Empresa.toModel() = EmpresaModel(
     id,
     nombre,
-    descripcion,
-    idUserAdm
+    descripcion
 )
