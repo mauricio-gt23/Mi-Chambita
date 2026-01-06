@@ -26,51 +26,48 @@ import androidx.compose.ui.unit.dp
 fun ErrorDisplay(
     modifier: Modifier = Modifier,
     errorMessage: String,
-    onDismiss: () -> Unit,
-    isVisible: Boolean
+    onDismiss: () -> Unit
 ) {
-    if (isVisible) {
-        Box(
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Card(
             modifier = modifier
-                .fillMaxSize()
+                .fillMaxWidth()
                 .padding(16.dp),
-            contentAlignment = Alignment.Center
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.errorContainer,
+                contentColor = MaterialTheme.colorScheme.onErrorContainer
+            )
         ) {
-            Card(
-                modifier = modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.errorContainer,
-                    contentColor = MaterialTheme.colorScheme.onErrorContainer
-                )
+            Column(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
             ) {
-                Column(
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.Error,
-                        contentDescription = "Error Icon"
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = "Error",
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = errorMessage,
-                        style = MaterialTheme.typography.bodyMedium,
-                        textAlign = TextAlign.Center
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                    TextButton(onClick = onDismiss) {
-                        Text("Ok")
-                    }
+                Icon(
+                    imageVector = Icons.Filled.Error,
+                    contentDescription = "Error Icon"
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = "Error",
+                    style = MaterialTheme.typography.titleMedium
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = errorMessage,
+                    style = MaterialTheme.typography.bodyMedium,
+                    textAlign = TextAlign.Center
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                TextButton(onClick = onDismiss) {
+                    Text("Ok")
                 }
             }
         }

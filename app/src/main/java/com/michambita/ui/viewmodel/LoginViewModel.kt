@@ -46,4 +46,8 @@ class LoginViewModel @Inject constructor(
     fun updatePassword(value: String) {
         _authUiState.value = _authUiState.value.copy(password = value)
     }
+
+    fun clearError() {
+        _uiState.value = UiState.Empty
+    }
 }

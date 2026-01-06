@@ -45,8 +45,6 @@ fun HomeScreen(
         skipPartiallyExpanded = true
     )
 
-    var showError by remember { mutableStateOf(true) }
-
     HomeContent(
         uiState = homeUiState,
         navController = navController,
@@ -114,8 +112,7 @@ fun HomeScreen(
             ErrorDisplay(
                 modifier = Modifier,
                 errorMessage = state.message,
-                isVisible = showError,
-                onDismiss = { showError = false }
+                onDismiss = { homeViewModel.clearUiState() }
             )
         }
     }

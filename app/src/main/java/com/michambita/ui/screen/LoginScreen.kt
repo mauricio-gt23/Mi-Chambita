@@ -24,8 +24,6 @@ fun LoginScreen(
     val authUiState by viewModel.authUiState.collectAsStateWithLifecycle()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    var showError by remember { mutableStateOf(true) }
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -78,8 +76,7 @@ fun LoginScreen(
             ErrorDisplay(
                 modifier = Modifier,
                 errorMessage = state.message,
-                isVisible = showError,
-                onDismiss = { showError = false }
+                onDismiss = { viewModel.clearError() }
             )
         }
     }
