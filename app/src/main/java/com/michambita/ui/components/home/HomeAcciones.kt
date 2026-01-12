@@ -59,6 +59,19 @@ fun HomeAcciones(
                 modifier = Modifier.weight(1f)
             )
         }
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            ActionButton(
+                "Estadisticas",
+                Icons.Filled.AttachMoney,
+                onClick = onProductosClick,
+                isSecondary = true,
+                modifier = Modifier.weight(1f)
+            )
+        }
     }
 }
 
