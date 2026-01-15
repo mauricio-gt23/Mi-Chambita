@@ -14,8 +14,6 @@ class AddMovimientoUseCase @Inject constructor(
     operator fun invoke(): Flow<List<Movimiento>> = movimientoRepository.getAllMovimientoPendientes()
 
     suspend operator fun invoke(movimiento: Movimiento): Result<Unit> {
-        val userId = authRepository.getCurrentUser().firstOrNull()
-        movimiento.userId = userId
-        return movimientoRepository.addMovimiento(movimiento)
+        return movimientoRepository.saveMovimientoLocally(movimiento)
     }
 }

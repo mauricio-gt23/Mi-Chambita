@@ -8,6 +8,7 @@ class UpdateMovimientoUseCase @Inject constructor(
     private val movimientoRepository: SynchronizationRepository,
 ) {
     suspend operator fun invoke(movimiento: Movimiento): Result<Unit> {
-        return movimientoRepository.updateMovimiento(movimiento)
+        val movimientoToUpdate = movimiento.copy(sincronizado = false)
+        return movimientoRepository.updateMovimiento(movimientoToUpdate)
     }
 }
