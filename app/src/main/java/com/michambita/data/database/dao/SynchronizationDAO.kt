@@ -30,5 +30,5 @@ interface SynchronizationDAO {
     suspend fun markAsSynchronized(ids: List<Long>)
 
     @Query("DELETE FROM movimiento WHERE sincronizado = 1 AND fecha_registro < :cutoffDate")
-    suspend fun deleteOldSynchronizedMovimientos(cutoffDate: Date)
+    suspend fun deleteOldSynchronizedMovimientos(cutoffDate: Long)
 }

@@ -67,7 +67,7 @@ class SynchronizationRepositoryImpl @Inject constructor(
         return try {
             val calendar = Calendar.getInstance()
             calendar.add(Calendar.DAY_OF_YEAR, -daysOld)
-            val cutoffDate = calendar.time
+            val cutoffDate = calendar.timeInMillis
             synchronizationDAO.deleteOldSynchronizedMovimientos(cutoffDate)
             Result.success(Unit)
         } catch (e: Exception) {
