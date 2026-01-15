@@ -13,4 +13,8 @@ interface SynchronizationRepository {
     suspend fun deleteMovimiento(movimiento: Movimiento): Result<Unit>
 
     suspend fun deleteAllMovimientoPendientes(): Result<Unit>
+
+    suspend fun markMultipleAsSynchronized(ids: List<Long>): Result<Unit>
+
+    suspend fun cleanOldSynchronizedMovimientos(daysOld: Int = 7): Result<Unit>
 }

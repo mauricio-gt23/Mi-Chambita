@@ -8,6 +8,7 @@ import com.michambita.domain.model.toDomain
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
+import java.util.Calendar
 
 class SynchronizationRepositoryImpl @Inject constructor(
     private val synchronizationDAO: SynchronizationDAO
@@ -47,6 +48,27 @@ class SynchronizationRepositoryImpl @Inject constructor(
     override suspend fun deleteAllMovimientoPendientes(): Result<Unit> {
         return try {
             synchronizationDAO.deleteAll()
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun markMultipleAsSynchronized(ids: List<Long>): Result<Unit> {
+        return try {
+            synchronizationDAO.markAsSynchronized(ids)
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun cleanOldSynchronizedMovimientos(daysOld: Int): Result<Unit> {
+        return try {
+            val calendar = Calendar.getInstance()
+            calendar.add(Calendar.DAY_OF_YEAR, -daysOld)
+            val cutoffDate = calendar.time
+            synchronizationDAO.deleteOldSynchronizedMovimientos(cutoffDate)
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
