@@ -30,7 +30,10 @@ fun EncabezadoHistorial(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text("Movimientos por sincronizar", style = MaterialTheme.typography.titleMedium)
+        Text(
+            "Movimientos por sincronizar (${movimientosPendientes.size})",
+            style = MaterialTheme.typography.titleMedium
+        )
         TextButton(onClick = onSincronizarMovimiento, enabled = isValid) {
             Icon(Icons.Default.Sync, contentDescription = null)
             Spacer(modifier = Modifier.width(4.dp))
