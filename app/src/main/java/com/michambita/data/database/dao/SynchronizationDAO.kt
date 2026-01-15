@@ -25,4 +25,10 @@ interface SynchronizationDAO {
 
     @Query("DELETE FROM movimiento")
     suspend fun deleteAll()
+
+    @Query("UPDATE movimiento SET sincronizado = 1 WHERE id IN (:ids)")
+    suspend fun markAsSynchronized(ids: List<Long>)
+
+    @Query("DELETE FROM movimiento WHERE sincronizado = 1 AND fecha_registro < :cutoffDate")
+    suspend fun deleteOldSynchronizedMovimientos(cutoffDate: Date)
 }
