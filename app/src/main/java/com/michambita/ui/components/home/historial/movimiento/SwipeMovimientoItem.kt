@@ -33,6 +33,13 @@ fun SwipeMovimientoItem(
     onEditar: (Movimiento) -> Unit,
     onEliminar: (Movimiento) -> Unit,
 ) {
+    // Si está sincronizado, solo mostrar sin swipe
+    if (movimiento.sincronizado) {
+        MovimientoItem(movimiento)
+        return
+    }
+    
+    // Si NO está sincronizado, permitir swipe
     val scope = rememberCoroutineScope()
     var pendingReset by remember { mutableStateOf(false) }
     val dismissState = rememberSwipeToDismissBoxState(
