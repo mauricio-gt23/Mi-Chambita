@@ -80,8 +80,7 @@ fun MovimientoSheet(
                         onMovimientoChange(m.copy(monto = nuevoMonto))
                     },
                     onItemsChange = { nuevosItems ->
-                        val total =
-                            nuevosItems.fold(BigDecimal.ZERO) { acc, it -> acc + it.precioTotal }
+                        val total = nuevosItems.fold(BigDecimal.ZERO) { acc, it -> acc + it.precioTotal }
                         onMovimientoChange(m.copy(items = nuevosItems, monto = total))
                     },
                     modoOperacion = modoOperacion,
@@ -196,9 +195,8 @@ private fun VentaDetalleSection(
 
         LaunchedEffect(Unit) {
             if (itemsIniciales.isNotEmpty()) {
-                val total =
-                    itemsIniciales.fold(BigDecimal.ZERO) { acc, item -> acc + item.precioTotal }
-                onMontoChange(total.toPlainString())
+                val total = itemsIniciales.fold(BigDecimal.ZERO) { acc, item -> acc + item.precioTotal }
+                onMontoChange(total.toString())
             }
         }
 
@@ -287,7 +285,7 @@ private fun VentaDetalleSection(
                             val total = itemsVenta.fold(BigDecimal.ZERO) { acc, item ->
                                 acc + item.precioTotal
                             }
-                            onMontoChange(total.toPlainString())
+                            onMontoChange(total.toString())
                             cantidad = ""
                             onItemsChange(itemsVenta)
                         }
@@ -372,9 +370,8 @@ private fun VentaDetalleList(
                             if (index in 0 until updated.size) {
                                 updated.removeAt(index)
                                 onItemsUpdate(updated)
-                                val total =
-                                    updated.fold(BigDecimal.ZERO) { acc, it2 -> acc + it2.precioTotal }
-                                onMontoChange(total.toPlainString())
+                                val total = updated.fold(BigDecimal.ZERO) { acc, it2 -> acc + it2.precioTotal }
+                                onMontoChange(total.toString())
                             }
                         }) {
                             Icon(Icons.Default.Delete, contentDescription = null)

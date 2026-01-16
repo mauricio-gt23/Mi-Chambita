@@ -52,7 +52,7 @@ fun HomeAcciones(
                 modifier = Modifier.weight(1f)
             )
             ActionButton(
-                "Ver Inventario", 
+                "Inventario",
                 Icons.Filled.Inventory, 
                 onClick = onInventarioClick, 
                 isSecondary = true,
@@ -95,7 +95,7 @@ fun ActionButton(
         shape = MaterialTheme.shapes.medium
     ) {
         Icon(icon, contentDescription = null)
-        Spacer(modifier = Modifier.width(8.dp))
+        Spacer(modifier = Modifier.width(4.dp))
         Text(text, fontSize = 16.sp)
     }
 }

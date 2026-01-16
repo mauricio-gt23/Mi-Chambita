@@ -1,14 +1,13 @@
 import com.michambita.domain.model.MovimientoItem
-import java.math.BigDecimal
 
 data class MovimientoItemModel(
     val productoId: String = "",
     val cantidad: Int = 0,
-    val precioTotal: BigDecimal = BigDecimal.ZERO
+    val precioTotal: Double = 0.0
 )
 
 fun MovimientoItem.toModel() = MovimientoItemModel(
     productoId,
     cantidad,
-    precioTotal
+    precioTotal.toDouble()
 )

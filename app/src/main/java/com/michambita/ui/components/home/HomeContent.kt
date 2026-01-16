@@ -21,7 +21,7 @@ fun HomeContent(
     uiState: HomeUiState,
     navController: NavController,
     modifier: Modifier = Modifier,
-    movimientosPendientes: List<Movimiento>,
+    movimientos: List<Movimiento>,
     onRegistrarVenta: () -> Unit,
     onRegistrarGasto: () -> Unit,
     onEditarMovimiento: (Movimiento) -> Unit,
@@ -45,9 +45,9 @@ fun HomeContent(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        EncabezadoHistorial(modifier, movimientosPendientes, onSincronizarMovimiento)
+        EncabezadoHistorial(modifier, movimientos, onSincronizarMovimiento)
         MovimientoHistorial(
-            movimientosPendientes = movimientosPendientes,
+            movimientos = movimientos,
             onEditarMovimiento = onEditarMovimiento,
             onEliminarMovimiento = onEliminarMovimiento,
             isInitialLoading = uiState.isInitialLoading

@@ -14,6 +14,10 @@ class SynchronizationRepositoryImpl @Inject constructor(
     private val synchronizationDAO: SynchronizationDAO
 ) : SynchronizationRepository {
 
+    override fun getAllMovimientos(): Flow<List<Movimiento>> {
+        return synchronizationDAO.findAll().map { list -> list.map { it.toDomain() } }
+    }
+
     override fun getAllMovimientoPendientes(): Flow<List<Movimiento>> {
         return synchronizationDAO.findAllBySincronizado(false).map{list -> list.map { it.toDomain() } }
     }

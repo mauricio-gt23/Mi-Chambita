@@ -12,5 +12,5 @@ data class MovimientoItem(
 fun MovimientoItemModel.toDomain() = MovimientoItem(
     productoId,
     cantidad,
-    precioTotal
+    precioTotal.toBigDecimal()
 )

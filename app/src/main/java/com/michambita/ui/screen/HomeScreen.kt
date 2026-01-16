@@ -30,7 +30,7 @@ fun HomeScreen(
 ) {
     val uiState by homeViewModel.uiState.collectAsStateWithLifecycle()
     val homeUiState by homeViewModel.homeUiState.collectAsStateWithLifecycle()
-    val movimientos by homeViewModel.movimientos.collectAsStateWithLifecycle()
+    val movimientosHoy by homeViewModel.movimientos.collectAsStateWithLifecycle()
 
     val movimientoUiState by movimientoViewModel.uiState.collectAsStateWithLifecycle()
 
@@ -49,7 +49,7 @@ fun HomeScreen(
         uiState = homeUiState,
         navController = navController,
         modifier = Modifier,
-        movimientosPendientes = movimientos,
+        movimientos = movimientosHoy,
         onRegistrarVenta = {
             movimientoViewModel.onRegistrarVenta()
             homeViewModel.showBottomSheet()

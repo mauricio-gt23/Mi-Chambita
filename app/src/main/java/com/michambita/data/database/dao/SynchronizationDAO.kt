@@ -11,6 +11,9 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface SynchronizationDAO {
 
+    @Query("SELECT * FROM movimiento")
+    fun findAll(): Flow<List<MovimientoEntity>>
+
     @Query("SELECT * FROM movimiento WHERE sincronizado = :estado")
     fun findAllBySincronizado(estado: Boolean): Flow<List<MovimientoEntity>>
 

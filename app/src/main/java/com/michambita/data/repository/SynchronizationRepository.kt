@@ -4,6 +4,8 @@ import com.michambita.domain.model.Movimiento
 import kotlinx.coroutines.flow.Flow
 
 interface SynchronizationRepository {
+    fun getAllMovimientos(): Flow<List<Movimiento>>
+    
     fun getAllMovimientoPendientes() : Flow<List<Movimiento>>
 
     suspend fun addMovimiento(movimiento: Movimiento): Result<Unit>

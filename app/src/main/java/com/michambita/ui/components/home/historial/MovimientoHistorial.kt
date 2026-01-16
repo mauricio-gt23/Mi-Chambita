@@ -16,7 +16,7 @@ import com.michambita.utils.DateUtils
 
 @Composable
 fun MovimientoHistorial(
-    movimientosPendientes: List<Movimiento>,
+    movimientos: List<Movimiento>,
     onEditarMovimiento: (Movimiento) -> Unit,
     onEliminarMovimiento: (Movimiento) -> Unit,
     isInitialLoading: Boolean,
@@ -25,7 +25,7 @@ fun MovimientoHistorial(
     val spinnerVisible = isInitialLoading
     
     // Filtrar solo movimientos de hoy
-    val movimientosHoy = movimientosPendientes
+    val movimientosHoy = movimientos
         .filter { DateUtils.isToday(it.fechaRegistro) }
         .sortedByDescending { it.fechaRegistro.time }
 
