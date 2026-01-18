@@ -10,9 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.michambita.domain.model.Movimiento
 import com.michambita.ui.components.home.historial.movimiento.SwipeMovimientoItem
-import com.michambita.utils.DateUtils
 
- 
 
 @Composable
 fun MovimientoHistorial(
@@ -22,13 +20,6 @@ fun MovimientoHistorial(
     isInitialLoading: Boolean,
     modifier: Modifier = Modifier
 ) {
-    val spinnerVisible = isInitialLoading
-    
-    // Filtrar solo movimientos de hoy
-    val movimientosHoy = movimientos
-        .filter { DateUtils.isToday(it.fechaRegistro) }
-        .sortedByDescending { it.fechaRegistro.time }
-
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -42,7 +33,7 @@ fun MovimientoHistorial(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            if (spinnerVisible) {
+            if (isInitialLoading) {
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
@@ -58,7 +49,7 @@ fun MovimientoHistorial(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     items(
-                        items = movimientosHoy,
+                        items = movimientos,
                         key = { it.hashCode() }
                     ) { movimiento ->
                         SwipeMovimientoItem(

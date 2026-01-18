@@ -15,6 +15,7 @@ import com.michambita.navigation.Screen
 import com.michambita.ui.components.home.historial.EncabezadoHistorial
 import com.michambita.ui.components.home.historial.MovimientoHistorial
 import com.michambita.ui.viewmodel.HomeUiState
+import com.michambita.utils.DateUtils
 
 @Composable
 fun HomeContent(
@@ -28,6 +29,10 @@ fun HomeContent(
     onEliminarMovimiento: (Movimiento) -> Unit,
     onSincronizarMovimiento: () -> Unit
 ) {
+    val movimientosHoy = movimientos
+        .filter { DateUtils.isToday(it.fechaRegistro) }
+        .sortedByDescending { it.fechaRegistro.time }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -43,11 +48,11 @@ fun HomeContent(
             onInventarioClick = { navController.navigate(Screen.Inventario.route) }
         )
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
-        EncabezadoHistorial(modifier, movimientos, onSincronizarMovimiento)
+        EncabezadoHistorial(modifier, movimientosHoy, onSincronizarMovimiento)
         MovimientoHistorial(
-            movimientos = movimientos,
+            movimientos = movimientosHoy,
             onEditarMovimiento = onEditarMovimiento,
             onEliminarMovimiento = onEliminarMovimiento,
             isInitialLoading = uiState.isInitialLoading
