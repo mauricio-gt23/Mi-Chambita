@@ -1,4 +1,5 @@
 pluginManagement {
+    includeBuild("build-logic")
     repositories {
         google()
         gradlePluginPortal()
@@ -16,3 +17,12 @@ dependencyResolutionManagement {
 
 rootProject.name = "MiChambita"
 include(":app")
+include(":core:domain")
+include(":core:common")
+include(":core:data")
+include(":core:ui")
+include(":router")
+include(":feature:auth")
+include(":feature:home")
+include(":feature:producto")
+include(":feature:inventario")
