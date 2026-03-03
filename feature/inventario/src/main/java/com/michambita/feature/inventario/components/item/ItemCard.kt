@@ -1,0 +1,79 @@
+package com.michambita.feature.inventario.components.item
+
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.clickable
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Inventory2
+import androidx.compose.material.icons.filled.Straighten
+import androidx.compose.material3.AssistChip
+import androidx.compose.material3.AssistChipDefaults
+import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import com.michambita.core.domain.model.Producto
+import com.michambita.core.domain.enums.EnumTipoProducto
+
+@Composable
+fun ItemCard(
+    producto: Producto,
+    onRequestEditStock: (Producto) -> Unit,
+    onOpenEditProduct: (Producto) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    ElevatedCard(modifier = modifier.clickable { onOpenEditProduct(producto) }) {
+        Column(modifier = Modifier.padding(12.dp)) {
+            Text(
+                text = producto.nombre,
+                style = MaterialTheme.typography.titleMedium,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+            Spacer(Modifier.height(4.dp))
+            Text(
+                text = "$${producto.precio}",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Spacer(Modifier.height(8.dp))
+            when (producto.tipoProducto) {
+                EnumTipoProducto.INVENTARIABLE -> {
+                    Row {
+                        AssistChip(
+                            onClick = { onRequestEditStock(producto) },
+                            label = { Text("Stock: ${(producto.stock ?: 0)}") },
+                            leadingIcon = { Icon(Icons.Rounded.Inventory2, contentDescription = null) },
+                            colors = AssistChipDefaults.assistChipColors(
+                                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                                labelColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                                leadingIconContentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                            )
+                        )
+                        
+                    }
+                }
+                EnumTipoProducto.NO_INVENTARIABLE -> {
+                    AssistChip(
+                        onClick = {},
+                        label = { Text("Unidad medida: ${producto.unidadMedida.ifBlank { "Sin unidad" }}") },
+                        leadingIcon = { Icon(Icons.Filled.Straighten, contentDescription = null) },
+                        colors = AssistChipDefaults.assistChipColors(
+                            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                            labelColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                            leadingIconContentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                        )
+                    )
+                }
+                EnumTipoProducto.SERVICIO -> {}
+            }
+        }
+    }
+}
