@@ -4,7 +4,6 @@ plugins {
     alias(libs.plugins.kotlin.kapt)
     alias(libs.plugins.hilt)
     alias(libs.plugins.google.services)
-    alias(libs.plugins.androidx.room)
 }
 
 android {
@@ -51,62 +50,49 @@ android {
     packaging {
         resources.excludes += "/META-INF/{AL2.0,LGPL2.1}"
     }
-
-    room {
-        schemaDirectory("$projectDir/schemas")
-    }
 }
 
 dependencies {
+    // Module dependencies
+    implementation(project(":core:domain"))
+    implementation(project(":core:common"))
+    implementation(project(":core:data"))
+    implementation(project(":core:ui"))
+    implementation(project(":router"))
+    implementation(project(":feature:auth"))
+    implementation(project(":feature:home"))
+    implementation(project(":feature:producto"))
+    implementation(project(":feature:inventario"))
+
     // Compose BOM
     implementation(platform(libs.androidx.compose.bom))
 
     // Jetpack Compose
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-tooling-preview")
-    implementation("androidx.compose.ui:ui-text")
     implementation("androidx.compose.material3:material3")
     implementation("androidx.navigation:navigation-compose")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose")
     implementation("androidx.activity:activity-compose")
-    implementation(libs.androidx.material.icons.extended)
 
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.runtime.compose)
-
-    // Room
-    implementation(libs.androidx.room.runtime)
-    implementation(libs.androidx.room.ktx)
-    kapt(libs.androidx.room.compiler)
-
-    // DataStore
-    implementation(libs.androidx.datastore)
 
     // Hilt
     implementation(libs.dagger.hilt.android)
     kapt(libs.dagger.hilt.compiler)
     implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
 
-    // Firebase
-    implementation(libs.firebase.storage)
-    implementation(libs.firebase.auth)
-    implementation(libs.firebase.firestore)
-
-    // Coil (imagery)
-    implementation(libs.coil)
-    implementation(libs.coil.compose)
-
-    // Retrofit (preparado para futuro backend)
-    implementation(libs.retrofit)
-    implementation(libs.retrofit.gson)
-
-    // ThreeTenABP
-    implementation(libs.threetenabp)
-
     // WorkManager
     implementation(libs.androidx.work.runtime)
     implementation(libs.androidx.hilt.work)
     kapt(libs.androidx.hilt.compiler)
+
+    // ThreeTenABP
+    implementation(libs.threetenabp)
+
+    // Firebase
+    implementation(libs.firebase.auth)
 
     // Testing
     testImplementation("junit:junit:4.13.2")

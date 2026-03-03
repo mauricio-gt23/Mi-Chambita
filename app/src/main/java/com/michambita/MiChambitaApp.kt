@@ -4,7 +4,7 @@ import android.app.Application
 import androidx.work.*
 import com.google.firebase.FirebaseApp
 import com.jakewharton.threetenabp.AndroidThreeTen
-import com.michambita.worker.SyncMovimientosWorker
+import com.michambita.core.data.worker.SyncMovimientosWorker
 import dagger.hilt.android.HiltAndroidApp
 import java.util.Calendar
 import java.util.concurrent.TimeUnit
