@@ -12,7 +12,8 @@ import androidx.navigation.NavController
 import com.michambita.feature.home.components.HomeContent
 import com.michambita.feature.home.components.historial.movimiento.MovimientoSheet
 import com.michambita.feature.home.viewmodel.HomeViewModel
-import com.michambita.feature.inventario.viewmodel.InventarioViewModel
+import com.michambita.feature.inventario.intentmodel.InventarioIntent
+import com.michambita.feature.inventario.intentmodel.InventarioIntentModel
 import com.michambita.core.common.UiState
 import com.michambita.core.domain.model.Producto
 import com.michambita.feature.producto.viewmodel.MovimientoViewModel
@@ -25,7 +26,7 @@ import com.michambita.core.ui.components.widget.LoadingOverlay
 fun HomeScreen(
     navController: NavController,
     homeViewModel: HomeViewModel = hiltViewModel(),
-    inventarioViewModel: InventarioViewModel = hiltViewModel(),
+    inventarioIntentModel: InventarioIntentModel = hiltViewModel(),
     movimientoViewModel: MovimientoViewModel = hiltViewModel()
 ) {
     val uiState by homeViewModel.uiState.collectAsStateWithLifecycle()
@@ -34,12 +35,9 @@ fun HomeScreen(
 
     val movimientoUiState by movimientoViewModel.uiState.collectAsStateWithLifecycle()
 
-    val uiStateProductos by inventarioViewModel.uiStateGetAllProducto.collectAsStateWithLifecycle()
-    LaunchedEffect(Unit) { inventarioViewModel.getAllProducto() }
-    val productos: List<Producto> = when (val s = uiStateProductos) {
-        is UiState.Success -> s.data
-        else -> emptyList()
-    }
+    val inventarioState by inventarioIntentModel.uiState.collectAsStateWithLifecycle()
+    LaunchedEffect(Unit) { inventarioIntentModel.sendIntent(InventarioIntent.LoadProductos) }
+    val productos: List<Producto> = inventarioState.productos
 
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
