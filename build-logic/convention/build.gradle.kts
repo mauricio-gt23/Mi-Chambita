@@ -9,6 +9,10 @@ dependencies {
 
 gradlePlugin {
     plugins {
+        register("androidApplication") {
+            id = "michambita.android.application"
+            implementationClass = "AndroidApplicationConventionPlugin"
+        }
         register("kotlinLibrary") {
             id = "michambita.kotlin.library"
             implementationClass = "KotlinLibraryConventionPlugin"
