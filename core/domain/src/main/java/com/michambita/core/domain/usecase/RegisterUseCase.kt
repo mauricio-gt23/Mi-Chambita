@@ -59,7 +59,7 @@ constructor(
 
                 empresaId = saveResult.getOrNull()!!
                 isAdmin = true
-                resolvedBusinessType = businessType
+                resolvedBusinessType = businessType!!
             }
 
             "asociar" -> {

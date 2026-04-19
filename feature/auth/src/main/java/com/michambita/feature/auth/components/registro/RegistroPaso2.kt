@@ -39,6 +39,8 @@ fun RegistroPaso2(
         empresaCodigo.isNotBlank()
     }
 
+    val submitLabel = if (empresaOption == "crear") "Continuar" else "Registrarse"
+
     var empresaNombreWasFocused by remember { mutableStateOf(false) }
     var empresaCodigoWasFocused by remember { mutableStateOf(false) }
     var empresaNombreShowError by remember { mutableStateOf(false) }
@@ -133,7 +135,7 @@ fun RegistroPaso2(
             enabled = step2Valid,
             modifier = Modifier.weight(1f)
         ) {
-            Text("Registrarse")
+            Text(submitLabel)
         }
     }
 }
