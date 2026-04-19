@@ -2,6 +2,8 @@ package com.michambita.feature.auth.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.michambita.core.domain.motor.BusinessTypeProvider
+import com.michambita.core.domain.enums.BusinessType
 import com.michambita.core.domain.model.Empresa
 import com.michambita.core.domain.model.User
 import com.michambita.core.domain.usecase.RegisterUseCase
@@ -16,12 +18,14 @@ data class RegistroUiState(
     val usuario: User = User(),
     val currentStep: Int = 1,
     val empresaOption: String = "crear",
-    val empresa: Empresa = Empresa(nombre = "")
+    val empresa: Empresa = Empresa(nombre = ""),
+    val businessType: BusinessType? = null
 )
 
 @HiltViewModel
 class RegistroViewModel @Inject constructor(
-    private val registerUseCase: RegisterUseCase
+    private val registerUseCase: RegisterUseCase,
+    private val businessTypeProvider: BusinessTypeProvider
 ) : ViewModel() {
 
     private val _registroUiState = MutableStateFlow(RegistroUiState())
@@ -30,26 +34,39 @@ class RegistroViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<UiState<String>>(UiState.Empty)
     val uiState: StateFlow<UiState<String>> = _uiState
 
+    /**
+     * Returns the total number of steps based on the empresa option.
+     */
+    val totalSteps: Int
+        get() = if (_registroUiState.value.empresaOption == "crear") 3 else 2
+
     fun register() {
         viewModelScope.launch {
             _uiState.value = UiState.Loading
 
-            val usuario = _registroUiState.value.usuario
-            val empresaOption = _registroUiState.value.empresaOption
-            val empresa = _registroUiState.value.empresa
-            
+            val state = _registroUiState.value
+            val usuario = state.usuario
+            val empresaOption = state.empresaOption
+            val empresa = state.empresa
+
             val result = registerUseCase(
                 name = usuario.name ?: "",
                 email = usuario.email ?: "",
                 password = usuario.password ?: "",
                 empresaOption = empresaOption,
                 empresaNombre = if (empresaOption == "crear") empresa.nombre else null,
-                empresaCodigo = if (empresaOption == "asociar") empresa.id else null
+                empresaCodigo = if (empresaOption == "asociar") empresa.id else null,
+                businessType = if (empresaOption == "crear") state.businessType else null
             )
 
-            _uiState.value = result.fold(
-                onSuccess = { UiState.Success(it) },
-                onFailure = { UiState.Error(it.message ?: "Error desconocido") }
+            result.fold(
+                onSuccess = { registerResult ->
+                    businessTypeProvider.saveBusinessType(registerResult.businessType)
+                    _uiState.value = UiState.Success(registerResult.message)
+                },
+                onFailure = { error ->
+                    _uiState.value = UiState.Error(error.message ?: "Error desconocido")
+                }
             )
         }
     }
@@ -96,6 +113,10 @@ class RegistroViewModel @Inject constructor(
         _registroUiState.value = _registroUiState.value.copy(
             empresa = _registroUiState.value.empresa.copy(id = codigo)
         )
+    }
+
+    fun updateBusinessType(type: BusinessType) {
+        _registroUiState.value = _registroUiState.value.copy(businessType = type)
     }
 
     fun clearError() {

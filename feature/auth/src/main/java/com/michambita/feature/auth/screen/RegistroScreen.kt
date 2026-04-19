@@ -12,6 +12,7 @@ import com.michambita.feature.auth.viewmodel.RegistroViewModel
 import com.michambita.core.common.UiState
 import com.michambita.feature.auth.components.registro.RegistroPaso1
 import com.michambita.feature.auth.components.registro.RegistroPaso2
+import com.michambita.feature.auth.components.registro.RegistroPaso3
 import com.michambita.core.ui.components.widget.AlertModal
 import com.michambita.core.ui.components.widget.ErrorDisplay
 import com.michambita.core.ui.components.widget.LoadingOverlay
@@ -24,6 +25,8 @@ fun RegistroScreen(
 ) {
     val registroUiState by viewModel.registroUiState.collectAsStateWithLifecycle()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    val totalSteps = viewModel.totalSteps
 
     Column(
         modifier = Modifier
@@ -46,7 +49,7 @@ fun RegistroScreen(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = "Paso ${registroUiState.currentStep} de 2",
+                    text = "Paso ${registroUiState.currentStep} de $totalSteps",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.primary
                 )
@@ -78,6 +81,20 @@ fun RegistroScreen(
                     onEmpresaNombreChange = viewModel::updateEmpresaNombre,
                     onEmpresaCodigoChange = viewModel::updateEmpresaCodigo,
                     onBack = { viewModel.updateCurrentStep(1) },
+                    onSubmit = {
+                        if (registroUiState.empresaOption == "crear") {
+                            viewModel.updateCurrentStep(3)
+                        } else {
+                            viewModel.register()
+                        }
+                    }
+                )
+            }
+            3 -> {
+                RegistroPaso3(
+                    selectedBusinessType = registroUiState.businessType,
+                    onBusinessTypeSelected = viewModel::updateBusinessType,
+                    onBack = { viewModel.updateCurrentStep(2) },
                     onSubmit = { viewModel.register() }
                 )
             }

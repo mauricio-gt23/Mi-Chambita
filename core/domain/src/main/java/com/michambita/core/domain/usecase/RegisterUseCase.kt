@@ -1,11 +1,20 @@
 package com.michambita.core.domain.usecase
 
+import com.michambita.core.domain.enums.BusinessType
 import com.michambita.core.domain.model.Empresa
 import com.michambita.core.domain.repository.AuthRepository
 import com.michambita.core.domain.repository.EmpresaRepository
 import javax.inject.Inject
 
-class RegisterUseCase @Inject constructor(
+/**
+ * Result of a registration operation. Contains the success message and the resolved BusinessType
+ * (either from the created empresa or from the joined empresa).
+ */
+data class RegisterResult(val message: String, val businessType: BusinessType)
+
+class RegisterUseCase
+@Inject
+constructor(
     private val authRepository: AuthRepository,
     private val empresaRepository: EmpresaRepository
 ) {
@@ -16,11 +25,13 @@ class RegisterUseCase @Inject constructor(
         password: String,
         empresaOption: String,
         empresaNombre: String? = null,
-        empresaCodigo: String? = null
-    ): Result<String> {
+        empresaCodigo: String? = null,
+        businessType: BusinessType? = null
+    ): Result<RegisterResult> {
 
         var empresaId: String
         var isAdmin: Boolean
+        var resolvedBusinessType: BusinessType
 
         val emailExists = authRepository.checkEmailExists(email).getOrNull()
         if (emailExists == true) {
@@ -35,10 +46,12 @@ class RegisterUseCase @Inject constructor(
                     return Result.failure(Exception("Ya existe una empresa con ese nombre"))
                 }
 
-                val nuevaEmpresa = Empresa(
-                    nombre = nombreTrimmed,
-                    descripcion = ""
-                )
+                val nuevaEmpresa =
+                    Empresa(
+                        nombre = nombreTrimmed,
+                        descripcion = "",
+                        businessType = businessType
+                    )
                 val saveResult = empresaRepository.saveEmpresa(nuevaEmpresa)
                 if (saveResult.isFailure) {
                     return Result.failure(saveResult.exceptionOrNull() ?: Exception("Error al crear la empresa"))
@@ -46,14 +59,23 @@ class RegisterUseCase @Inject constructor(
 
                 empresaId = saveResult.getOrNull()!!
                 isAdmin = true
+                resolvedBusinessType = businessType
             }
+
             "asociar" -> {
-                val empresa = empresaRepository.getEmpresaById(empresaCodigo!!).getOrNull()
-                    ?: return Result.failure(Exception("No existe una empresa con ese código"))
+                val empresa =
+                    empresaRepository.getEmpresaById(empresaCodigo!!).getOrNull()
+                        ?: return Result.failure(
+                            Exception("No existe una empresa con ese código")
+                        )
 
                 empresaId = empresa.id!!
                 isAdmin = false
+                resolvedBusinessType = empresa.businessType ?: return Result.failure(
+                    Exception("La empresa no tiene un tipo de negocio configurado")
+                )
             }
+
             else -> {
                 return Result.failure(Exception("Opción de empresa inválida"))
             }
@@ -68,13 +90,15 @@ class RegisterUseCase @Inject constructor(
         )
 
         return if (registerResult.isSuccess) {
-            when (empresaOption) {
-                "crear" -> Result.success("El código identificador de su empresa es $empresaId")
-                "asociar" -> Result.success("Se asoció a la empresa correctamente")
-                else -> Result.failure(Exception("Opción de empresa inválida"))
-            }
+            val message =
+                when (empresaOption) {
+                    "crear" -> "El código identificador de su empresa es $empresaId"
+                    "asociar" -> "Se asoció a la empresa correctamente"
+                    else -> ""
+                }
+            Result.success(RegisterResult(message = message, businessType = resolvedBusinessType))
         } else {
-            registerResult
+            Result.failure(registerResult.exceptionOrNull() ?: Exception("Error en el registro"))
         }
     }
 }
