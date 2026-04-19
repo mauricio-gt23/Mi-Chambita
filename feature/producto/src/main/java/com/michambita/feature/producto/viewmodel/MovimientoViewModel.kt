@@ -21,7 +21,7 @@ import javax.inject.Inject
 data class MovimientoUiState(
         val modoOperacion: EnumModoOperacion = EnumModoOperacion.REGISTRAR,
         val movimientoRegEdit: Movimiento? = null,
-        val tipoMovimiento: EnumTipoMovimiento = EnumTipoMovimiento.VENTA
+        val tipoMovimiento: EnumTipoMovimiento = EnumTipoMovimiento.INCOME
 )
 
 @HiltViewModel
@@ -37,12 +37,12 @@ class MovimientoViewModel @Inject constructor(
     fun onRegistrarVenta() {
         _uiState.update {
             it.copy(
-                tipoMovimiento = EnumTipoMovimiento.VENTA,
+                tipoMovimiento = EnumTipoMovimiento.INCOME,
                 modoOperacion = EnumModoOperacion.REGISTRAR,
                 movimientoRegEdit = Movimiento(
                     descripcion = "",
                     monto = BigDecimal.ZERO,
-                    tipoMovimiento = EnumTipoMovimiento.VENTA,
+                    tipoMovimiento = EnumTipoMovimiento.INCOME,
                     esMovimientoRapido = true
                 )
             )
@@ -52,12 +52,12 @@ class MovimientoViewModel @Inject constructor(
     fun onRegistrarGasto() {
         _uiState.update {
             it.copy(
-                tipoMovimiento = EnumTipoMovimiento.GASTO,
+                tipoMovimiento = EnumTipoMovimiento.EXPENSE,
                 modoOperacion = EnumModoOperacion.REGISTRAR,
                 movimientoRegEdit = Movimiento(
                     descripcion = "",
                     monto = BigDecimal.ZERO,
-                    tipoMovimiento = EnumTipoMovimiento.GASTO,
+                    tipoMovimiento = EnumTipoMovimiento.EXPENSE,
                     esMovimientoRapido = true
                 )
             )

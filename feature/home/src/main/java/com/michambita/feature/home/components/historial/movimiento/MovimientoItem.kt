@@ -33,9 +33,9 @@ import com.michambita.core.domain.enums.EnumTipoMovimiento
 fun MovimientoItem(
     movimiento: Movimiento,
 ) {
-    val esVenta = movimiento.tipoMovimiento == EnumTipoMovimiento.VENTA
-    val color = if (esVenta) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
-    val icon = if (esVenta) Icons.Filled.PointOfSale else Icons.Filled.Receipt
+    val isIncome = movimiento.tipoMovimiento == EnumTipoMovimiento.INCOME
+    val color = if (isIncome) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
+    val icon = if (isIncome) Icons.Filled.PointOfSale else Icons.Filled.Receipt
     
     // Colores de estado de sincronización
     val estadoColor = if (movimiento.sincronizado) 

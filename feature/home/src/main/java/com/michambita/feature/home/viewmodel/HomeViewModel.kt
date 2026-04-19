@@ -94,18 +94,18 @@ class HomeViewModel @Inject constructor(
     private fun actualizarResumen(movimientos: List<Movimiento>) {
         val movimientosHoy = movimientos.filter { DateUtils.isToday(it.fechaRegistro) }
 
-        val totalVentas = movimientosHoy
-            .filter { it.tipoMovimiento == EnumTipoMovimiento.VENTA }
+        val totalIncome = movimientosHoy
+            .filter { it.tipoMovimiento == EnumTipoMovimiento.INCOME }
             .sumOf { it.monto }
 
-        val totalGastos = movimientosHoy
-            .filter { it.tipoMovimiento == EnumTipoMovimiento.GASTO }
+        val totalExpense = movimientosHoy
+            .filter { it.tipoMovimiento == EnumTipoMovimiento.EXPENSE }
             .sumOf { it.monto }
 
         _homeUiState.update { currentState ->
             currentState.copy(
-                ventas = "S/ ${totalVentas.toPlainString()}",
-                gastos = "S/ ${totalGastos.toPlainString()}"
+                ventas = "S/ ${totalIncome.toPlainString()}",
+                gastos = "S/ ${totalExpense.toPlainString()}"
             )
         }
     }

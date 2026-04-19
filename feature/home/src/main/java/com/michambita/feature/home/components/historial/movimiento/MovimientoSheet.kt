@@ -38,14 +38,14 @@ fun MovimientoSheet(
     val m = movimiento ?: Movimiento(
         descripcion = "",
         monto = BigDecimal.ZERO,
-        tipoMovimiento = EnumTipoMovimiento.VENTA,
+        tipoMovimiento = EnumTipoMovimiento.INCOME,
         esMovimientoRapido = true,
         items = emptyList()
     )
 
     val tipoOperacion = m.tipoMovimiento
 
-    val showDetalleVenta = tipoOperacion == EnumTipoMovimiento.VENTA && !m.esMovimientoRapido
+    val showDetalleVenta = tipoOperacion == EnumTipoMovimiento.INCOME && !m.esMovimientoRapido
 
     val heighSheet = if (showDetalleVenta)  Modifier.fillMaxHeight(0.9f)   else Modifier.height(320.dp)
 
@@ -116,20 +116,20 @@ private fun HeaderRow(
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(
-                imageVector = if (tipoOperacion == EnumTipoMovimiento.VENTA) Icons.Default.PointOfSale else Icons.Default.MoneyOff,
+                imageVector = if (tipoOperacion == EnumTipoMovimiento.INCOME) Icons.Default.PointOfSale else Icons.Default.MoneyOff,
                 contentDescription = null
             )
             Spacer(Modifier.width(8.dp))
             Text(
                 text = if (modoOperacion == EnumModoOperacion.REGISTRAR) {
-                    if (tipoOperacion == EnumTipoMovimiento.VENTA) "Registrar Venta" else "Registrar Gasto"
+                    if (tipoOperacion == EnumTipoMovimiento.INCOME) "Registrar Venta" else "Registrar Gasto"
                 } else {
                     "Editar Movimiento"
                 },
                 style = MaterialTheme.typography.titleLarge
             )
         }
-        if (tipoOperacion == EnumTipoMovimiento.VENTA) {
+        if (tipoOperacion == EnumTipoMovimiento.INCOME) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Switch(
                     checked = esMovimientoRapido,
@@ -157,7 +157,7 @@ private fun DescriptionField(
         value = titulo,
         onValueChange = onTituloChange,
         label = { Text("Descripción") },
-        placeholder = { Text(if (tipoOperacion == EnumTipoMovimiento.VENTA) "Ej: venta de jugos" else "Ej: compra de vasos") },
+        placeholder = { Text(if (tipoOperacion == EnumTipoMovimiento.INCOME) "Ej: venta de jugos" else "Ej: compra de vasos") },
         modifier = Modifier.fillMaxWidth()
     )
 }
@@ -411,7 +411,7 @@ private fun FooterDetailed(
             Text(
                 when (modoOperacion) {
                     EnumModoOperacion.REGISTRAR ->
-                        if (tipoOperacion == EnumTipoMovimiento.VENTA) "Guardar Venta" else "Guardar Gasto"
+                        if (tipoOperacion == EnumTipoMovimiento.INCOME) "Guardar Venta" else "Guardar Gasto"
 
                     EnumModoOperacion.EDITAR -> "Guardar Cambios"
                 }
@@ -433,7 +433,7 @@ private fun FooterSimple(
         Text(
             when (modoOperacion) {
                 EnumModoOperacion.REGISTRAR ->
-                    if (tipoOperacion == EnumTipoMovimiento.VENTA) "Guardar Venta" else "Guardar Gasto"
+                    if (tipoOperacion == EnumTipoMovimiento.INCOME) "Guardar Venta" else "Guardar Gasto"
 
                 EnumModoOperacion.EDITAR -> "Guardar Cambios"
             }
