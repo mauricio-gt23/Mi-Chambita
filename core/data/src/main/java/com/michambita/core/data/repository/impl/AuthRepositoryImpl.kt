@@ -2,7 +2,7 @@ package com.michambita.core.data.repository.impl
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.michambita.core.data.local.preferences.UserPreferencesRepository
+import com.michambita.core.data.local.preferences.UserPreferencesRepositoryImpl
 import com.michambita.core.domain.repository.AuthRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.tasks.await
@@ -11,7 +11,7 @@ import javax.inject.Inject
 class AuthRepositoryImpl @Inject constructor(
     private val firestore: FirebaseFirestore,
     private val firebaseAuth: FirebaseAuth,
-    private val userPreferencesRepository: UserPreferencesRepository
+    private val userPreferencesRepositoryImpl: UserPreferencesRepositoryImpl
 ) : AuthRepository {
 
     private val userCollection = firestore.collection("usuarios")
@@ -21,7 +21,7 @@ class AuthRepositoryImpl @Inject constructor(
             val authResult = firebaseAuth.signInWithEmailAndPassword(email, password).await()
             val firebaseUser = authResult.user
             if (firebaseUser != null) {
-                userPreferencesRepository.saveUserUid(firebaseUser.uid)
+                userPreferencesRepositoryImpl.saveUserUid(firebaseUser.uid)
                 Result.success(firebaseUser.uid)
             } else {
                 Result.failure(Exception("Error al iniciar sesión con Firebase: Usuario nulo"))
@@ -52,7 +52,7 @@ class AuthRepositoryImpl @Inject constructor(
                 userCollection.document(firebaseUser.uid)
                     .set(userMap)
                     .await()
-                userPreferencesRepository.saveUserUid(firebaseUser.uid)
+                userPreferencesRepositoryImpl.saveUserUid(firebaseUser.uid)
                 Result.success(firebaseUser.uid)
             } else {
                 Result.failure(Exception("Error al registrarse en Firebase"))
@@ -76,11 +76,11 @@ class AuthRepositoryImpl @Inject constructor(
     }
 
     override fun getCurrentUser(): Flow<String?> {
-        return userPreferencesRepository.userUidFlow
+        return userPreferencesRepositoryImpl.userUidFlow
     }
 
     override suspend fun logout() {
-        userPreferencesRepository.clearUserUid()
+        userPreferencesRepositoryImpl.clearUserUid()
         firebaseAuth.signOut()
     }
 }
