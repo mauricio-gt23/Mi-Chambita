@@ -32,6 +32,7 @@ fun MainContainer(
 ) {
     val navController = rememberNavController()
     val uiState by viewModel.uiStateGetUser.collectAsStateWithLifecycle()
+    val motor by viewModel.currentMotor.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
         viewModel.getUser()
@@ -67,7 +68,7 @@ fun MainContainer(
             startDestination = Screen.MainContainer.route,
             modifier = Modifier.padding(innerPadding)
         ) {
-            composable(Screen.MainContainer.route) { HomeScreen(navController) }
+            composable(Screen.MainContainer.route) { HomeScreen(navController, motor = motor) }
             composable(Screen.Producto.route) { ProductoScreen(onSaveSuccess = { navController.popBackStack() }) }
             composable("${Screen.Producto.route}/{id}") { backStackEntry ->
                 val id = backStackEntry.arguments?.getString("id")
