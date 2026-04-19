@@ -53,8 +53,8 @@ class Converters {
     @TypeConverter
     fun fromEnumTipoMovimiento(tipo: EnumTipoMovimiento?): String? {
         return when (tipo) {
-            EnumTipoMovimiento.VENTA -> "V"
-            EnumTipoMovimiento.GASTO -> "G"
+            EnumTipoMovimiento.INCOME -> "I"
+            EnumTipoMovimiento.EXPENSE -> "E"
             null -> null
         }
     }
@@ -62,8 +62,8 @@ class Converters {
     @TypeConverter
     fun toEnumTipoMovimiento(value: String?): EnumTipoMovimiento? {
         return when (value?.uppercase()) {
-            "V", "VENTA" -> EnumTipoMovimiento.VENTA
-            "G", "GASTO" -> EnumTipoMovimiento.GASTO
+            "I", "INCOME" -> EnumTipoMovimiento.INCOME
+            "E", "EXPENSE" -> EnumTipoMovimiento.EXPENSE
             else -> null
         }
     }

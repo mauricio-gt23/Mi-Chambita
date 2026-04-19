@@ -24,7 +24,7 @@ data class MovimientoEntity(
     val monto: BigDecimal = BigDecimal.ZERO,
 
     @ColumnInfo(name = "tipo_movimiento")
-    val tipoMovimiento: EnumTipoMovimiento = EnumTipoMovimiento.GASTO,
+    val tipoMovimiento: EnumTipoMovimiento = EnumTipoMovimiento.EXPENSE,
 
     @ColumnInfo(name = "fecha_registro")
     val fechaRegistro: Date = Date(),

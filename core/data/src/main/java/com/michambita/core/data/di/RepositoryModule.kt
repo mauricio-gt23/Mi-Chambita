@@ -1,5 +1,6 @@
 package com.michambita.core.data.di
 
+import com.michambita.core.data.local.preferences.UserPreferencesRepository
 import com.michambita.core.data.repository.impl.AuthRepositoryImpl
 import com.michambita.core.data.repository.impl.EmpresaRepositoryImpl
 import com.michambita.core.data.repository.impl.MovimientoRepositoryImpl
@@ -7,6 +8,8 @@ import com.michambita.core.data.repository.impl.ProductoImageRepositoryImpl
 import com.michambita.core.data.repository.impl.ProductoRepositoryImpl
 import com.michambita.core.data.repository.impl.SynchronizationRepositoryImpl
 import com.michambita.core.data.repository.impl.UserRepositoryImpl
+import com.michambita.core.domain.motor.BusinessTypeProvider
+import com.michambita.core.domain.motor.GetCurrentMotorUseCase
 import com.michambita.core.domain.repository.AuthRepository
 import com.michambita.core.domain.repository.EmpresaRepository
 import com.michambita.core.domain.repository.MovimientoRepository
@@ -16,6 +19,7 @@ import com.michambita.core.domain.repository.SynchronizationRepository
 import com.michambita.core.domain.repository.UserRepository
 import dagger.Binds
 import dagger.Module
+import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
@@ -51,4 +55,16 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindEmpresaRepository(empresaRepositoryImpl: EmpresaRepositoryImpl): EmpresaRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindBusinessTypeProvider(userPreferencesRepository: UserPreferencesRepository): BusinessTypeProvider
+
+    companion object {
+        @Provides
+        @Singleton
+        fun provideGetCurrentMotorUseCase(businessTypeProvider: BusinessTypeProvider): GetCurrentMotorUseCase {
+            return GetCurrentMotorUseCase(businessTypeProvider)
+        }
+    }
 }
