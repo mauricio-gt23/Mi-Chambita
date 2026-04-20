@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
-class GetCurrentMotorUseCase @Inject constructor(
+class GetCurrentBusinessMotorUseCase @Inject constructor(
     private val businessTypeRepository: BusinessTypePreferencesRepository
 ) {
     operator fun invoke(): Flow<BusinessMotor?> =
