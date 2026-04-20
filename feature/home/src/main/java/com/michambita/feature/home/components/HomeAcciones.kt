@@ -9,9 +9,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.michambita.feature.home.config.HomeUiConfig
 
 @Composable
 fun HomeAcciones(
+    uiConfig: HomeUiConfig,
     onRegistrarVenta: () -> Unit,
     onRegistrarGasto: () -> Unit,
     onProductosClick: () -> Unit,
@@ -27,37 +29,39 @@ fun HomeAcciones(
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             ActionButton(
-                "Registrar Venta",
+                "Registrar ${uiConfig.incomeLabel}",
                 Icons.Filled.AddShoppingCart,
                 onRegistrarVenta,
                 Modifier.weight(1f)
             )
             ActionButton(
-                "Registrar Gasto",
+                "Registrar ${uiConfig.expenseLabel}",
                 Icons.Filled.Payment,
                 onRegistrarGasto,
                 Modifier.weight(1f)
             )
         }
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            ActionButton(
-                "Productos", 
-                Icons.Filled.AddBox, 
-                onClick = onProductosClick, 
-                isSecondary = true,
-                modifier = Modifier.weight(1f)
-            )
-            ActionButton(
-                "Inventario",
-                Icons.Filled.Inventory, 
-                onClick = onInventarioClick, 
-                isSecondary = true,
-                modifier = Modifier.weight(1f)
-            )
+        if (uiConfig.showInventorySection) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                ActionButton(
+                    "Productos", 
+                    Icons.Filled.AddBox, 
+                    onClick = onProductosClick, 
+                    isSecondary = true,
+                    modifier = Modifier.weight(1f)
+                )
+                ActionButton(
+                    "Inventario",
+                    Icons.Filled.Inventory, 
+                    onClick = onInventarioClick, 
+                    isSecondary = true,
+                    modifier = Modifier.weight(1f)
+                )
+            }
         }
 
         Row(

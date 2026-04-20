@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.michambita.core.domain.model.Movimiento
+import com.michambita.feature.home.config.HomeUiConfig
 import com.michambita.core.common.Screen
 import com.michambita.feature.home.components.historial.EncabezadoHistorial
 import com.michambita.feature.home.components.historial.MovimientoHistorial
@@ -20,6 +21,7 @@ import com.michambita.core.common.DateUtils
 @Composable
 fun HomeContent(
     uiState: HomeUiState,
+    uiConfig: HomeUiConfig,
     navController: NavController,
     modifier: Modifier = Modifier,
     movimientos: List<Movimiento>,
@@ -39,9 +41,15 @@ fun HomeContent(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
-        ResumenDiario(ventas = uiState.ventas, gastos = uiState.gastos, isInitialLoading = uiState.isInitialLoading)
+        ResumenDiario(
+            uiConfig = uiConfig,
+            ventas = uiState.ventas,
+            gastos = uiState.gastos,
+            isInitialLoading = uiState.isInitialLoading
+        )
 
         HomeAcciones(
+            uiConfig = uiConfig,
             onRegistrarVenta = onRegistrarVenta,
             onRegistrarGasto = onRegistrarGasto,
             onProductosClick = { navController.navigate(Screen.Producto.route) },

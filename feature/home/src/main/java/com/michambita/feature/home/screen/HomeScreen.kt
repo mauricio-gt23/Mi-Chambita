@@ -9,6 +9,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.michambita.core.domain.motor.BusinessMotor
+import com.michambita.feature.home.config.HomeUiConfig
 import com.michambita.feature.home.components.HomeContent
 import com.michambita.feature.home.components.historial.movimiento.MovimientoSheet
 import com.michambita.feature.home.viewmodel.HomeViewModel
@@ -25,19 +27,27 @@ import com.michambita.core.ui.components.widget.LoadingOverlay
 @Composable
 fun HomeScreen(
     navController: NavController,
+    motor: BusinessMotor,
     homeViewModel: HomeViewModel = hiltViewModel(),
     inventarioIntentModel: InventarioIntentModel = hiltViewModel(),
     movimientoViewModel: MovimientoViewModel = hiltViewModel()
 ) {
+    val uiConfig = remember(motor) { HomeUiConfig.from(motor) }
+
     val uiState by homeViewModel.uiState.collectAsStateWithLifecycle()
     val homeUiState by homeViewModel.homeUiState.collectAsStateWithLifecycle()
     val movimientos by homeViewModel.movimientos.collectAsStateWithLifecycle()
 
     val movimientoUiState by movimientoViewModel.uiState.collectAsStateWithLifecycle()
 
-    val inventarioState by inventarioIntentModel.uiState.collectAsStateWithLifecycle()
-    LaunchedEffect(Unit) { inventarioIntentModel.sendIntent(InventarioIntent.LoadProductos) }
-    val productos: List<Producto> = inventarioState.productos
+    // Only load productos if the motor needs them
+    val productos: List<Producto> = if (uiConfig.showProductPicker) {
+        val inventarioState by inventarioIntentModel.uiState.collectAsStateWithLifecycle()
+        LaunchedEffect(Unit) { inventarioIntentModel.sendIntent(InventarioIntent.LoadProductos) }
+        inventarioState.productos
+    } else {
+        emptyList()
+    }
 
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
@@ -45,6 +55,7 @@ fun HomeScreen(
 
     HomeContent(
         uiState = homeUiState,
+        uiConfig = uiConfig,
         navController = navController,
         modifier = Modifier,
         movimientos = movimientos,

@@ -13,10 +13,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.michambita.feature.home.config.HomeUiConfig
  
 
 @Composable
 fun ResumenDiario(
+    uiConfig: HomeUiConfig,
     ventas: String,
     gastos: String,
     movimientosPendientesAyer: Int = 0,
@@ -32,7 +34,7 @@ fun ResumenDiario(
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             SummaryTile(
-                title = "Ventas de Hoy",
+                title = "${uiConfig.incomeLabel}s de Hoy",
                 icon = Icons.Filled.AttachMoney,
                 amount = ventas,
                 color = MaterialTheme.colorScheme.primary,
@@ -40,7 +42,7 @@ fun ResumenDiario(
                 modifier = Modifier.weight(1f)
             )
             SummaryTile(
-                title = "Gastos de Hoy",
+                title = "${uiConfig.expenseLabel}s de Hoy",
                 icon = Icons.Filled.MoneyOff,
                 amount = gastos,
                 color = MaterialTheme.colorScheme.error,
