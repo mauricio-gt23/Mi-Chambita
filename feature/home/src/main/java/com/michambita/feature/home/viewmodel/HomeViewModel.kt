@@ -2,12 +2,12 @@ package com.michambita.feature.home.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.michambita.core.domain.model.Movimiento
-import com.michambita.core.domain.enums.EnumTipoMovimiento
-import com.michambita.core.domain.repository.SynchronizationRepository
-import com.michambita.core.domain.usecase.GetAllMovimientoUseCase
-import com.michambita.core.domain.usecase.SyncMovimientosUseCase
-import com.michambita.core.common.UiState
+import com.michambita.domain.model.Movimiento
+import com.michambita.domain.enums.EnumTipoMovimiento
+import com.michambita.domain.repository.SynchronizationRepository
+import com.michambita.domain.usecase.GetAllMovimientoUseCase
+import com.michambita.domain.usecase.SyncMovimientosUseCase
+import com.michambita.common.UiState
 import java.util.Calendar
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,7 +19,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import com.michambita.core.common.DateUtils
+import com.michambita.common.DateUtils
 import kotlinx.coroutines.delay
 
 data class HomeUiState(

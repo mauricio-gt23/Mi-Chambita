@@ -16,7 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.michambita.core.domain.enums.EnumTipoProducto
+import com.michambita.domain.enums.EnumTipoProducto
 import com.michambita.feature.producto.components.SectionCard
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AttachMoney

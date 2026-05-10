@@ -11,8 +11,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 
-import com.michambita.core.common.Screen
-import com.michambita.core.ui.components.widget.LoadingOverlay
+import com.michambita.common.Screen
+import com.michambita.ui.components.widget.LoadingOverlay
 import com.michambita.feature.inventario.components.InventarioContent
 import com.michambita.feature.inventario.intentmodel.InventarioIntent
 import com.michambita.feature.inventario.intentmodel.InventarioIntentModel

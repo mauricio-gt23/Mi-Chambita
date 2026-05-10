@@ -25,9 +25,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.michambita.core.domain.model.Movimiento
-import com.michambita.core.common.DateUtils
-import com.michambita.core.domain.enums.EnumTipoMovimiento
+import com.michambita.domain.model.Movimiento
+import com.michambita.common.DateUtils
+import com.michambita.domain.enums.EnumTipoMovimiento
 
 @Composable
 fun MovimientoItem(

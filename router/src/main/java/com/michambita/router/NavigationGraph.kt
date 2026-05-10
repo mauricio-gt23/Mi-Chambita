@@ -9,7 +9,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.michambita.core.common.Screen
+import com.michambita.common.Screen
 import com.michambita.feature.auth.screen.SplashScreen
 import com.michambita.feature.auth.screen.LoginScreen
 import com.michambita.feature.auth.screen.RegistroScreen

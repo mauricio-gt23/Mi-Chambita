@@ -19,8 +19,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.michambita.core.domain.model.Producto
-import com.michambita.core.domain.enums.EnumTipoProducto
+import com.michambita.domain.model.Producto
+import com.michambita.domain.enums.EnumTipoProducto
 
 @Composable
 fun ItemCard(

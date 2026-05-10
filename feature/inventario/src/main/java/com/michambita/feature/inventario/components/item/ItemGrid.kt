@@ -12,7 +12,7 @@ import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.michambita.core.domain.model.Producto
+import com.michambita.domain.model.Producto
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable

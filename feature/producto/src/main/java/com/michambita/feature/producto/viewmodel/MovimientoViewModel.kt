@@ -2,13 +2,13 @@ package com.michambita.feature.producto.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.michambita.core.domain.enums.EnumModoOperacion
-import com.michambita.core.domain.enums.EnumTipoMovimiento
-import com.michambita.core.domain.model.Movimiento
-import com.michambita.core.domain.model.MovimientoItem
-import com.michambita.core.domain.usecase.AddMovimientoUseCase
-import com.michambita.core.domain.usecase.DeleteMovimientoUseCase
-import com.michambita.core.domain.usecase.UpdateMovimientoUseCase
+import com.michambita.domain.enums.EnumModoOperacion
+import com.michambita.domain.enums.EnumTipoMovimiento
+import com.michambita.domain.model.Movimiento
+import com.michambita.domain.model.MovimientoItem
+import com.michambita.domain.usecase.AddMovimientoUseCase
+import com.michambita.domain.usecase.DeleteMovimientoUseCase
+import com.michambita.domain.usecase.UpdateMovimientoUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

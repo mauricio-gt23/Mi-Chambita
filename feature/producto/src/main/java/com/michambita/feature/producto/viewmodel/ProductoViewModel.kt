@@ -2,12 +2,12 @@ package com.michambita.feature.producto.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.michambita.core.domain.enums.EnumModoOperacion
-import com.michambita.core.domain.enums.EnumTipoProducto
-import com.michambita.core.domain.model.Producto
-import com.michambita.core.domain.usecase.SaveProductoUseCase
-import com.michambita.core.domain.usecase.GetProductoUseCase
-import com.michambita.core.common.UiState
+import com.michambita.domain.enums.EnumModoOperacion
+import com.michambita.domain.enums.EnumTipoProducto
+import com.michambita.domain.model.Producto
+import com.michambita.domain.usecase.SaveProductoUseCase
+import com.michambita.domain.usecase.GetProductoUseCase
+import com.michambita.common.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

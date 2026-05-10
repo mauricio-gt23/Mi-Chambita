@@ -34,9 +34,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.michambita.core.domain.model.Producto
-import com.michambita.core.domain.enums.EnumTipoProducto
-import com.michambita.core.ui.components.widget.SearchBar
+import com.michambita.domain.model.Producto
+import com.michambita.domain.enums.EnumTipoProducto
+import com.michambita.ui.components.widget.SearchBar
 import com.michambita.feature.inventario.components.item.ItemGrid
 import com.michambita.feature.inventario.components.item.StockDialog
 

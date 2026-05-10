@@ -2,8 +2,8 @@ package com.michambita.feature.auth.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.michambita.core.domain.usecase.LoginUseCase
-import com.michambita.core.common.UiState
+import com.michambita.domain.usecase.LoginUseCase
+import com.michambita.common.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

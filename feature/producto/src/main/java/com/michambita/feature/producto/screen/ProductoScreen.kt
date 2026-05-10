@@ -13,14 +13,14 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.ui.platform.LocalContext
-import com.michambita.core.ui.di.ImageLoaderEntryPoint
+import com.michambita.ui.di.ImageLoaderEntryPoint
 import dagger.hilt.android.EntryPointAccessors
 import com.michambita.feature.producto.viewmodel.ProductoViewModel
 import com.michambita.feature.producto.viewmodel.ImagenViewModel
-import com.michambita.core.common.UiState
-import com.michambita.core.ui.components.widget.LoadingOverlay
+import com.michambita.common.UiState
+import com.michambita.ui.components.widget.LoadingOverlay
 import com.michambita.feature.producto.components.ProductoForm
-import com.michambita.core.domain.enums.EnumModoOperacion
+import com.michambita.domain.enums.EnumModoOperacion
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

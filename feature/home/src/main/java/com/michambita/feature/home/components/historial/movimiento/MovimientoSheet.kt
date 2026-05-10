@@ -16,12 +16,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.michambita.core.domain.enums.EnumModoOperacion
-import com.michambita.core.domain.enums.EnumTipoProducto
-import com.michambita.core.domain.enums.EnumTipoMovimiento
-import com.michambita.core.domain.model.Producto
-import com.michambita.core.domain.model.MovimientoItem
-import com.michambita.core.domain.model.Movimiento
+import com.michambita.domain.enums.EnumModoOperacion
+import com.michambita.domain.enums.EnumTipoProducto
+import com.michambita.domain.enums.EnumTipoMovimiento
+import com.michambita.domain.model.Producto
+import com.michambita.domain.model.MovimientoItem
+import com.michambita.domain.model.Movimiento
 import java.math.BigDecimal
 import java.math.RoundingMode
 

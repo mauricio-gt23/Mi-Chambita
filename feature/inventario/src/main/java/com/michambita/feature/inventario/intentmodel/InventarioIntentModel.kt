@@ -1,9 +1,9 @@
 package com.michambita.feature.inventario.intentmodel
 
 import androidx.lifecycle.viewModelScope
-import com.michambita.core.common.mvi.BaseIntentModel
-import com.michambita.core.domain.usecase.LoadAllProductoByUserId
-import com.michambita.core.domain.usecase.UpdateProductoStockUseCase
+import com.michambita.common.mvi.BaseIntentModel
+import com.michambita.domain.usecase.LoadAllProductoByUserId
+import com.michambita.domain.usecase.UpdateProductoStockUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject

@@ -7,7 +7,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.michambita.core.domain.enums.EnumTipoProducto
+import com.michambita.domain.enums.EnumTipoProducto
 import coil.ImageLoader
 import com.michambita.feature.producto.components.section.DatosBasicosSection
 import com.michambita.feature.producto.components.section.ImagenSection

@@ -23,7 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.michambita.core.domain.model.Movimiento
+import com.michambita.domain.model.Movimiento
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)

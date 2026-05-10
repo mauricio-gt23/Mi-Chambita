@@ -1,6 +1,6 @@
 package com.michambita.feature.inventario.intentmodel
 
-import com.michambita.core.domain.model.Producto
+import com.michambita.domain.model.Producto
 
 data class InventarioUiState(
     val isLoading: Boolean = false,

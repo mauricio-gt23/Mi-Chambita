@@ -9,8 +9,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
 import com.michambita.router.NavigationGraph
-import com.michambita.core.ui.theme.MiChambitaTheme
-import com.michambita.core.common.DismissKeyboardWrapper
+import com.michambita.ui.theme.MiChambitaTheme
+import com.michambita.common.DismissKeyboardWrapper
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

@@ -2,11 +2,11 @@ package com.michambita.router
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.michambita.core.domain.model.User
-import com.michambita.core.domain.motor.BusinessMotor
-import com.michambita.core.domain.usecase.GetCurrentBusinessMotorUseCase
-import com.michambita.core.domain.usecase.LoadUserUseCase
-import com.michambita.core.common.UiState
+import com.michambita.domain.model.User
+import com.michambita.domain.motor.BusinessMotor
+import com.michambita.domain.usecase.GetCurrentBusinessMotorUseCase
+import com.michambita.domain.usecase.LoadUserUseCase
+import com.michambita.common.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted

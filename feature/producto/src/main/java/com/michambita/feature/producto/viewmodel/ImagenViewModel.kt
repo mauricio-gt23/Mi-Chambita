@@ -5,13 +5,13 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import android.net.Uri
-import com.michambita.core.common.UiState
+import com.michambita.common.UiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import com.michambita.core.domain.usecase.UploadProductoImageUseCase
-import com.michambita.core.domain.usecase.DeleteProductoImageUseCase
+import com.michambita.domain.usecase.UploadProductoImageUseCase
+import com.michambita.domain.usecase.DeleteProductoImageUseCase
 
 @HiltViewModel
 class ImagenViewModel @Inject constructor(

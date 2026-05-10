@@ -7,9 +7,9 @@ android {
 }
 
 dependencies {
-    implementation(project(":core:domain"))
-    implementation(project(":core:common"))
-    implementation(project(":core:ui"))
+    implementation(project(":domain"))
+    implementation(project(":common"))
+    implementation(project(":ui"))
     implementation(project(":feature:producto"))
     implementation(project(":feature:inventario"))
 }

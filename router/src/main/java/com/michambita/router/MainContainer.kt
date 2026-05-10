@@ -18,12 +18,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.michambita.core.common.Screen
+import com.michambita.common.Screen
 import com.michambita.feature.home.screen.HomeScreen
 import com.michambita.feature.producto.screen.ProductoScreen
 import com.michambita.feature.inventario.screen.InventarioScreen
 import com.michambita.router.MainViewModel
-import com.michambita.core.common.UiState
+import com.michambita.common.UiState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

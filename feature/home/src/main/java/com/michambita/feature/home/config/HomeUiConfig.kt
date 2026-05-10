@@ -1,6 +1,6 @@
 package com.michambita.feature.home.config
 
-import com.michambita.core.domain.motor.BusinessMotor
+import com.michambita.domain.motor.BusinessMotor
 
 data class HomeUiConfig(
     val incomeLabel: String,

@@ -10,13 +10,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.michambita.core.domain.model.Movimiento
+import com.michambita.domain.model.Movimiento
 import com.michambita.feature.home.config.HomeUiConfig
-import com.michambita.core.common.Screen
+import com.michambita.common.Screen
 import com.michambita.feature.home.components.historial.EncabezadoHistorial
 import com.michambita.feature.home.components.historial.MovimientoHistorial
 import com.michambita.feature.home.viewmodel.HomeUiState
-import com.michambita.core.common.DateUtils
+import com.michambita.common.DateUtils
 
 @Composable
 fun HomeContent(
