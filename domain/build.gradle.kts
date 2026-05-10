@@ -1,0 +1,11 @@
+plugins {
+    id("michambita.android.library")
+}
+
+android {
+    namespace = "com.michambita.domain"
+}
+
+dependencies {
+    implementation(project(":common"))
+}
