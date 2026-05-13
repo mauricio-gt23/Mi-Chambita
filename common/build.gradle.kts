@@ -1,9 +1,15 @@
 plugins {
-    id("michambita.android.feature")
+    id("michambita.android.library")
 }
 
 android {
     namespace = "com.michambita.common"
+    buildFeatures {
+        compose = true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.11"
+    }
 }
 
 dependencies {
@@ -11,4 +17,6 @@ dependencies {
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.foundation:foundation")
     implementation("androidx.compose.runtime:runtime")
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
 }

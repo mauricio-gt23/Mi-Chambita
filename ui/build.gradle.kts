@@ -1,5 +1,7 @@
 plugins {
-    id("michambita.android.feature")
+    id("michambita.android.library")
+    id("michambita.android.hilt")
+    id("michambita.android.compose")
 }
 
 android {
