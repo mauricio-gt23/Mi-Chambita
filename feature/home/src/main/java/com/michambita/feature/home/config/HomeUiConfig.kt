@@ -1,31 +1,22 @@
 package com.michambita.feature.home.config
 
-import com.michambita.domain.motor.BusinessMotor
+import com.michambita.domain.enums.BusinessType
 
 data class HomeUiConfig(
-    val incomeLabel: String,
-    val expenseLabel: String,
     val showInventorySection: Boolean,
     val showProductPicker: Boolean
 ) {
     companion object {
-        fun from(motor: BusinessMotor): HomeUiConfig = when (motor) {
-            is BusinessMotor.Inventory -> HomeUiConfig(
-                incomeLabel = "Venta",
-                expenseLabel = "Gasto",
+        fun from(type: BusinessType): HomeUiConfig = when (type) {
+            BusinessType.INVENTORY -> HomeUiConfig(
                 showInventorySection = true,
-                showProductPicker = true,
-
+                showProductPicker = true
             )
-            is BusinessMotor.Service -> HomeUiConfig(
-                incomeLabel = "Servicio",
-                expenseLabel = "Gasto",
+            BusinessType.SERVICE -> HomeUiConfig(
                 showInventorySection = false,
                 showProductPicker = false
             )
-            is BusinessMotor.CashFlow -> HomeUiConfig(
-                incomeLabel = "Ingreso",
-                expenseLabel = "Gasto",
+            BusinessType.CASH_FLOW -> HomeUiConfig(
                 showInventorySection = false,
                 showProductPicker = false
             )

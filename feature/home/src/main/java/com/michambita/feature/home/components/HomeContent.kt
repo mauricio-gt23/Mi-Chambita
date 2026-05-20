@@ -42,7 +42,6 @@ fun HomeContent(
         verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
         ResumenDiario(
-            uiConfig = uiConfig,
             ventas = uiState.ventas,
             gastos = uiState.gastos,
             isInitialLoading = uiState.isInitialLoading

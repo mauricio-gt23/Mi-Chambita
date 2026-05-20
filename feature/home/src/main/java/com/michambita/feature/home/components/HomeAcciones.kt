@@ -29,13 +29,13 @@ fun HomeAcciones(
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             ActionButton(
-                "Registrar ${uiConfig.incomeLabel}",
+                "Registrar Ingreso",
                 Icons.Filled.AddShoppingCart,
                 onRegistrarVenta,
                 Modifier.weight(1f)
             )
             ActionButton(
-                "Registrar ${uiConfig.expenseLabel}",
+                "Registrar Gasto",
                 Icons.Filled.Payment,
                 onRegistrarGasto,
                 Modifier.weight(1f)
@@ -71,7 +71,7 @@ fun HomeAcciones(
             ActionButton(
                 "Estadisticas",
                 Icons.Filled.AttachMoney,
-                onClick = onProductosClick,
+                onClick = {},
                 isSecondary = true,
                 modifier = Modifier.weight(1f)
             )

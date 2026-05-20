@@ -18,7 +18,6 @@ import com.michambita.feature.home.config.HomeUiConfig
 
 @Composable
 fun ResumenDiario(
-    uiConfig: HomeUiConfig,
     ventas: String,
     gastos: String,
     movimientosPendientesAyer: Int = 0,
@@ -34,7 +33,7 @@ fun ResumenDiario(
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             SummaryTile(
-                title = "${uiConfig.incomeLabel}s de Hoy",
+                title = "Ingresos de Hoy",
                 icon = Icons.Filled.AttachMoney,
                 amount = ventas,
                 color = MaterialTheme.colorScheme.primary,
@@ -42,7 +41,7 @@ fun ResumenDiario(
                 modifier = Modifier.weight(1f)
             )
             SummaryTile(
-                title = "${uiConfig.expenseLabel}s de Hoy",
+                title = "Gastos de Hoy",
                 icon = Icons.Filled.MoneyOff,
                 amount = gastos,
                 color = MaterialTheme.colorScheme.error,

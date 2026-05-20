@@ -9,7 +9,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import com.michambita.domain.motor.BusinessMotor
+import com.michambita.domain.enums.BusinessType
 import com.michambita.feature.home.config.HomeUiConfig
 import com.michambita.feature.home.components.HomeContent
 import com.michambita.feature.home.components.historial.movimiento.MovimientoSheet
@@ -27,12 +27,12 @@ import com.michambita.ui.components.widget.LoadingOverlay
 @Composable
 fun HomeScreen(
     navController: NavController,
-    motor: BusinessMotor,
+    businessType: BusinessType,
     homeViewModel: HomeViewModel = hiltViewModel(),
     inventarioIntentModel: InventarioIntentModel = hiltViewModel(),
     movimientoViewModel: MovimientoViewModel = hiltViewModel()
 ) {
-    val uiConfig = remember(motor) { HomeUiConfig.from(motor) }
+    val uiConfig = remember(businessType) { HomeUiConfig.from(businessType) }
 
     val uiState by homeViewModel.uiState.collectAsStateWithLifecycle()
     val homeUiState by homeViewModel.homeUiState.collectAsStateWithLifecycle()
