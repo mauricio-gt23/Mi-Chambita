@@ -14,7 +14,7 @@ class EmpresaRepositoryImpl @Inject constructor(
     private val firestore: FirebaseFirestore
 ) : EmpresaRepository {
 
-    private val empresaCollection = firestore.collection("empresas")
+    private val empresaCollection = firestore.collection("companies")
 
     override suspend fun saveEmpresa(empresa: Empresa): Result<String> {
         return try {

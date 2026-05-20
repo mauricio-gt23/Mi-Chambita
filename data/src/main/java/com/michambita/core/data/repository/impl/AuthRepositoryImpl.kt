@@ -14,7 +14,7 @@ class AuthRepositoryImpl @Inject constructor(
     private val userPreferencesRepositoryImpl: UserPreferencesRepositoryImpl
 ) : AuthRepository {
 
-    private val userCollection = firestore.collection("usuarios")
+    private val userCollection = firestore.collection("users")
 
     override suspend fun login(email: String, password: String): Result<String> {
         return try {
