@@ -1,5 +1,6 @@
 package com.michambita.router
 
+import android.util.Log
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
@@ -22,17 +23,17 @@ import com.michambita.common.Screen
 import com.michambita.feature.home.screen.HomeScreen
 import com.michambita.feature.producto.screen.ProductoScreen
 import com.michambita.feature.inventario.screen.InventarioScreen
-import com.michambita.router.MainViewModel
 import com.michambita.common.UiState
+import com.michambita.domain.enums.BusinessType
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainContainer(
+    businessType: BusinessType,
     viewModel: MainViewModel = hiltViewModel(),
 ) {
     val navController = rememberNavController()
     val uiState by viewModel.uiStateGetUser.collectAsStateWithLifecycle()
-    val businessType by viewModel.currentBusinessType.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
         viewModel.getUser()
@@ -68,7 +69,9 @@ fun MainContainer(
             startDestination = Screen.MainContainer.route,
             modifier = Modifier.padding(innerPadding)
         ) {
-            composable(Screen.MainContainer.route) { HomeScreen(navController, businessType = businessType) }
+            composable(Screen.MainContainer.route) {
+                HomeScreen(navController, businessType = businessType)
+            }
             composable(Screen.Producto.route) { ProductoScreen(onSaveSuccess = { navController.popBackStack() }) }
             composable("${Screen.Producto.route}/{id}") { backStackEntry ->
                 val id = backStackEntry.arguments?.getString("id")

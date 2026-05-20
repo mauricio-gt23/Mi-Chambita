@@ -16,7 +16,6 @@ import com.michambita.feature.auth.screen.RegistroScreen
 import com.michambita.feature.auth.viewmodel.SessionViewModel
 import com.michambita.feature.auth.viewmodel.UserSessionState
 
-
 @Composable
 fun NavigationGraph(
     navController: NavHostController,
@@ -24,6 +23,7 @@ fun NavigationGraph(
     sessionViewModel: SessionViewModel = hiltViewModel()
 ) {
     val userSessionState by sessionViewModel.userSessionState.collectAsState()
+    val businessType by sessionViewModel.currentBusinessType.collectAsState()
 
     NavHost(
         navController = navController,
@@ -34,19 +34,18 @@ fun NavigationGraph(
         composable(Screen.Splash.route) {
             SplashScreen()
 
-            LaunchedEffect(userSessionState) {
-                when (userSessionState) {
-                    is UserSessionState.Authenticated -> {
+            LaunchedEffect(userSessionState, businessType) {
+                when {
+                    userSessionState is UserSessionState.Authenticated && businessType != null -> {
                         navController.navigate(Screen.MainContainer.route) {
                             popUpTo(Screen.Splash.route) { inclusive = true }
                         }
                     }
-                    is UserSessionState.Unauthenticated -> {
+                    userSessionState is UserSessionState.Unauthenticated -> {
                         navController.navigate(Screen.Login.route) {
                             popUpTo(Screen.Splash.route) { inclusive = true }
                         }
                     }
-                    is UserSessionState.Unknown -> {}
                 }
             }
         }
@@ -78,7 +77,7 @@ fun NavigationGraph(
         }
 
         composable(Screen.MainContainer.route) {
-            MainContainer()
+            MainContainer(businessType!!)
         }
     }
 }

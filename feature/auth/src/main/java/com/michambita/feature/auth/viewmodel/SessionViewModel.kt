@@ -2,7 +2,9 @@ package com.michambita.feature.auth.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.michambita.domain.usecase.LoginUseCase
+import com.michambita.domain.enums.BusinessType
+import com.michambita.domain.usecase.GetBusinessTypeUseCase
+import com.michambita.core.domain.usecase.LoginUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -12,20 +14,26 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SessionViewModel @Inject constructor(
-    private val loginUseCase: LoginUseCase
+    private val loginUseCase: LoginUseCase,
+    private val getBusinessTypeUseCase: GetBusinessTypeUseCase
 ) : ViewModel() {
+
     val userSessionState: StateFlow<UserSessionState> = loginUseCase.getCurrentUser()
         .map { userUid ->
-            if (userUid != null) {
-                UserSessionState.Authenticated
-            } else {
-                UserSessionState.Unauthenticated
-            }
+            if (userUid != null) UserSessionState.Authenticated
+            else UserSessionState.Unauthenticated
         }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = UserSessionState.Unknown
+        )
+
+    val currentBusinessType: StateFlow<BusinessType?> = getBusinessTypeUseCase()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = null
         )
 }
 

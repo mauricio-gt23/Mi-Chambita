@@ -2,35 +2,21 @@ package com.michambita.router
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.michambita.domain.enums.BusinessType
 import com.michambita.domain.model.User
-import com.michambita.domain.usecase.GetBusinessTypeUseCase
 import com.michambita.domain.usecase.LoadUserUseCase
 import com.michambita.common.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val getUserUseCase: LoadUserUseCase,
-    private val getBusinessTypeUseCase: GetBusinessTypeUseCase
 ) : ViewModel() {
     private val _uiStateGetUser = MutableStateFlow<UiState<User>>(UiState.Empty)
     val uiStateGetUser : StateFlow<UiState<User>> = _uiStateGetUser
-
-    val currentBusinessType: StateFlow<BusinessType> = getBusinessTypeUseCase()
-        .filterNotNull()
-        .stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(5000),
-            BusinessType.CASH_FLOW
-        )
 
     fun getUser() {
         viewModelScope.launch {
