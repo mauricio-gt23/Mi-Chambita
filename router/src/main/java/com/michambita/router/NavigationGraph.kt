@@ -77,7 +77,15 @@ fun NavigationGraph(
         }
 
         composable(Screen.MainContainer.route) {
-            MainContainer(businessType!!)
+            val safeBusinessType = businessType ?: return@composable
+            MainContainer(
+                businessType = safeBusinessType,
+                onLogout = {
+                    navController.navigate(Screen.Login.route) {
+                        popUpTo(0) { inclusive = true }
+                    }
+                },
+            )
         }
     }
 }

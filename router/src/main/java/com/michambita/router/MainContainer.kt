@@ -1,6 +1,5 @@
 package com.michambita.router
 
-import android.util.Log
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
@@ -23,6 +22,7 @@ import com.michambita.common.Screen
 import com.michambita.feature.home.screen.HomeScreen
 import com.michambita.feature.producto.screen.ProductoScreen
 import com.michambita.feature.inventario.screen.InventarioScreen
+import com.michambita.feature.profile.screen.ProfileScreen
 import com.michambita.common.UiState
 import com.michambita.domain.enums.BusinessType
 
@@ -30,6 +30,7 @@ import com.michambita.domain.enums.BusinessType
 @Composable
 fun MainContainer(
     businessType: BusinessType,
+    onLogout: () -> Unit,
     viewModel: MainViewModel = hiltViewModel(),
 ) {
     val navController = rememberNavController()
@@ -48,6 +49,7 @@ fun MainContainer(
                 "¡Bienvenido!"
             }
         }
+
         is UiState.Loading -> "Cargando perfil..."
         else -> "¡Bienvenido!"
     }
@@ -57,7 +59,7 @@ fun MainContainer(
             TopAppBar(
                 title = { Text(topBarTitle) },
                 actions = {
-                    IconButton(onClick = { /* Acción perfil o logout */ }) {
+                    IconButton(onClick = { navController.navigate(Screen.Profile.route) }) {
                         Icon(Icons.Default.AccountCircle, contentDescription = "Perfil")
                     }
                 }
@@ -78,6 +80,12 @@ fun MainContainer(
                 ProductoScreen(productId = id, onSaveSuccess = { navController.popBackStack() })
             }
             composable(Screen.Inventario.route) { InventarioScreen(navController) }
+            composable(Screen.Profile.route) {
+                ProfileScreen(
+                    onNavigateBack = { navController.popBackStack() },
+                    onLogout = onLogout,
+                )
+            }
 //            composable(Screen.Gastos.route) { GastosScreen(navController) }
 //            composable(Screen.Resumen.route) { ResumenScreen(navController) }
         }

@@ -16,4 +16,5 @@ dependencies {
     implementation(project(":feature:home"))
     implementation(project(":feature:producto"))
     implementation(project(":feature:inventario"))
+    implementation(project(":feature:profile"))
 }
