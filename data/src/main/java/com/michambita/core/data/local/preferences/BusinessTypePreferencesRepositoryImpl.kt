@@ -34,4 +34,10 @@ class BusinessTypePreferencesRepositoryImpl @Inject constructor(
             preferences[PreferencesKeys.BUSINESS_TYPE] = type.name
         }
     }
+
+    override suspend fun clearBusinessType() {
+        dataStore.edit { preferences ->
+            preferences.remove(PreferencesKeys.BUSINESS_TYPE)
+        }
+    }
 }

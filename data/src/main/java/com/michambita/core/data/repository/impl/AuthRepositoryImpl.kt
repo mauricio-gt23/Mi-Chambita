@@ -2,6 +2,8 @@ package com.michambita.data.repository.impl
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.michambita.data.database.dao.SynchronizationDAO
+import com.michambita.data.local.preferences.BusinessTypePreferencesRepositoryImpl
 import com.michambita.data.local.preferences.UserPreferencesRepositoryImpl
 import com.michambita.domain.repository.AuthRepository
 import kotlinx.coroutines.flow.Flow
@@ -11,7 +13,9 @@ import javax.inject.Inject
 class AuthRepositoryImpl @Inject constructor(
     private val firestore: FirebaseFirestore,
     private val firebaseAuth: FirebaseAuth,
-    private val userPreferencesRepositoryImpl: UserPreferencesRepositoryImpl
+    private val userPreferencesRepositoryImpl: UserPreferencesRepositoryImpl,
+    private val businessTypePreferencesRepositoryImpl: BusinessTypePreferencesRepositoryImpl,
+    private val synchronizationDAO: SynchronizationDAO,
 ) : AuthRepository {
 
     private val userCollection = firestore.collection("users")
@@ -80,7 +84,9 @@ class AuthRepositoryImpl @Inject constructor(
     }
 
     override suspend fun logout() {
+        synchronizationDAO.deleteAll()
         userPreferencesRepositoryImpl.clearUserUid()
+        businessTypePreferencesRepositoryImpl.clearBusinessType()
         firebaseAuth.signOut()
     }
 }
