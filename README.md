@@ -39,6 +39,18 @@
 
 ---
 
+## 🏪 Tipos de negocio
+
+Durante el registro (paso 3), el usuario elige el tipo de negocio que maneja. La app adapta la interfaz según esa elección:
+
+| Tipo | Enum | Descripción en registro | Funcionalidades disponibles |
+|------|------|-------------------------|---------------------------|
+| **Vendo productos** | `INVENTORY` | "Administra tu inventario y registra ventas" | Registrar ingresos/gastos · **Catálogo de productos** · **Inventario con stock** · Selector de productos en movimientos · Historial · Estadísticas |
+| **Ofrezco servicios** | `SERVICE` | "Gestiona tus servicios y citas" | Registrar ingresos/gastos · Historial · Estadísticas |
+| **Solo ingresos/gastos** | `CASH_FLOW` | "Registra tus ingresos y gastos de forma simple" | Registrar ingresos/gastos · Historial · Estadísticas |
+
+---
+
 ## 🛠️ Tecnologías
 
 | Tecnología | Versión | Uso |
