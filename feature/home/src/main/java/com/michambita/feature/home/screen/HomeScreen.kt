@@ -17,8 +17,8 @@ import com.michambita.feature.home.viewmodel.HomeViewModel
 import com.michambita.feature.inventario.intentmodel.InventarioIntent
 import com.michambita.feature.inventario.intentmodel.InventarioIntentModel
 import com.michambita.common.UiState
-import com.michambita.domain.model.Producto
-import com.michambita.feature.producto.viewmodel.MovimientoViewModel
+import com.michambita.domain.model.Item
+import com.michambita.feature.item.viewmodel.MovimientoViewModel
 import com.michambita.ui.components.widget.AlertModal
 import com.michambita.ui.components.widget.ErrorDisplay
 import com.michambita.ui.components.widget.LoadingOverlay
@@ -40,11 +40,11 @@ fun HomeScreen(
 
     val movimientoUiState by movimientoViewModel.uiState.collectAsStateWithLifecycle()
 
-    // Only load productos if the motor needs them
-    val productos: List<Producto> = if (uiConfig.showProductPicker) {
+    // Only load items if the motor needs them
+    val items: List<Item> = if (uiConfig.showProductPicker) {
         val inventarioState by inventarioIntentModel.uiState.collectAsStateWithLifecycle()
-        LaunchedEffect(Unit) { inventarioIntentModel.sendIntent(InventarioIntent.LoadProductos) }
-        inventarioState.productos
+        LaunchedEffect(Unit) { inventarioIntentModel.sendIntent(InventarioIntent.LoadItems) }
+        inventarioState.items
     } else {
         emptyList()
     }
@@ -92,7 +92,7 @@ fun HomeScreen(
                     modifier = Modifier,
                     modoOperacion = movimientoUiState.modoOperacion,
                     movimiento = movimientoUiState.movimientoRegEdit,
-                    productos = productos,
+                    items = items,
                     onMovimientoChange = movimientoViewModel::onMovimientoChange,
                     onGuardarClick = {
                         movimientoViewModel.onGuardarMovimiento()
