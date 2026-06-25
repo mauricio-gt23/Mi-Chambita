@@ -20,7 +20,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.michambita.common.Screen
 import com.michambita.feature.home.screen.HomeScreen
-import com.michambita.feature.producto.screen.ProductoScreen
+import com.michambita.feature.item.screen.ItemScreen
 import com.michambita.feature.inventario.screen.InventarioScreen
 import com.michambita.feature.profile.screen.ProfileScreen
 import com.michambita.common.UiState
@@ -74,10 +74,19 @@ fun MainContainer(
             composable(Screen.MainContainer.route) {
                 HomeScreen(navController, businessType = businessType)
             }
-            composable(Screen.Producto.route) { ProductoScreen(onSaveSuccess = { navController.popBackStack() }) }
-            composable("${Screen.Producto.route}/{id}") { backStackEntry ->
+            composable(Screen.Item.route) {
+                ItemScreen(
+                    businessType = businessType,
+                    onSaveSuccess = { navController.popBackStack() }
+                )
+            }
+            composable("${Screen.Item.route}/{id}") { backStackEntry ->
                 val id = backStackEntry.arguments?.getString("id")
-                ProductoScreen(productId = id, onSaveSuccess = { navController.popBackStack() })
+                ItemScreen(
+                    businessType = businessType,
+                    itemId = id,
+                    onSaveSuccess = { navController.popBackStack() }
+                )
             }
             composable(Screen.Inventario.route) { InventarioScreen(navController) }
             composable(Screen.Profile.route) {
@@ -86,8 +95,6 @@ fun MainContainer(
                     onLogout = onLogout,
                 )
             }
-//            composable(Screen.Gastos.route) { GastosScreen(navController) }
-//            composable(Screen.Resumen.route) { ResumenScreen(navController) }
         }
     }
 }
