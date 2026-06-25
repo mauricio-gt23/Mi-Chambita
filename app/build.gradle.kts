@@ -22,7 +22,7 @@ dependencies {
     implementation(project(":router"))
     implementation(project(":feature:auth"))
     implementation(project(":feature:home"))
-    implementation(project(":feature:producto"))
+    implementation(project(":feature:item"))
     implementation(project(":feature:inventario"))
 
     // WorkManager
