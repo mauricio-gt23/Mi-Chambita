@@ -4,15 +4,15 @@ import com.michambita.data.local.preferences.BusinessTypePreferencesRepositoryIm
 import com.michambita.data.repository.impl.AuthRepositoryImpl
 import com.michambita.data.repository.impl.EmpresaRepositoryImpl
 import com.michambita.data.repository.impl.MovimientoRepositoryImpl
-import com.michambita.data.repository.impl.ProductoImageRepositoryImpl
-import com.michambita.data.repository.impl.ProductoRepositoryImpl
+import com.michambita.data.repository.impl.ItemImageRepositoryImpl
+import com.michambita.data.repository.impl.ItemRepositoryImpl
 import com.michambita.data.repository.impl.SynchronizationRepositoryImpl
 import com.michambita.data.repository.impl.UserRepositoryImpl
 import com.michambita.domain.repository.AuthRepository
 import com.michambita.domain.repository.EmpresaRepository
 import com.michambita.domain.repository.MovimientoRepository
-import com.michambita.domain.repository.ProductoImageRepository
-import com.michambita.domain.repository.ProductoRepository
+import com.michambita.domain.repository.ItemImageRepository
+import com.michambita.domain.repository.ItemRepository
 import com.michambita.domain.repository.SynchronizationRepository
 import com.michambita.domain.repository.UserRepository
 import com.michambita.domain.repository.preference.BusinessTypePreferencesRepository
@@ -32,11 +32,11 @@ abstract class RepositoryModule {
 
     @Binds
     @Singleton
-    abstract fun bindProductoRepository(productoRepositoryImpl: ProductoRepositoryImpl): ProductoRepository
+    abstract fun bindItemRepository(itemRepositoryImpl: ItemRepositoryImpl): ItemRepository
 
     @Binds
     @Singleton
-    abstract fun bindProductoImageRepository(productoImageRepositoryImpl: ProductoImageRepositoryImpl): ProductoImageRepository
+    abstract fun bindItemImageRepository(itemImageRepositoryImpl: ItemImageRepositoryImpl): ItemImageRepository
 
     @Binds
     @Singleton
