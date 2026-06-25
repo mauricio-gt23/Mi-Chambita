@@ -18,7 +18,7 @@ fun SearchBar(
     OutlinedTextField(
         value = query,
         onValueChange = onQueryChange,
-        label = { Text("Buscar productos") },
+        label = { Text("Buscar...") },
         leadingIcon = { androidx.compose.material3.Icon(Icons.Filled.Search, contentDescription = null) },
         modifier = Modifier
             .fillMaxWidth()

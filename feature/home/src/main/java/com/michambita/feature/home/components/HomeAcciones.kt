@@ -42,25 +42,27 @@ fun HomeAcciones(
             )
         }
 
-        if (uiConfig.showInventorySection) {
+        if (uiConfig.itemLabel.isNotEmpty()) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 ActionButton(
-                    "Productos", 
-                    Icons.Filled.AddBox, 
-                    onClick = onProductosClick, 
+                    uiConfig.itemLabel,
+                    Icons.Filled.AddBox,
+                    onClick = onProductosClick,
                     isSecondary = true,
                     modifier = Modifier.weight(1f)
                 )
-                ActionButton(
-                    "Inventario",
-                    Icons.Filled.Inventory, 
-                    onClick = onInventarioClick, 
-                    isSecondary = true,
-                    modifier = Modifier.weight(1f)
-                )
+                if (uiConfig.showInventorySection) {
+                    ActionButton(
+                        "Inventario",
+                        Icons.Filled.Inventory,
+                        onClick = onInventarioClick,
+                        isSecondary = true,
+                        modifier = Modifier.weight(1f)
+                    )
+                }
             }
         }
 
@@ -69,7 +71,7 @@ fun HomeAcciones(
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             ActionButton(
-                "Estadisticas",
+                "Estadísticas",
                 Icons.Filled.AttachMoney,
                 onClick = {},
                 isSecondary = true,

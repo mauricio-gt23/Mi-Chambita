@@ -7,20 +7,19 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.michambita.domain.model.Producto
+import com.michambita.domain.model.Item
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ItemGrid(
-    productos: List<Producto>,
+    items: List<Item>,
     state: LazyGridState,
-    onRequestEditStock: (Producto) -> Unit,
-    onOpenEditProduct: (Producto) -> Unit,
+    onRequestEditStock: (Item) -> Unit,
+    onOpenEditProduct: (Item) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyVerticalGrid(
@@ -31,11 +30,11 @@ fun ItemGrid(
         modifier = modifier.fillMaxSize(),
         state = state
     ) {
-        itemsIndexed(productos, key = { index, item ->
+        itemsIndexed(items, key = { index, item ->
             val id = item.id
             if (id != null && id.isNotBlank()) id else "pos_$index"
-        }) { _, producto ->
-            ItemCard(producto = producto, onRequestEditStock = onRequestEditStock, onOpenEditProduct = onOpenEditProduct)
+        }) { _, item ->
+            ItemCard(item = item, onRequestEditStock = onRequestEditStock, onOpenEditProduct = onOpenEditProduct)
         }
     }
 }

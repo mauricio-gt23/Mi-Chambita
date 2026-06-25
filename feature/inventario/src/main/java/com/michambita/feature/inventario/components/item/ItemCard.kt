@@ -19,60 +19,61 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.michambita.domain.model.Producto
-import com.michambita.domain.enums.EnumTipoProducto
+import com.michambita.domain.model.Item
+import com.michambita.domain.enums.ItemType
 
 @Composable
 fun ItemCard(
-    producto: Producto,
-    onRequestEditStock: (Producto) -> Unit,
-    onOpenEditProduct: (Producto) -> Unit,
+    item: Item,
+    onRequestEditStock: (Item) -> Unit,
+    onOpenEditProduct: (Item) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    ElevatedCard(modifier = modifier.clickable { onOpenEditProduct(producto) }) {
+    ElevatedCard(modifier = modifier.clickable { onOpenEditProduct(item) }) {
         Column(modifier = Modifier.padding(12.dp)) {
             Text(
-                text = producto.nombre,
+                text = item.nombre,
                 style = MaterialTheme.typography.titleMedium,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
             Spacer(Modifier.height(4.dp))
             Text(
-                text = "$${producto.precio}",
+                text = "$${item.precio}",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Spacer(Modifier.height(8.dp))
-            when (producto.tipoProducto) {
-                EnumTipoProducto.INVENTARIABLE -> {
-                    Row {
+            when (item.itemType) {
+                ItemType.PRODUCT -> {
+                    if (item.stock != null) {
+                        Row {
+                            AssistChip(
+                                onClick = { onRequestEditStock(item) },
+                                label = { Text("Stock: ${item.stock}") },
+                                leadingIcon = { Icon(Icons.Rounded.Inventory2, contentDescription = null) },
+                                colors = AssistChipDefaults.assistChipColors(
+                                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                                    labelColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                                    leadingIconContentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                                )
+                            )
+                        }
+                    }
+                    if (!item.unidadMedida.isNullOrBlank()) {
                         AssistChip(
-                            onClick = { onRequestEditStock(producto) },
-                            label = { Text("Stock: ${(producto.stock ?: 0)}") },
-                            leadingIcon = { Icon(Icons.Rounded.Inventory2, contentDescription = null) },
+                            onClick = {},
+                            label = { Text("Unidad: ${item.unidadMedida}") },
+                            leadingIcon = { Icon(Icons.Filled.Straighten, contentDescription = null) },
                             colors = AssistChipDefaults.assistChipColors(
-                                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                                labelColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                                leadingIconContentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                                containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                                labelColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                                leadingIconContentColor = MaterialTheme.colorScheme.onSecondaryContainer
                             )
                         )
-                        
                     }
                 }
-                EnumTipoProducto.NO_INVENTARIABLE -> {
-                    AssistChip(
-                        onClick = {},
-                        label = { Text("Unidad medida: ${producto.unidadMedida.ifBlank { "Sin unidad" }}") },
-                        leadingIcon = { Icon(Icons.Filled.Straighten, contentDescription = null) },
-                        colors = AssistChipDefaults.assistChipColors(
-                            containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                            labelColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                            leadingIconContentColor = MaterialTheme.colorScheme.onSecondaryContainer
-                        )
-                    )
-                }
-                EnumTipoProducto.SERVICIO -> {}
+                ItemType.SERVICE -> {}
             }
         }
     }

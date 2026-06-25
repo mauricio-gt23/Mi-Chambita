@@ -51,7 +51,7 @@ fun HomeContent(
             uiConfig = uiConfig,
             onRegistrarVenta = onRegistrarVenta,
             onRegistrarGasto = onRegistrarGasto,
-            onProductosClick = { navController.navigate(Screen.Producto.route) },
+            onProductosClick = { navController.navigate(Screen.Item.route) },
             onInventarioClick = { navController.navigate(Screen.Inventario.route) }
         )
 
