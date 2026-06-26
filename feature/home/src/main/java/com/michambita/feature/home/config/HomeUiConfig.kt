@@ -4,24 +4,24 @@ import com.michambita.domain.enums.BusinessType
 
 data class HomeUiConfig(
     val showInventorySection: Boolean,
-    val showItemtPicker: Boolean,
+    val loadItemList: Boolean,
     val itemLabel: String,
 ) {
     companion object {
         fun from(type: BusinessType): HomeUiConfig = when (type) {
             BusinessType.INVENTORY -> HomeUiConfig(
                 showInventorySection = true,
-                showItemtPicker = true,
+                loadItemList = true,
                 itemLabel = "Productos"
             )
             BusinessType.SERVICE -> HomeUiConfig(
-                showInventorySection = false,
-                showItemtPicker = true,
+                showInventorySection = true,
+                loadItemList = true,
                 itemLabel = "Servicios"
             )
             BusinessType.CASH_FLOW -> HomeUiConfig(
                 showInventorySection = false,
-                showItemtPicker = false,
+                loadItemList = false,
                 itemLabel = ""
             )
         }

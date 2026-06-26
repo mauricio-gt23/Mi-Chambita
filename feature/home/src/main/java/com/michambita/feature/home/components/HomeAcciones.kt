@@ -56,7 +56,7 @@ fun HomeAcciones(
                 )
                 if (uiConfig.showInventorySection) {
                     ActionButton(
-                        "Inventario",
+                        "Catálogo",
                         Icons.Filled.Inventory,
                         onClick = onInventarioClick,
                         isSecondary = true,

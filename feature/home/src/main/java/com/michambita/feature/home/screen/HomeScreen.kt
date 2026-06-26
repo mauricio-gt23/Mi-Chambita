@@ -41,7 +41,7 @@ fun HomeScreen(
     val movimientoUiState by movimientoViewModel.uiState.collectAsStateWithLifecycle()
 
     // Only load items if the motor needs them
-    val items: List<Item> = if (uiConfig.showItemtPicker) {
+    val items: List<Item> = if (uiConfig.loadItemList) {
         val inventarioState by inventarioIntentModel.uiState.collectAsStateWithLifecycle()
         LaunchedEffect(Unit) { inventarioIntentModel.sendIntent(InventarioIntent.LoadItems) }
         inventarioState.items
