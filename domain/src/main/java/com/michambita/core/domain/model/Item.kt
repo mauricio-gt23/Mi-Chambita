@@ -4,7 +4,7 @@ import com.michambita.domain.enums.ItemType
 
 data class Item(
     val id: String? = "",
-    var userId: String? = "",
+    var companyId: String? = "",
     val nombre: String,
     val descripcion: String? = "",
     val precio: Double,

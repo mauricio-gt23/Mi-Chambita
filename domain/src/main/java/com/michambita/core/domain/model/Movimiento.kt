@@ -6,7 +6,8 @@ import java.util.Date
 
 data class Movimiento(
     val id: Long? = null,
-    var userId: String? = "",
+    var companyId: String? = "",
+    val createdByUserId: String? = null,
     val descripcion: String,
     val monto: BigDecimal,
     val tipoMovimiento: EnumTipoMovimiento,

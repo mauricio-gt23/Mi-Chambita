@@ -6,6 +6,6 @@ data class User(
     val email: String? = null,
     val password: String? = null,
     val confirmPassword: String? = null,
-    val idEmpresa: String? = null,
+    val companyId: String? = null,
     val ctrlAdmin: Boolean = false
 )

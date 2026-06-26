@@ -8,7 +8,7 @@ interface AuthRepository {
         name: String,
         email: String,
         password: String,
-        idEmpresa: String,
+        companyId: String,
         ctrlAdmin: Boolean
     ): Result<String>
     suspend fun checkEmailExists(email: String): Result<Boolean>
