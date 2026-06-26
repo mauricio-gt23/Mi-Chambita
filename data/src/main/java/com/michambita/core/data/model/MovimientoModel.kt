@@ -6,7 +6,8 @@ import java.util.Date
 
 data class MovimientoModel(
     val id: Long? = null,
-    val userId: String? = "",
+    val companyId: String? = "",
+    val createdByUserId: String? = null,
     val descripcion: String = "",
     val monto: Double = 0.0,
     val tipoMovimiento: String = EnumTipoMovimiento.INCOME.name,
@@ -18,7 +19,8 @@ data class MovimientoModel(
 
 fun MovimientoModel.toDomain() = Movimiento(
     id = id,
-    userId = userId,
+    companyId = companyId,
+    createdByUserId = createdByUserId,
     descripcion = descripcion,
     monto = monto.toBigDecimal(),
     tipoMovimiento = try {
@@ -34,7 +36,8 @@ fun MovimientoModel.toDomain() = Movimiento(
 
 fun Movimiento.toModel() = MovimientoModel(
     id = id,
-    userId = userId,
+    companyId = companyId,
+    createdByUserId = createdByUserId,
     descripcion = descripcion,
     monto = monto.toDouble(),
     tipoMovimiento = tipoMovimiento.name,

@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 3,
-    "identityHash": "8fb750c3b99e2cdd4fb4562649d97d99",
+    "identityHash": "dafe36ddba75f122e04ccf27c25212a4",
     "entities": [
       {
         "tableName": "movimiento",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `user_id` TEXT NOT NULL, `descripcion` TEXT NOT NULL, `monto` REAL NOT NULL, `tipo_movimiento` TEXT NOT NULL, `fecha_registro` INTEGER NOT NULL, `sincronizado` INTEGER NOT NULL, `items` TEXT NOT NULL, `es_movimiento_rapido` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `company_id` TEXT NOT NULL, `created_by_user_id` TEXT, `descripcion` TEXT NOT NULL, `monto` REAL NOT NULL, `tipo_movimiento` TEXT NOT NULL, `fecha_registro` INTEGER NOT NULL, `sincronizado` INTEGER NOT NULL, `items` TEXT NOT NULL, `es_movimiento_rapido` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -15,10 +15,16 @@
             "notNull": true
           },
           {
-            "fieldPath": "userId",
-            "columnName": "user_id",
+            "fieldPath": "companyId",
+            "columnName": "company_id",
             "affinity": "TEXT",
             "notNull": true
+          },
+          {
+            "fieldPath": "createdByUserId",
+            "columnName": "created_by_user_id",
+            "affinity": "TEXT",
+            "notNull": false
           },
           {
             "fieldPath": "descripcion",
@@ -76,7 +82,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '8fb750c3b99e2cdd4fb4562649d97d99')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'dafe36ddba75f122e04ccf27c25212a4')"
     ]
   }
 }

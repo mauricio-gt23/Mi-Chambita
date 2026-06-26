@@ -5,7 +5,7 @@ import com.michambita.domain.model.Item
 
 data class ItemModel(
     val id: String? = null,
-    val userId: String? = null,
+    val companyId: String? = null,
     val nombre: String = "",
     val descripcion: String? = "",
     val precio: Double = 0.0,
@@ -17,7 +17,7 @@ data class ItemModel(
 
 fun ItemModel.toDomain() = Item(
     id = id,
-    userId = userId,
+    companyId = companyId,
     nombre = nombre,
     descripcion = descripcion,
     precio = precio,
@@ -29,7 +29,7 @@ fun ItemModel.toDomain() = Item(
 
 fun Item.toModel() = ItemModel(
     id = id,
-    userId = userId,
+    companyId = companyId,
     nombre = nombre,
     descripcion = descripcion,
     precio = precio,

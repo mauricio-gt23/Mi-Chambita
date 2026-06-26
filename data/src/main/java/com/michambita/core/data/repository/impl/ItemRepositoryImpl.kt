@@ -52,9 +52,9 @@ class ItemRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getAllItemsByUserId(userId: String): Result<List<Item>> {
+    override suspend fun getAllItemsByCompanyId(companyId: String): Result<List<Item>> {
         return try {
-            val querySnapshot = itemCollection.whereEqualTo("userId", userId).get().await()
+            val querySnapshot = itemCollection.whereEqualTo("companyId", companyId).get().await()
             val itemList = querySnapshot.documents.mapNotNull { document ->
                 document.toObject(ItemModel::class.java)?.copy(id = document.id)?.toDomain()
             }

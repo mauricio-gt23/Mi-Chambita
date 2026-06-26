@@ -39,7 +39,7 @@ class AuthRepositoryImpl @Inject constructor(
         name: String,
         email: String,
         password: String,
-        idEmpresa: String,
+        companyId: String,
         ctrlAdmin: Boolean
     ): Result<String> {
         return try {
@@ -50,7 +50,7 @@ class AuthRepositoryImpl @Inject constructor(
                     "userId" to firebaseUser.uid,
                     "name" to name,
                     "email" to email,
-                    "idEmpresa" to idEmpresa,
+                    "companyId" to companyId,
                     "ctrlAdmin" to ctrlAdmin
                 )
                 userCollection.document(firebaseUser.uid)

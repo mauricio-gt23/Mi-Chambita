@@ -2,14 +2,14 @@ package com.michambita.data.di
 
 import com.michambita.data.local.preferences.BusinessTypePreferencesRepositoryImpl
 import com.michambita.data.repository.impl.AuthRepositoryImpl
-import com.michambita.data.repository.impl.EmpresaRepositoryImpl
+import com.michambita.data.repository.impl.CompanyRepositoryImpl
 import com.michambita.data.repository.impl.MovimientoRepositoryImpl
 import com.michambita.data.repository.impl.ItemImageRepositoryImpl
 import com.michambita.data.repository.impl.ItemRepositoryImpl
 import com.michambita.data.repository.impl.SynchronizationRepositoryImpl
 import com.michambita.data.repository.impl.UserRepositoryImpl
 import com.michambita.domain.repository.AuthRepository
-import com.michambita.domain.repository.EmpresaRepository
+import com.michambita.domain.repository.CompanyRepository
 import com.michambita.domain.repository.MovimientoRepository
 import com.michambita.domain.repository.ItemImageRepository
 import com.michambita.domain.repository.ItemRepository
@@ -52,7 +52,7 @@ abstract class RepositoryModule {
 
     @Binds
     @Singleton
-    abstract fun bindEmpresaRepository(empresaRepositoryImpl: EmpresaRepositoryImpl): EmpresaRepository
+    abstract fun bindCompanyRepository(companyRepositoryImpl: CompanyRepositoryImpl): CompanyRepository
 
     // PREF REPOSITORY
     @Binds

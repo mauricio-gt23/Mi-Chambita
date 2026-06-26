@@ -14,8 +14,11 @@ data class MovimientoEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
 
-    @ColumnInfo(name = "user_id")
-    val userId: String = "",
+    @ColumnInfo(name = "company_id")
+    val companyId: String = "",
+
+    @ColumnInfo(name = "created_by_user_id")
+    val createdByUserId: String? = null,
 
     @ColumnInfo(name = "descripcion")
     val descripcion: String = "",
@@ -40,7 +43,7 @@ data class MovimientoEntity(
 )
 
 fun Movimiento.toDataBase(): MovimientoEntity =
-    MovimientoEntity(this.id ?: 0, userId!!, descripcion, monto, tipoMovimiento, fechaRegistro, sincronizado, items, esMovimientoRapido)
+    MovimientoEntity(this.id ?: 0, companyId!!, createdByUserId, descripcion, monto, tipoMovimiento, fechaRegistro, sincronizado, items, esMovimientoRapido)
 
 fun MovimientoEntity.toDomain(): Movimiento =
-    Movimiento(this.id, userId, descripcion, monto, tipoMovimiento, fechaRegistro, sincronizado, esMovimientoRapido, items)
+    Movimiento(this.id, companyId, createdByUserId, descripcion, monto, tipoMovimiento, fechaRegistro, sincronizado, esMovimientoRapido, items)
