@@ -117,7 +117,7 @@ fun ProfileScreen(
                     ),
                 )
 
-                uiState.empresa?.let { empresa ->
+                uiState.company?.let { empresa ->
                     ProfileInfoCard(
                         title = "Mi empresa",
                         items = listOfNotNull(

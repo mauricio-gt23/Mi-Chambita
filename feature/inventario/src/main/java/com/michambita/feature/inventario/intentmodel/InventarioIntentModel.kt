@@ -2,7 +2,7 @@ package com.michambita.feature.inventario.intentmodel
 
 import androidx.lifecycle.viewModelScope
 import com.michambita.common.mvi.BaseIntentModel
-import com.michambita.domain.usecase.LoadAllItemsByUserIdUseCase
+import com.michambita.domain.usecase.LoadAllItemsByCompanyIdUseCase
 import com.michambita.domain.usecase.UpdateItemStockUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -10,7 +10,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class InventarioIntentModel @Inject constructor(
-    private val loadAllItemsByUserIdUseCase: LoadAllItemsByUserIdUseCase,
+    private val loadAllItemsByCompanyIdUseCase: LoadAllItemsByCompanyIdUseCase,
     private val updateItemStockUseCase: UpdateItemStockUseCase
 ) : BaseIntentModel<InventarioUiState, InventarioIntent, Nothing>(
     initialState = InventarioUiState()
@@ -27,7 +27,7 @@ class InventarioIntentModel @Inject constructor(
         reduce { copy(isLoading = true, errorMessage = null) }
 
         viewModelScope.launch {
-            val result = loadAllItemsByUserIdUseCase.invoke()
+            val result = loadAllItemsByCompanyIdUseCase.invoke()
 
             result.fold(
                 onSuccess = { items ->

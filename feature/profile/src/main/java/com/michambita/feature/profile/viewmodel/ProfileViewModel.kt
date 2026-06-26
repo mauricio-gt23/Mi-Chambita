@@ -2,7 +2,7 @@ package com.michambita.feature.profile.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.michambita.domain.model.Empresa
+import com.michambita.domain.model.Company
 import com.michambita.domain.model.User
 import com.michambita.domain.repository.AuthRepository
 import com.michambita.domain.repository.preference.BusinessTypePreferencesRepository
@@ -20,7 +20,7 @@ import javax.inject.Inject
 data class ProfileUiState(
     val isLoading: Boolean = true,
     val user: User? = null,
-    val empresa: Empresa? = null,
+    val company: Company? = null,
     val isLoggingOut: Boolean = false,
     val showLogoutDialog: Boolean = false,
     val error: String? = null,
@@ -51,7 +51,7 @@ class ProfileViewModel @Inject constructor(
                         it.copy(
                             isLoading = false,
                             user = profileData.user,
-                            empresa = profileData.empresa,
+                            company = profileData.company,
                         )
                     }
                 },

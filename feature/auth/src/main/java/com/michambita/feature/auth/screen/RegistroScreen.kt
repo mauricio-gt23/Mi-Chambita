@@ -74,15 +74,15 @@ fun RegistroScreen(
             }
             2 -> {
                 RegistroPaso2(
-                    empresaOption = registroUiState.empresaOption,
-                    empresaNombre = registroUiState.empresa.nombre,
-                    empresaCodigo = registroUiState.empresa.id ?: "",
-                    onEmpresaOptionChange = viewModel::updateEmpresaOption,
-                    onEmpresaNombreChange = viewModel::updateEmpresaNombre,
-                    onEmpresaCodigoChange = viewModel::updateEmpresaCodigo,
+                    companyOption = registroUiState.companyOption,
+                    companyName = registroUiState.company.nombre,
+                    companyCode = registroUiState.company.id ?: "",
+                    onCompanyOptionChange = viewModel::updateCompanyOption,
+                    onCompanyNameChange = viewModel::updateCompanyNombre,
+                    onCompanyCodeChange = viewModel::updateCompanyCodigo,
                     onBack = { viewModel.updateCurrentStep(1) },
                     onSubmit = {
-                        if (registroUiState.empresaOption == "crear") {
+                        if (registroUiState.companyOption == "crear") {
                             viewModel.updateCurrentStep(3)
                         } else {
                             viewModel.register()

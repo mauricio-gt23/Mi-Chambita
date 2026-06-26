@@ -24,27 +24,27 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun RegistroPaso2(
-    empresaOption: String,
-    empresaNombre: String,
-    empresaCodigo: String,
-    onEmpresaOptionChange: (String) -> Unit,
-    onEmpresaNombreChange: (String) -> Unit,
-    onEmpresaCodigoChange: (String) -> Unit,
+    companyOption: String,
+    companyName: String,
+    companyCode: String,
+    onCompanyOptionChange: (String) -> Unit,
+    onCompanyNameChange: (String) -> Unit,
+    onCompanyCodeChange: (String) -> Unit,
     onBack: () -> Unit,
     onSubmit: () -> Unit
 ) {
-    val step2Valid = if (empresaOption == "crear") {
-        empresaNombre.isNotBlank()
+    val step2Valid = if (companyOption == "crear") {
+        companyName.isNotBlank()
     } else {
-        empresaCodigo.isNotBlank()
+        companyCode.isNotBlank()
     }
 
-    val submitLabel = if (empresaOption == "crear") "Continuar" else "Registrarse"
+    val submitLabel = if (companyOption == "crear") "Continuar" else "Registrarse"
 
-    var empresaNombreWasFocused by remember { mutableStateOf(false) }
-    var empresaCodigoWasFocused by remember { mutableStateOf(false) }
-    var empresaNombreShowError by remember { mutableStateOf(false) }
-    var empresaCodigoShowError by remember { mutableStateOf(false) }
+    var companyNameWasFocused by remember { mutableStateOf(false) }
+    var companyCodeWasFocused by remember { mutableStateOf(false) }
+    var companyNameShowError by remember { mutableStateOf(false) }
+    var companyCodeShowError by remember { mutableStateOf(false) }
 
     Text(
         text = "Configuración de Empresa",
@@ -59,8 +59,8 @@ fun RegistroPaso2(
             modifier = Modifier.fillMaxWidth()
         ) {
             RadioButton(
-                selected = empresaOption == "crear",
-                onClick = { onEmpresaOptionChange("crear") }
+                selected = companyOption == "crear",
+                onClick = { onCompanyOptionChange("crear") }
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text("Crear nueva empresa")
@@ -73,8 +73,8 @@ fun RegistroPaso2(
             modifier = Modifier.fillMaxWidth()
         ) {
             RadioButton(
-                selected = empresaOption == "asociar",
-                onClick = { onEmpresaOptionChange("asociar") }
+                selected = companyOption == "asociar",
+                onClick = { onCompanyOptionChange("asociar") }
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text("Asociarse a empresa existente")
@@ -83,35 +83,35 @@ fun RegistroPaso2(
 
     Spacer(modifier = Modifier.height(16.dp))
 
-    if (empresaOption == "crear") {
+    if (companyOption == "crear") {
         OutlinedTextField(
-            value = empresaNombre,
-            onValueChange = onEmpresaNombreChange,
+            value = companyName,
+            onValueChange = onCompanyNameChange,
             label = { Text("Nombre de la empresa *") },
-            isError = empresaNombreShowError && empresaNombre.isBlank(),
+            isError = companyNameShowError && companyName.isBlank(),
             modifier = Modifier
                 .fillMaxWidth()
                 .onFocusChanged { f ->
                     if (f.isFocused) {
-                        empresaNombreWasFocused = true
-                    } else if (empresaNombreWasFocused) {
-                        empresaNombreShowError = true
+                        companyNameWasFocused = true
+                    } else if (companyNameWasFocused) {
+                        companyNameShowError = true
                     }
                 }
         )
     } else {
         OutlinedTextField(
-            value = empresaCodigo,
-            onValueChange = onEmpresaCodigoChange,
+            value = companyCode,
+            onValueChange = onCompanyCodeChange,
             label = { Text("Código de empresa *") },
-            isError = empresaCodigoShowError && empresaCodigo.isBlank(),
+            isError = companyCodeShowError && companyCode.isBlank(),
             modifier = Modifier
                 .fillMaxWidth()
                 .onFocusChanged { f ->
                     if (f.isFocused) {
-                        empresaCodigoWasFocused = true
-                    } else if (empresaCodigoWasFocused) {
-                        empresaCodigoShowError = true
+                        companyCodeWasFocused = true
+                    } else if (companyCodeWasFocused) {
+                        companyCodeShowError = true
                     }
                 }
         )

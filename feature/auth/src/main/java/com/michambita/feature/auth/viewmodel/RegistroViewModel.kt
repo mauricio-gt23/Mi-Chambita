@@ -3,7 +3,7 @@ package com.michambita.feature.auth.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.michambita.domain.enums.BusinessType
-import com.michambita.domain.model.Empresa
+import com.michambita.domain.model.Company
 import com.michambita.domain.model.User
 import com.michambita.domain.usecase.RegisterUseCase
 import com.michambita.common.UiState
@@ -17,8 +17,8 @@ import javax.inject.Inject
 data class RegistroUiState(
     val usuario: User = User(),
     val currentStep: Int = 1,
-    val empresaOption: String = "crear",
-    val empresa: Empresa = Empresa(nombre = ""),
+    val companyOption: String = "crear",
+    val company: Company = Company(nombre = ""),
     val businessType: BusinessType? = null
 )
 
@@ -35,10 +35,10 @@ class RegistroViewModel @Inject constructor(
     val uiState: StateFlow<UiState<String>> = _uiState
 
     /**
-     * Returns the total number of steps based on the empresa option.
+     * Returns the total number of steps based on the company option.
      */
     val totalSteps: Int
-        get() = if (_registroUiState.value.empresaOption == "crear") 3 else 2
+        get() = if (_registroUiState.value.companyOption == "crear") 3 else 2
 
     fun register() {
         viewModelScope.launch {
@@ -46,17 +46,17 @@ class RegistroViewModel @Inject constructor(
 
             val state = _registroUiState.value
             val usuario = state.usuario
-            val empresaOption = state.empresaOption
-            val empresa = state.empresa
+            val companyOption = state.companyOption
+            val company = state.company
 
             val result = registerUseCase(
                 name = usuario.name ?: "",
                 email = usuario.email ?: "",
                 password = usuario.password ?: "",
-                empresaOption = empresaOption,
-                empresaNombre = if (empresaOption == "crear") empresa.nombre else null,
-                empresaCodigo = if (empresaOption == "asociar") empresa.id else null,
-                businessType = if (empresaOption == "crear") state.businessType else null
+                companyOption = companyOption,
+                companyName = if (companyOption == "crear") company.nombre else null,
+                companyCode = if (companyOption == "asociar") company.id else null,
+                businessType = if (companyOption == "crear") state.businessType else null
             )
 
             result.fold(
@@ -99,19 +99,19 @@ class RegistroViewModel @Inject constructor(
         _registroUiState.value = _registroUiState.value.copy(currentStep = step)
     }
 
-    fun updateEmpresaOption(option: String) {
-        _registroUiState.value = _registroUiState.value.copy(empresaOption = option)
+    fun updateCompanyOption(option: String) {
+        _registroUiState.value = _registroUiState.value.copy(companyOption = option)
     }
 
-    fun updateEmpresaNombre(nombre: String) {
+    fun updateCompanyNombre(nombre: String) {
         _registroUiState.value = _registroUiState.value.copy(
-            empresa = _registroUiState.value.empresa.copy(nombre = nombre)
+            company = _registroUiState.value.company.copy(nombre = nombre)
         )
     }
 
-    fun updateEmpresaCodigo(codigo: String) {
+    fun updateCompanyCodigo(codigo: String) {
         _registroUiState.value = _registroUiState.value.copy(
-            empresa = _registroUiState.value.empresa.copy(id = codigo)
+            company = _registroUiState.value.company.copy(id = codigo)
         )
     }
 
