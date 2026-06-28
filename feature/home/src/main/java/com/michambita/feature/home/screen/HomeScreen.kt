@@ -23,9 +23,9 @@ import com.michambita.feature.inventario.intentmodel.InventarioIntentModel
 import com.michambita.common.UiState
 import com.michambita.domain.model.Item
 import com.michambita.feature.item.viewmodel.MovimientoViewModel
-import com.michambita.ui.components.widget.MiChambitaSnackbarHost
 import com.michambita.ui.components.widget.SnackbarEvent
 import com.michambita.ui.components.widget.LoadingOverlay
+import com.michambita.ui.components.widget.SnackbarHost
 import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -103,7 +103,7 @@ fun HomeScreen(
         )
 
         // Snackbar host posicionado en la parte inferior
-        MiChambitaSnackbarHost(
+        SnackbarHost(
             snackbarHostState = snackbarHostState,
             currentEvent = currentSnackbarEvent,
             modifier = Modifier
