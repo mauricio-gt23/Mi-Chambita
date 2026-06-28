@@ -2,6 +2,7 @@ package com.michambita.data.repository.impl
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.michambita.core.data.util.Constant
 import com.michambita.data.database.dao.SynchronizationDAO
 import com.michambita.domain.repository.AuthRepository
 import com.michambita.domain.repository.preference.CompanyPreferencesRepository
@@ -20,7 +21,7 @@ class AuthRepositoryImpl @Inject constructor(
     private val synchronizationDAO: SynchronizationDAO,
 ) : AuthRepository {
 
-    private val userCollection = firestore.collection("users")
+    private val userCollection = firestore.collection(Constant.Documents.USUARIOS)
 
     override suspend fun login(email: String, password: String): Result<String> {
         return try {

@@ -1,6 +1,7 @@
 package com.michambita.data.repository.impl
 
 import com.google.firebase.firestore.FirebaseFirestore
+import com.michambita.core.data.util.Constant
 import com.michambita.data.model.UserModel
 import com.michambita.data.model.toDomain
 import com.michambita.domain.model.User
@@ -11,7 +12,7 @@ import javax.inject.Inject
 class UserRepositoryImpl @Inject constructor(
     private val firestore: FirebaseFirestore
 ) : UserRepository {
-    private val userCollection = firestore.collection("users")
+    private val userCollection = firestore.collection(Constant.Documents.USUARIOS)
 
     override suspend fun getUser(userId: String): Result<User> {
         return try {

@@ -1,6 +1,7 @@
 package com.michambita.data.repository.impl
 
 import com.google.firebase.firestore.FirebaseFirestore
+import com.michambita.core.data.util.Constant
 import com.michambita.data.model.ItemModel
 import com.michambita.data.model.toDomain
 import com.michambita.data.model.toModel
@@ -13,7 +14,7 @@ class ItemRepositoryImpl @Inject constructor(
     private val firestore: FirebaseFirestore
 ) : ItemRepository {
 
-    private val itemCollection = firestore.collection("items")
+    private val itemCollection = firestore.collection(Constant.Documents.ITEMS)
 
     override suspend fun saveItem(item: Item): Result<Unit> {
         return try {

@@ -42,7 +42,8 @@ class SynchronizationRepositoryImpl @Inject constructor(
 
     override suspend fun deleteMovimiento(movimiento: Movimiento): Result<Unit> {
         return try {
-            synchronizationDAO.deleteById(movimiento.id!!)
+            val id = movimiento.id ?: return Result.failure(Exception("Movimiento sin ID"))
+            synchronizationDAO.deleteById(id)
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
@@ -58,7 +59,7 @@ class SynchronizationRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun markMultipleAsSynchronized(ids: List<Long>): Result<Unit> {
+    override suspend fun markMultipleAsSynchronized(ids: List<String>): Result<Unit> {
         return try {
             synchronizationDAO.markAsSynchronized(ids)
             Result.success(Unit)

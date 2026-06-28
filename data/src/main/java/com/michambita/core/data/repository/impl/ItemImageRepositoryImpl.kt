@@ -2,6 +2,7 @@ package com.michambita.data.repository.impl
 
 import android.net.Uri
 import com.google.firebase.storage.FirebaseStorage
+import com.michambita.core.data.util.Constant
 import com.michambita.domain.repository.ItemImageRepository
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
@@ -10,10 +11,12 @@ class ItemImageRepositoryImpl @Inject constructor(
     private val firebaseStorage: FirebaseStorage
 ) : ItemImageRepository {
 
+    private val itemsPath = Constant.Documents.ITEMS
+
     override suspend fun uploadItemImage(uri: Uri): Result<String> {
         return try {
             val storageRef = firebaseStorage.reference
-            val imageRef = storageRef.child("items/${System.currentTimeMillis()}.jpg")
+            val imageRef = storageRef.child("${itemsPath}/${System.currentTimeMillis()}.jpg")
             imageRef.putFile(uri).await()
             val url = imageRef.downloadUrl.await().toString()
             Result.success(url)

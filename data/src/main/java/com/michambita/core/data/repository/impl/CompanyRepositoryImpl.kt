@@ -1,6 +1,7 @@
 package com.michambita.data.repository.impl
 
 import com.google.firebase.firestore.FirebaseFirestore
+import com.michambita.core.data.util.Constant
 import com.michambita.data.model.CompanyModel
 import com.michambita.data.model.toDomain
 import com.michambita.data.model.toModel
@@ -14,7 +15,7 @@ class CompanyRepositoryImpl @Inject constructor(
     private val firestore: FirebaseFirestore
 ) : CompanyRepository {
 
-    private val companyCollection = firestore.collection("companies")
+    private val companyCollection = firestore.collection(Constant.Documents.EMPRESAS)
 
     override suspend fun saveCompany(company: Company): Result<String> {
         return try {
