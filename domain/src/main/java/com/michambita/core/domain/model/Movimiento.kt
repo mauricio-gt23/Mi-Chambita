@@ -5,7 +5,7 @@ import java.math.BigDecimal
 import java.util.Date
 
 data class Movimiento(
-    val id: Long? = null,
+    val id: String? = null,
     var companyId: String? = "",
     val createdByUserId: String? = null,
     val descripcion: String,
