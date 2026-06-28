@@ -1,6 +1,7 @@
 package com.michambita.data.di
 
-import com.michambita.data.local.preferences.BusinessTypePreferencesRepositoryImpl
+import com.michambita.data.local.preferences.CompanyPreferencesRepositoryImpl
+import com.michambita.data.local.preferences.UserPreferencesRepositoryImpl
 import com.michambita.data.repository.impl.AuthRepositoryImpl
 import com.michambita.data.repository.impl.CompanyRepositoryImpl
 import com.michambita.data.repository.impl.MovimientoRepositoryImpl
@@ -15,7 +16,8 @@ import com.michambita.domain.repository.ItemImageRepository
 import com.michambita.domain.repository.ItemRepository
 import com.michambita.domain.repository.SynchronizationRepository
 import com.michambita.domain.repository.UserRepository
-import com.michambita.domain.repository.preference.BusinessTypePreferencesRepository
+import com.michambita.domain.repository.preference.CompanyPreferencesRepository
+import com.michambita.domain.repository.preference.UserPreferencesRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -57,5 +59,9 @@ abstract class RepositoryModule {
     // PREF REPOSITORY
     @Binds
     @Singleton
-    abstract fun bindBusinessTypeRepository(businessTypePreferenceRepository: BusinessTypePreferencesRepositoryImpl): BusinessTypePreferencesRepository
+    abstract fun bindUserPreferencesRepository(userPreferencesRepositoryImpl: UserPreferencesRepositoryImpl): UserPreferencesRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindCompanyPreferencesRepository(companyPreferencesRepositoryImpl: CompanyPreferencesRepositoryImpl): CompanyPreferencesRepository
 }

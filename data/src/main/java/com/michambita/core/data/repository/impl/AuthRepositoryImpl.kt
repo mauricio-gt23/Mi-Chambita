@@ -3,18 +3,20 @@ package com.michambita.data.repository.impl
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.michambita.data.database.dao.SynchronizationDAO
-import com.michambita.data.local.preferences.BusinessTypePreferencesRepositoryImpl
-import com.michambita.data.local.preferences.UserPreferencesRepositoryImpl
 import com.michambita.domain.repository.AuthRepository
+import com.michambita.domain.repository.preference.CompanyPreferencesRepository
+import com.michambita.domain.repository.preference.UserPreferencesRepository
+import com.michambita.domain.model.User
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(
     private val firestore: FirebaseFirestore,
     private val firebaseAuth: FirebaseAuth,
-    private val userPreferencesRepositoryImpl: UserPreferencesRepositoryImpl,
-    private val businessTypePreferencesRepositoryImpl: BusinessTypePreferencesRepositoryImpl,
+    private val userPreferencesRepository: UserPreferencesRepository,
+    private val companyPreferencesRepository: CompanyPreferencesRepository,
     private val synchronizationDAO: SynchronizationDAO,
 ) : AuthRepository {
 
@@ -25,7 +27,7 @@ class AuthRepositoryImpl @Inject constructor(
             val authResult = firebaseAuth.signInWithEmailAndPassword(email, password).await()
             val firebaseUser = authResult.user
             if (firebaseUser != null) {
-                userPreferencesRepositoryImpl.saveUserUid(firebaseUser.uid)
+                userPreferencesRepository.saveUser(User(userId = firebaseUser.uid))
                 Result.success(firebaseUser.uid)
             } else {
                 Result.failure(Exception("Error al iniciar sesión con Firebase: Usuario nulo"))
@@ -56,7 +58,15 @@ class AuthRepositoryImpl @Inject constructor(
                 userCollection.document(firebaseUser.uid)
                     .set(userMap)
                     .await()
-                userPreferencesRepositoryImpl.saveUserUid(firebaseUser.uid)
+                userPreferencesRepository.saveUser(
+                    User(
+                        userId = firebaseUser.uid,
+                        name = name,
+                        email = email,
+                        companyId = companyId,
+                        ctrlAdmin = ctrlAdmin
+                    )
+                )
                 Result.success(firebaseUser.uid)
             } else {
                 Result.failure(Exception("Error al registrarse en Firebase"))
@@ -80,13 +90,13 @@ class AuthRepositoryImpl @Inject constructor(
     }
 
     override fun getCurrentUser(): Flow<String?> {
-        return userPreferencesRepositoryImpl.userUidFlow
+        return userPreferencesRepository.userFlow.map { it?.userId }
     }
 
     override suspend fun logout() {
         synchronizationDAO.deleteAll()
-        userPreferencesRepositoryImpl.clearUserUid()
-        businessTypePreferencesRepositoryImpl.clearBusinessType()
+        userPreferencesRepository.clearUser()
+        companyPreferencesRepository.clearCompany()
         firebaseAuth.signOut()
     }
 }
