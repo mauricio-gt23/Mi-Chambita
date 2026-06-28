@@ -1,9 +1,11 @@
 package com.michambita.core.domain.usecase
 
+import com.michambita.domain.model.User
 import com.michambita.domain.repository.AuthRepository
 import com.michambita.domain.repository.CompanyRepository
 import com.michambita.domain.repository.UserRepository
-import com.michambita.domain.repository.preference.BusinessTypePreferencesRepository
+import com.michambita.domain.repository.preference.CompanyPreferencesRepository
+import com.michambita.domain.repository.preference.UserPreferencesRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -11,7 +13,8 @@ class LoginUseCase @Inject constructor(
     private val authRepository: AuthRepository,
     private val userRepository: UserRepository,
     private val companyRepository: CompanyRepository,
-    private val businessTypePreferencesRepository: BusinessTypePreferencesRepository
+    private val userPreferencesRepository: UserPreferencesRepository,
+    private val companyPreferencesRepository: CompanyPreferencesRepository
 ) {
     fun getCurrentUser(): Flow<String?> = authRepository.getCurrentUser()
 
@@ -27,14 +30,13 @@ class LoginUseCase @Inject constructor(
         val companyId = user.companyId
             ?: return Result.failure(Exception("El usuario no tiene empresa asociada"))
 
-        // 3. Obtener empresa → businessType
+        // 3. Obtener empresa
         val company = companyRepository.getCompanyById(companyId).getOrNull()
             ?: return Result.failure(Exception("La empresa asociada no existe"))
-        val businessType = company.businessType
-            ?: return Result.failure(Exception("La empresa no tiene tipo de negocio configurado"))
 
-        // 4. Persistir BusinessType en DataStore
-        businessTypePreferencesRepository.saveBusinessType(businessType)
+        // 4. Persistir User y Company en DataStore
+        userPreferencesRepository.saveUser(user)
+        companyPreferencesRepository.saveCompany(company)
 
         return Result.success(uid)
     }

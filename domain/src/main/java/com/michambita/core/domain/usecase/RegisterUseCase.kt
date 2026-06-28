@@ -2,8 +2,11 @@ package com.michambita.domain.usecase
 
 import com.michambita.domain.enums.BusinessType
 import com.michambita.domain.model.Company
+import com.michambita.domain.model.User
 import com.michambita.domain.repository.AuthRepository
 import com.michambita.domain.repository.CompanyRepository
+import com.michambita.domain.repository.preference.CompanyPreferencesRepository
+import com.michambita.domain.repository.preference.UserPreferencesRepository
 import javax.inject.Inject
 
 /**
@@ -16,7 +19,9 @@ class RegisterUseCase
 @Inject
 constructor(
     private val authRepository: AuthRepository,
-    private val companyRepository: CompanyRepository
+    private val companyRepository: CompanyRepository,
+    private val userPreferencesRepository: UserPreferencesRepository,
+    private val companyPreferencesRepository: CompanyPreferencesRepository
 ) {
 
     suspend operator fun invoke(
@@ -32,6 +37,7 @@ constructor(
         var companyId: String
         var isAdmin: Boolean
         var resolvedBusinessType: BusinessType
+        var resolvedCompany: Company
 
         val emailExists = authRepository.checkEmailExists(email).getOrNull()
         if (emailExists == true) {
@@ -60,6 +66,7 @@ constructor(
                 companyId = saveResult.getOrNull()!!
                 isAdmin = true
                 resolvedBusinessType = businessType!!
+                resolvedCompany = newCompany.copy(id = companyId)
             }
 
             "asociar" -> {
@@ -74,6 +81,7 @@ constructor(
                 resolvedBusinessType = company.businessType ?: return Result.failure(
                     Exception("La empresa no tiene un tipo de negocio configurado")
                 )
+                resolvedCompany = company
             }
 
             else -> {
@@ -90,6 +98,20 @@ constructor(
         )
 
         return if (registerResult.isSuccess) {
+            val uid = registerResult.getOrNull()!!
+
+            // Persistir User y Company en DataStore
+            userPreferencesRepository.saveUser(
+                User(
+                    userId = uid,
+                    name = name,
+                    email = email,
+                    companyId = companyId,
+                    ctrlAdmin = isAdmin
+                )
+            )
+            companyPreferencesRepository.saveCompany(resolvedCompany)
+
             val message =
                 when (companyOption) {
                     "crear" -> "El código identificador de su empresa es $companyId"
