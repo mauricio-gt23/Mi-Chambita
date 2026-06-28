@@ -16,7 +16,6 @@ import com.michambita.common.Screen
 import com.michambita.feature.home.components.historial.EncabezadoHistorial
 import com.michambita.feature.home.components.historial.MovimientoHistorial
 import com.michambita.feature.home.viewmodel.HomeUiState
-import com.michambita.common.DateUtils
 
 @Composable
 fun HomeContent(
@@ -28,12 +27,12 @@ fun HomeContent(
     onRegistrarVenta: () -> Unit,
     onRegistrarGasto: () -> Unit,
     onEditarMovimiento: (Movimiento) -> Unit,
-    onEliminarMovimiento: (Movimiento) -> Unit,
-    onSincronizarMovimiento: () -> Unit
+    onEliminarMovimiento: (Movimiento) -> Unit
+    // onSincronizarMovimiento: () -> Unit // Offline-first: comentado para MVP online-first
 ) {
-    val movimientosHoy = movimientos
-        .filter { DateUtils.isToday(it.fechaRegistro) }
-        .sortedByDescending { it.fechaRegistro.time }
+    // Online-first: los movimientos ya vienen filtrados por hoy desde Firestore,
+    // ordenados por fechaRegistro desc. Mostramos solo los últimos 10 en la UI.
+    val movimientosParaMostrar = movimientos.take(10)
 
     Column(
         modifier = modifier
@@ -57,9 +56,9 @@ fun HomeContent(
 
         Spacer(modifier = Modifier.height(10.dp))
 
-        EncabezadoHistorial(modifier, movimientosHoy, onSincronizarMovimiento)
+        EncabezadoHistorial(modifier)
         MovimientoHistorial(
-            movimientos = movimientosHoy,
+            movimientos = movimientosParaMostrar,
             onEditarMovimiento = onEditarMovimiento,
             onEliminarMovimiento = onEliminarMovimiento,
             isInitialLoading = uiState.isInitialLoading

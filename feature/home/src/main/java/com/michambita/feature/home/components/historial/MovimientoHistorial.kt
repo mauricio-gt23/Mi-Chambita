@@ -50,7 +50,7 @@ fun MovimientoHistorial(
                 ) {
                     items(
                         items = movimientos,
-                        key = { it.hashCode() }
+                        key = { it.id ?: it.hashCode().toString() }
                     ) { movimiento ->
                         SwipeMovimientoItem(
                             movimiento = movimiento,

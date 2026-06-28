@@ -29,7 +29,7 @@ fun HomeAcciones(
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             ActionButton(
-                "Registrar Ingreso",
+                "Registrar Venta",
                 Icons.Filled.AddShoppingCart,
                 onRegistrarVenta,
                 Modifier.weight(1f)

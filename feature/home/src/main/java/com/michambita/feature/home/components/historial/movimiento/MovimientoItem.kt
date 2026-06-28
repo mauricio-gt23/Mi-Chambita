@@ -90,14 +90,14 @@ fun MovimientoItem(
             Spacer(Modifier.width(8.dp))
             
             // Ícono de estado de sincronización
-            Icon(
-                estadoIcon,
-                contentDescription = if (movimiento.sincronizado) "Sincronizado" else "Pendiente",
-                tint = estadoColor,
-                modifier = Modifier
-                    .size(20.dp)
-                    .padding(end = 12.dp)
-            )
+//            Icon(
+//                estadoIcon,
+//                contentDescription = if (movimiento.sincronizado) "Sincronizado" else "Pendiente",
+//                tint = estadoColor,
+//                modifier = Modifier
+//                    .size(20.dp)
+//                    .padding(end = 12.dp)
+//            )
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.michambita.feature.home.components.historial
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
@@ -20,23 +21,31 @@ import com.michambita.domain.model.Movimiento
 
 @Composable
 fun EncabezadoHistorial(
-    modifier: Modifier = Modifier,
-    movimientos: List<Movimiento>,
-    onSincronizarMovimiento: () -> Unit
+    modifier: Modifier = Modifier
+    // movimientos: List<Movimiento>,           // Offline-first: comentado para MVP online-first
+    // onSincronizarMovimiento: () -> Unit       // Offline-first: comentado para MVP online-first
 ) {
-    val pendientes = movimientos.filter { !it.sincronizado }
-    val isValid = pendientes.isNotEmpty()
+    // Offline-first: lógica de pendientes comentada para MVP online-first
+    // val pendientes = movimientos.filter { !it.sincronizado }
+    // val isValid = pendientes.isNotEmpty()
 
     Row(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(
-            "MOVIMIENTOS (${movimientos.size})",
-            style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.Bold
-        )
+        Column {
+            Text(
+                "MOVIMIENTOS",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold
+            )
+            Text(
+                "Últimos 10 movimientos",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
         
         Row(
             horizontalArrangement = Arrangement.spacedBy(0.dp),
@@ -54,17 +63,18 @@ fun EncabezadoHistorial(
                 )
             }
             
-            IconButton(
-                onClick = onSincronizarMovimiento,
-                enabled = isValid
-            ) {
-                Icon(
-                    Icons.Default.Cloud,
-                    contentDescription = "Sincronizar",
-                    tint = if (isValid) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.size(28.dp)
-                )
-            }
+            // Offline-first: botón de sincronización comentado para MVP online-first
+            // IconButton(
+            //     onClick = onSincronizarMovimiento,
+            //     enabled = isValid
+            // ) {
+            //     Icon(
+            //         Icons.Default.Cloud,
+            //         contentDescription = "Sincronizar",
+            //         tint = if (isValid) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+            //         modifier = Modifier.size(28.dp)
+            //     )
+            // }
         }
     }
 }
