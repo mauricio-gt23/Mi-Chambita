@@ -7,7 +7,6 @@ import com.michambita.domain.model.Company
 import com.michambita.domain.model.User
 import com.michambita.domain.usecase.RegisterUseCase
 import com.michambita.common.UiState
-import com.michambita.domain.repository.preference.BusinessTypePreferencesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -25,7 +24,6 @@ data class RegistroUiState(
 @HiltViewModel
 class RegistroViewModel @Inject constructor(
     private val registerUseCase: RegisterUseCase,
-    private val businessTypePreferencesRepository: BusinessTypePreferencesRepository
 ) : ViewModel() {
 
     private val _registroUiState = MutableStateFlow(RegistroUiState())
@@ -61,7 +59,6 @@ class RegistroViewModel @Inject constructor(
 
             result.fold(
                 onSuccess = { registerResult ->
-                    businessTypePreferencesRepository.saveBusinessType(registerResult.businessType)
                     _uiState.value = UiState.Success(registerResult.message)
                 },
                 onFailure = { error ->

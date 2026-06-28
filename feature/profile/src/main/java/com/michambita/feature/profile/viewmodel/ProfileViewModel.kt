@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.michambita.domain.model.Company
 import com.michambita.domain.model.User
 import com.michambita.domain.repository.AuthRepository
-import com.michambita.domain.repository.preference.BusinessTypePreferencesRepository
 import com.michambita.domain.usecase.GetProfileUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
