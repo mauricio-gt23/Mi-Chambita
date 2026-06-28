@@ -5,7 +5,7 @@ import com.michambita.domain.model.Movimiento
 import java.util.Date
 
 data class MovimientoModel(
-    val id: Long? = null,
+    val id: String? = null,
     val companyId: String? = "",
     val createdByUserId: String? = null,
     val descripcion: String = "",

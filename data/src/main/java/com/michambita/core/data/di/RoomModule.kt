@@ -19,8 +19,12 @@ object RoomModule {
     @Singleton
     @Provides
     fun provideSynchronizationRoom(@ApplicationContext context: Context) =
-        Room.databaseBuilder(context, SynchronizationDB::class.java, SYNCHRONIZATION_DATABASE_NAME)
-            .build()
+            Room.databaseBuilder(
+                            context,
+                            SynchronizationDB::class.java,
+                            SYNCHRONIZATION_DATABASE_NAME
+                    )
+                    .build()
 
     @Singleton
     @Provides

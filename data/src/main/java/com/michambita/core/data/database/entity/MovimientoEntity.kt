@@ -11,8 +11,8 @@ import java.util.Date
 
 @Entity(tableName = "movimiento")
 data class MovimientoEntity(
-    @PrimaryKey(autoGenerate = true)
-    val id: Long = 0,
+    @PrimaryKey
+    val id: String = "",
 
     @ColumnInfo(name = "company_id")
     val companyId: String = "",
@@ -43,7 +43,7 @@ data class MovimientoEntity(
 )
 
 fun Movimiento.toDataBase(): MovimientoEntity =
-    MovimientoEntity(this.id ?: 0, companyId!!, createdByUserId, descripcion, monto, tipoMovimiento, fechaRegistro, sincronizado, items, esMovimientoRapido)
+    MovimientoEntity(this.id ?: "", companyId ?: "", createdByUserId, descripcion, monto, tipoMovimiento, fechaRegistro, sincronizado, items, esMovimientoRapido)
 
 fun MovimientoEntity.toDomain(): Movimiento =
     Movimiento(this.id, companyId, createdByUserId, descripcion, monto, tipoMovimiento, fechaRegistro, sincronizado, esMovimientoRapido, items)
