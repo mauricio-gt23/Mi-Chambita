@@ -45,7 +45,4 @@ dependencies {
     // ThreeTenABP
     implementation(libs.threetenabp)
 
-    // Compose (needed for ImageModule)
-    implementation(platform(libs.androidx.compose.bom))
-    implementation("androidx.compose.ui:ui")
 }
