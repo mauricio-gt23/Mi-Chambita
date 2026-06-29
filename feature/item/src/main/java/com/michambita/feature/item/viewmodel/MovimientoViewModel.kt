@@ -13,14 +13,10 @@ import com.michambita.domain.usecase.DeleteMovimientoOnlineUseCase
 import com.michambita.domain.usecase.UpdateMovimientoUseCase
 import com.michambita.domain.usecase.UpdateMovimientoOnlineUseCase
 import com.michambita.common.UiState
-import com.michambita.ui.components.widget.SnackbarEvent
-import com.michambita.ui.components.widget.SnackbarType
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
@@ -49,9 +45,7 @@ class MovimientoViewModel @Inject constructor(
     private val _operationState = MutableStateFlow<UiState<String>>(UiState.Empty)
     val operationState: StateFlow<UiState<String>> = _operationState.asStateFlow()
 
-    // Canal de eventos de Snackbar
-    private val _snackbarChannel = Channel<SnackbarEvent>(Channel.BUFFERED)
-    val snackbarEvent = _snackbarChannel.receiveAsFlow()
+
 
     fun onRegistrarVenta() {
         _operationState.value = UiState.Empty
@@ -116,7 +110,6 @@ class MovimientoViewModel @Inject constructor(
                             EnumModoOperacion.EDITAR -> "Movimiento actualizado"
                         }
                         _operationState.value = UiState.Success(message)
-                        _snackbarChannel.send(SnackbarEvent(message, SnackbarType.Success))
 
                         _uiState.update {
                             it.copy(
@@ -128,7 +121,6 @@ class MovimientoViewModel @Inject constructor(
                     onFailure = {
                         val errorMsg = it.message ?: "Error al guardar"
                         _operationState.value = UiState.Error(errorMsg)
-                        _snackbarChannel.send(SnackbarEvent(errorMsg, SnackbarType.Error))
                     }
                 )
             }
@@ -152,12 +144,10 @@ class MovimientoViewModel @Inject constructor(
             deleteMovimientoOnlineUseCase(movimiento).fold(
                 onSuccess = {
                     _operationState.value = UiState.Success("Movimiento eliminado")
-                    _snackbarChannel.send(SnackbarEvent("Movimiento eliminado", SnackbarType.Success))
                 },
                 onFailure = {
                     val errorMsg = it.message ?: "Error al eliminar"
                     _operationState.value = UiState.Error(errorMsg)
-                    _snackbarChannel.send(SnackbarEvent(errorMsg, SnackbarType.Error))
                 }
             )
         }

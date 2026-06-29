@@ -23,12 +23,10 @@ import com.michambita.feature.inventario.intentmodel.InventarioIntentModel
 import com.michambita.common.UiState
 import com.michambita.domain.model.Item
 import com.michambita.feature.item.viewmodel.MovimientoViewModel
-import com.michambita.ui.components.widget.SnackbarEvent
+import com.michambita.ui.components.widget.AlertModal
 import com.michambita.ui.components.widget.LoadingOverlay
-import com.michambita.ui.components.widget.SnackbarHost
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -60,24 +58,10 @@ fun HomeScreen(
         skipPartiallyExpanded = true
     )
 
-    // Snackbar state
-    val snackbarHostState = remember { SnackbarHostState() }
-    var currentSnackbarEvent by remember { mutableStateOf<SnackbarEvent?>(null) }
-
-    // Observar eventos de Snackbar del MovimientoViewModel
-    LaunchedEffect(Unit) {
-        movimientoViewModel.snackbarEvent.collectLatest { event ->
-            currentSnackbarEvent = event
-            snackbarHostState.showSnackbar(event.message)
-            currentSnackbarEvent = null
-        }
-    }
-
     // Cerrar bottom sheet automáticamente cuando la operación es exitosa
     LaunchedEffect(operationState) {
         if (operationState is UiState.Success && homeUiState.bottomSheetVisible) {
             homeViewModel.hideBottomSheet()
-            movimientoViewModel.clearOperationState()
         }
     }
 
@@ -102,15 +86,6 @@ fun HomeScreen(
             },
             onEliminarMovimiento = movimientoViewModel::deleteMovimiento
             // onSincronizarMovimiento = homeViewModel::onSincronizarMovimientos // Offline-first: comentado para MVP online-first
-        )
-
-        // Snackbar host posicionado en la parte inferior
-        SnackbarHost(
-            snackbarHostState = snackbarHostState,
-            currentEvent = currentSnackbarEvent,
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(bottom = 16.dp)
         )
     }
 
@@ -141,7 +116,7 @@ fun HomeScreen(
         }
     }
 
-    // Estado de operación CRUD online (Loading overlay)
+    // Estado de operación CRUD online
     when (val state = operationState) {
         is UiState.Loading -> {
             Dialog(
@@ -150,6 +125,26 @@ fun HomeScreen(
             ) {
                 LoadingOverlay(modifier = Modifier, message = "Guardando...")
             }
+        }
+        is UiState.Success -> {
+            AlertModal(
+                title = state.data,
+                message = "",
+                confirmButtonText = "OK",
+                showDismissButton = false,
+                onConfirm = { movimientoViewModel.clearOperationState() },
+                onDismissRequest = { movimientoViewModel.clearOperationState() }
+            )
+        }
+        is UiState.Error -> {
+            AlertModal(
+                title = state.message,
+                message = "",
+                confirmButtonText = "OK",
+                showDismissButton = false,
+                onConfirm = { movimientoViewModel.clearOperationState() },
+                onDismissRequest = { movimientoViewModel.clearOperationState() }
+            )
         }
         else -> {}
     }
