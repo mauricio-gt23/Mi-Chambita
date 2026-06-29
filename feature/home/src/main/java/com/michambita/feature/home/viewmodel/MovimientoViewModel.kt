@@ -1,4 +1,4 @@
-package com.michambita.feature.item.viewmodel
+package com.michambita.feature.home.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -6,12 +6,14 @@ import com.michambita.domain.enums.EnumModoOperacion
 import com.michambita.domain.enums.EnumTipoMovimiento
 import com.michambita.domain.model.Movimiento
 import com.michambita.domain.model.MovimientoItem
+import com.michambita.domain.model.Item
 import com.michambita.domain.usecase.AddMovimientoUseCase
 import com.michambita.domain.usecase.AddMovimientoOnlineUseCase
 import com.michambita.domain.usecase.DeleteMovimientoUseCase
 import com.michambita.domain.usecase.DeleteMovimientoOnlineUseCase
 import com.michambita.domain.usecase.UpdateMovimientoUseCase
 import com.michambita.domain.usecase.UpdateMovimientoOnlineUseCase
+import com.michambita.domain.usecase.LoadAllItemsByCompanyIdUseCase
 import com.michambita.common.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,9 +25,12 @@ import java.math.BigDecimal
 import javax.inject.Inject
 
 data class MovimientoUiState(
-        val modoOperacion: EnumModoOperacion = EnumModoOperacion.REGISTRAR,
-        val movimientoRegEdit: Movimiento? = null,
-        val tipoMovimiento: EnumTipoMovimiento = EnumTipoMovimiento.INCOME
+    val modoOperacion: EnumModoOperacion = EnumModoOperacion.REGISTRAR,
+    val movimientoRegEdit: Movimiento? = null,
+    val tipoMovimiento: EnumTipoMovimiento = EnumTipoMovimiento.INCOME,
+    val items: List<Item> = emptyList(),
+    val isLoadingItems: Boolean = false,
+    val itemsError: String? = null
 )
 
 @HiltViewModel
@@ -36,6 +41,7 @@ class MovimientoViewModel @Inject constructor(
     private val addMovimientoOnlineUseCase: AddMovimientoOnlineUseCase,
     private val updateMovimientoOnlineUseCase: UpdateMovimientoOnlineUseCase,
     private val deleteMovimientoOnlineUseCase: DeleteMovimientoOnlineUseCase,
+    private val loadAllItemsByCompanyIdUseCase: LoadAllItemsByCompanyIdUseCase,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(MovimientoUiState())
@@ -45,7 +51,18 @@ class MovimientoViewModel @Inject constructor(
     private val _operationState = MutableStateFlow<UiState<String>>(UiState.Empty)
     val operationState: StateFlow<UiState<String>> = _operationState.asStateFlow()
 
-
+    fun loadItems() {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoadingItems = true, itemsError = null) }
+            loadAllItemsByCompanyIdUseCase.invoke()
+                .onSuccess { list ->
+                    _uiState.update { it.copy(items = list, isLoadingItems = false) }
+                }
+                .onFailure { error ->
+                    _uiState.update { it.copy(isLoadingItems = false, itemsError = error.message) }
+                }
+        }
+    }
 
     fun onRegistrarVenta() {
         _operationState.value = UiState.Empty

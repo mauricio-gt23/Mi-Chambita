@@ -3,26 +3,20 @@ package com.michambita.feature.home.screen
 import androidx.compose.material3.*
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.*
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
 import com.michambita.domain.enums.BusinessType
 import com.michambita.feature.home.config.HomeUiConfig
 import com.michambita.feature.home.components.HomeContent
 import com.michambita.feature.home.components.historial.movimiento.MovimientoSheet
 import com.michambita.feature.home.viewmodel.HomeViewModel
-import com.michambita.feature.inventario.intentmodel.InventarioIntent
-import com.michambita.feature.inventario.intentmodel.InventarioIntentModel
+import com.michambita.feature.home.viewmodel.MovimientoViewModel
 import com.michambita.common.UiState
-import com.michambita.domain.model.Item
-import com.michambita.feature.item.viewmodel.MovimientoViewModel
 import com.michambita.ui.components.widget.AlertModal
 import com.michambita.ui.components.widget.LoadingOverlay
 import androidx.compose.ui.window.Dialog
@@ -31,10 +25,10 @@ import androidx.compose.ui.window.DialogProperties
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    navController: NavController,
     businessType: BusinessType,
+    onProductosClick: () -> Unit,
+    onInventarioClick: () -> Unit,
     homeViewModel: HomeViewModel = hiltViewModel(),
-    inventarioIntentModel: InventarioIntentModel = hiltViewModel(),
     movimientoViewModel: MovimientoViewModel = hiltViewModel()
 ) {
     val uiConfig = remember(businessType) { HomeUiConfig.from(businessType) }
@@ -45,14 +39,11 @@ fun HomeScreen(
     val movimientoUiState by movimientoViewModel.uiState.collectAsStateWithLifecycle()
     val operationState by movimientoViewModel.operationState.collectAsStateWithLifecycle()
 
-    // Only load items if the motor needs them
-    val items: List<Item> = if (uiConfig.loadItemList) {
-        val inventarioState by inventarioIntentModel.uiState.collectAsStateWithLifecycle()
-        LaunchedEffect(Unit) { inventarioIntentModel.sendIntent(InventarioIntent.LoadItems) }
-        inventarioState.items
-    } else {
-        emptyList()
+    // Load items if the configuration needs them (e.g. to associate items to transactions)
+    LaunchedEffect(uiConfig.loadItemList) {
+        if (uiConfig.loadItemList) movimientoViewModel.loadItems()
     }
+    val items = movimientoUiState.items
 
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
@@ -69,7 +60,8 @@ fun HomeScreen(
         HomeContent(
             uiState = homeUiState,
             uiConfig = uiConfig,
-            navController = navController,
+            onProductosClick = onProductosClick,
+            onInventarioClick = onInventarioClick,
             modifier = Modifier,
             movimientos = movimientos,
             onRegistrarVenta = {

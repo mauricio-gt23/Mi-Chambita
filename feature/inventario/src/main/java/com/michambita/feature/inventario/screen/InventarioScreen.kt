@@ -9,8 +9,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
-import com.michambita.common.Screen
+import com.michambita.domain.model.Item
 import com.michambita.ui.components.widget.LoadingOverlay
 import com.michambita.feature.inventario.components.InventarioContent
 import com.michambita.feature.inventario.intentmodel.InventarioIntent
@@ -20,7 +19,8 @@ import com.michambita.feature.inventario.intentmodel.InventarioIntentModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InventarioScreen(
-    navController: NavController,
+    onAddItem: () -> Unit,
+    onOpenEditItem: (Item) -> Unit,
     intentModel: InventarioIntentModel = hiltViewModel()
 ) {
     val uiState by intentModel.uiState.collectAsStateWithLifecycle()
@@ -32,16 +32,11 @@ fun InventarioScreen(
     InventarioContent(
         items = uiState.items,
         modifier = Modifier.fillMaxSize(),
-        onAddItem = { navController.navigate(Screen.Item.route) },
+        onAddItem = onAddItem,
         onChangeStock = { id, stock ->
             intentModel.sendIntent(InventarioIntent.UpdateStock(id, stock))
         },
-        onOpenEditItem = { item ->
-            val id = item.id
-            if (!id.isNullOrBlank()) {
-                navController.navigate("${Screen.Item.route}/$id")
-            }
-        }
+        onOpenEditItem = onOpenEditItem
     )
 
     if (uiState.isLoading) {
