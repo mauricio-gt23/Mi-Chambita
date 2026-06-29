@@ -26,6 +26,8 @@ import com.michambita.feature.item.viewmodel.MovimientoViewModel
 import com.michambita.ui.components.widget.SnackbarEvent
 import com.michambita.ui.components.widget.LoadingOverlay
 import com.michambita.ui.components.widget.SnackbarHost
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -142,7 +144,12 @@ fun HomeScreen(
     // Estado de operación CRUD online (Loading overlay)
     when (val state = operationState) {
         is UiState.Loading -> {
-            LoadingOverlay(modifier = Modifier, message = "Guardando...")
+            Dialog(
+                onDismissRequest = {},
+                properties = DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false)
+            ) {
+                LoadingOverlay(modifier = Modifier, message = "Guardando...")
+            }
         }
         else -> {}
     }

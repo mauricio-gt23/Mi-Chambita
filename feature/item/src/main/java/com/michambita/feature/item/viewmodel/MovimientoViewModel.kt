@@ -54,6 +54,7 @@ class MovimientoViewModel @Inject constructor(
     val snackbarEvent = _snackbarChannel.receiveAsFlow()
 
     fun onRegistrarVenta() {
+        _operationState.value = UiState.Empty
         _uiState.update {
             it.copy(
                 tipoMovimiento = EnumTipoMovimiento.INCOME,
@@ -69,6 +70,7 @@ class MovimientoViewModel @Inject constructor(
     }
 
     fun onRegistrarGasto() {
+        _operationState.value = UiState.Empty
         _uiState.update {
             it.copy(
                 tipoMovimiento = EnumTipoMovimiento.EXPENSE,
@@ -84,6 +86,7 @@ class MovimientoViewModel @Inject constructor(
     }
 
     fun onEditarMovimiento(movimiento: Movimiento) {
+        _operationState.value = UiState.Empty
         _uiState.update {
             it.copy(
                 tipoMovimiento = movimiento.tipoMovimiento,
@@ -114,6 +117,13 @@ class MovimientoViewModel @Inject constructor(
                         }
                         _operationState.value = UiState.Success(message)
                         _snackbarChannel.send(SnackbarEvent(message, SnackbarType.Success))
+
+                        _uiState.update {
+                            it.copy(
+                                modoOperacion = EnumModoOperacion.REGISTRAR,
+                                movimientoRegEdit = null,
+                            )
+                        }
                     },
                     onFailure = {
                         val errorMsg = it.message ?: "Error al guardar"
@@ -121,13 +131,6 @@ class MovimientoViewModel @Inject constructor(
                         _snackbarChannel.send(SnackbarEvent(errorMsg, SnackbarType.Error))
                     }
                 )
-
-                _uiState.update {
-                    it.copy(
-                        modoOperacion = EnumModoOperacion.REGISTRAR,
-                        movimientoRegEdit = null,
-                    )
-                }
             }
         }
     }

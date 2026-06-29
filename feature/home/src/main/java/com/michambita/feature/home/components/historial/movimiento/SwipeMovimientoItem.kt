@@ -29,36 +29,38 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SwipeMovimientoItem(
-    movimiento: Movimiento,
-    onEditar: (Movimiento) -> Unit,
-    onEliminar: (Movimiento) -> Unit,
+        movimiento: Movimiento,
+        onEditar: (Movimiento) -> Unit,
+        onEliminar: (Movimiento) -> Unit,
 ) {
+    // OFFLINE - FIRST
     // Si está sincronizado, solo mostrar sin swipe
-    if (movimiento.sincronizado) {
-        MovimientoItem(movimiento)
-        return
-    }
-    
-    // Si NO está sincronizado, permitir swipe
+    // if (movimiento.sincronizado) {
+    //     MovimientoItem(movimiento)
+    //     return
+    // }
+
+    // Permitir swipe en todos los casos (offline/sincronizado ignorado de momento)
     val scope = rememberCoroutineScope()
     var pendingReset by remember { mutableStateOf(false) }
-    val dismissState = rememberSwipeToDismissBoxState(
-        confirmValueChange = { value ->
-            when (value) {
-                SwipeToDismissBoxValue.EndToStart -> {
-                    onEliminar(movimiento)
-                    pendingReset = true
-                    false
-                }
-                SwipeToDismissBoxValue.StartToEnd -> {
-                    onEditar(movimiento)
-                    pendingReset = true
-                    false
-                }
-                else -> true
-            }
-        }
-    )
+    val dismissState =
+            rememberSwipeToDismissBoxState(
+                    confirmValueChange = { value ->
+                        when (value) {
+                            SwipeToDismissBoxValue.EndToStart -> {
+                                onEliminar(movimiento)
+                                pendingReset = true
+                                false
+                            }
+                            SwipeToDismissBoxValue.StartToEnd -> {
+                                onEditar(movimiento)
+                                pendingReset = true
+                                false
+                            }
+                            else -> true
+                        }
+                    }
+            )
 
     LaunchedEffect(pendingReset) {
         if (pendingReset) {
@@ -68,37 +70,34 @@ fun SwipeMovimientoItem(
     }
 
     SwipeToDismissBox(
-        state = dismissState,
-        backgroundContent = {
-            val direction = dismissState.dismissDirection
-            val color = when (direction) {
-                SwipeToDismissBoxValue.StartToEnd -> Color(0xFF4CAF50)
-                SwipeToDismissBoxValue.EndToStart -> Color(0xFFF44336)
-                else -> Color.Transparent
-            }
-            val icon = when (direction) {
-                SwipeToDismissBoxValue.StartToEnd -> Icons.Default.Edit
-                SwipeToDismissBoxValue.EndToStart -> Icons.Default.Delete
-                else -> null
-            }
+            state = dismissState,
+            backgroundContent = {
+                val direction = dismissState.dismissDirection
+                val color =
+                        when (direction) {
+                            SwipeToDismissBoxValue.StartToEnd -> Color(0xFF4CAF50)
+                            SwipeToDismissBoxValue.EndToStart -> Color(0xFFF44336)
+                            else -> Color.Transparent
+                        }
+                val icon =
+                        when (direction) {
+                            SwipeToDismissBoxValue.StartToEnd -> Icons.Default.Edit
+                            SwipeToDismissBoxValue.EndToStart -> Icons.Default.Delete
+                            else -> null
+                        }
 
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(color)
-                    .padding(horizontal = 20.dp),
-                contentAlignment = when (direction) {
-                    SwipeToDismissBoxValue.StartToEnd -> Alignment.CenterStart
-                    SwipeToDismissBoxValue.EndToStart -> Alignment.CenterEnd
-                    else -> Alignment.Center
-                }
-            ) {
-                icon?.let {
-                    Icon(it, contentDescription = null, tint = Color.White)
-                }
+                Box(
+                        modifier =
+                                Modifier.fillMaxSize()
+                                        .background(color)
+                                        .padding(horizontal = 20.dp),
+                        contentAlignment =
+                                when (direction) {
+                                    SwipeToDismissBoxValue.StartToEnd -> Alignment.CenterStart
+                                    SwipeToDismissBoxValue.EndToStart -> Alignment.CenterEnd
+                                    else -> Alignment.Center
+                                }
+                ) { icon?.let { Icon(it, contentDescription = null, tint = Color.White) } }
             }
-        }
-    ) {
-        MovimientoItem(movimiento)
-    }
+    ) { MovimientoItem(movimiento) }
 }

@@ -38,20 +38,24 @@ fun MovimientoItem(
     val icon = if (isIncome) Icons.Filled.PointOfSale else Icons.Filled.Receipt
     
     // Colores de estado de sincronización
-    val estadoColor = if (movimiento.sincronizado) 
-        MaterialTheme.colorScheme.tertiary  // Verde
-    else 
-        MaterialTheme.colorScheme.primary   // Naranja
+    val estadoColor = MaterialTheme.colorScheme.primary
+    val backgroundColor = MaterialTheme.colorScheme.surface
+
+    // Offline - first
+    // val estadoColor = if (movimiento.sincronizado) 
+    //     MaterialTheme.colorScheme.tertiary  // Verde
+    // else 
+    //     MaterialTheme.colorScheme.primary   // Naranja
         
-    val estadoIcon = if (movimiento.sincronizado) 
-        Icons.Filled.CloudDone 
-    else 
-        Icons.Filled.CloudQueue
+    // val estadoIcon = if (movimiento.sincronizado) 
+    //     Icons.Filled.CloudDone 
+    // else 
+    //     Icons.Filled.CloudQueue
         
-    val backgroundColor = if (movimiento.sincronizado) 
-        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
-    else 
-        MaterialTheme.colorScheme.surface
+    // val backgroundColor = if (movimiento.sincronizado) 
+    //     MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
+    // else 
+    //     MaterialTheme.colorScheme.surface
 
     Card(
         modifier = Modifier.fillMaxWidth(),

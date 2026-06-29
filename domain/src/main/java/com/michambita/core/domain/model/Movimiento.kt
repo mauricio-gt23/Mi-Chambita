@@ -12,7 +12,7 @@ data class Movimiento(
     val monto: BigDecimal,
     val tipoMovimiento: EnumTipoMovimiento,
     val fechaRegistro: Date = Date(),
-    val sincronizado: Boolean = false,
+    val sincronizado: Boolean = true,
     val esMovimientoRapido: Boolean = true,
     val items: List<MovimientoItem> = emptyList()
 )
