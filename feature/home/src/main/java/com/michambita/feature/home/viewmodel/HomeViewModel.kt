@@ -10,6 +10,7 @@ import com.michambita.domain.usecase.GetMovimientosOnlineUseCase
 import com.michambita.domain.usecase.SyncMovimientosUseCase
 import com.michambita.common.UiState
 import java.util.Calendar
+import java.math.BigDecimal
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -28,6 +29,8 @@ import kotlinx.coroutines.flow.flowOf
 data class HomeUiState(
     val ventas: String = "S/ 0.00",
     val gastos: String = "S/ 0.00",
+    val total: String = "S/ 0.00",
+    val isTotalPositive: Boolean = true,
     val bottomSheetVisible: Boolean = false,
     val isInitialLoading: Boolean = true,
     val movimientosPendientesAyer: Int = 0
@@ -124,10 +127,16 @@ class HomeViewModel @Inject constructor(
             .filter { it.tipoMovimiento == EnumTipoMovimiento.EXPENSE }
             .sumOf { it.monto }
 
+        val rawTotal = totalIncome.subtract(totalExpense)
+        val isPositive = rawTotal >= BigDecimal.ZERO
+        val totalAbs = rawTotal.abs()
+
         _homeUiState.update { currentState ->
             currentState.copy(
                 ventas = "S/ ${totalIncome.toPlainString()}",
-                gastos = "S/ ${totalExpense.toPlainString()}"
+                gastos = "S/ ${totalExpense.toPlainString()}",
+                total = "S/ ${totalAbs.toPlainString()}",
+                isTotalPositive = isPositive
             )
         }
     }

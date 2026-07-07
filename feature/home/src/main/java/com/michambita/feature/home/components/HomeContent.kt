@@ -42,6 +42,8 @@ fun HomeContent(
         ResumenDiario(
             ventas = uiState.ventas,
             gastos = uiState.gastos,
+            totalHoy = uiState.total,
+            isTotalHoyPositive = uiState.isTotalPositive,
             isInitialLoading = uiState.isInitialLoading
         )
 
