@@ -1,5 +1,6 @@
 package com.michambita.data.repository.impl
 
+import com.google.firebase.firestore.FieldPath.documentId
 import com.google.firebase.firestore.FirebaseFirestore
 import com.michambita.core.data.util.Constant
 import com.michambita.data.model.ItemModel
@@ -69,6 +70,24 @@ class ItemRepositoryImpl @Inject constructor(
         return try {
             itemCollection.document(id).update("stock", stock).await()
             Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun getItemsByIds(ids: List<String>): Result<List<Item>> {
+        if (ids.isEmpty()) return Result.success(emptyList())
+        return try {
+            val items = ids.chunked(10).flatMap { chunk ->
+                itemCollection.whereIn(documentId(), chunk)
+                    .get()
+                    .await()
+                    .documents
+                    .mapNotNull { doc ->
+                        doc.toObject(ItemModel::class.java)?.copy(id = doc.id)?.toDomain()
+                    }
+            }
+            Result.success(items)
         } catch (e: Exception) {
             Result.failure(e)
         }

@@ -8,4 +8,5 @@ interface ItemRepository {
     suspend fun deleteItem(id: String): Result<Unit>
     suspend fun getAllItemsByCompanyId(companyId: String): Result<List<Item>>
     suspend fun updateItemStock(id: String, stock: Int): Result<Unit>
+    suspend fun getItemsByIds(ids: List<String>): Result<List<Item>>
 }
