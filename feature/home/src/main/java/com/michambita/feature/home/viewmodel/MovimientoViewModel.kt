@@ -15,6 +15,8 @@ import com.michambita.domain.usecase.UpdateMovimientoUseCase
 import com.michambita.domain.usecase.UpdateMovimientoOnlineUseCase
 import com.michambita.domain.usecase.LoadAllItemsByCompanyIdUseCase
 import com.michambita.common.UiState
+import com.michambita.domain.exception.InsufficientStockException
+import com.michambita.domain.exception.StockShortage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -30,7 +32,9 @@ data class MovimientoUiState(
     val tipoMovimiento: EnumTipoMovimiento = EnumTipoMovimiento.INCOME,
     val items: List<Item> = emptyList(),
     val isLoadingItems: Boolean = false,
-    val itemsError: String? = null
+    val itemsError: String? = null,
+    val originalItems: List<MovimientoItem> = emptyList(),
+    val stockShortages: List<StockShortage> = emptyList()
 )
 
 @HiltViewModel
@@ -75,7 +79,9 @@ class MovimientoViewModel @Inject constructor(
                     monto = BigDecimal.ZERO,
                     tipoMovimiento = EnumTipoMovimiento.INCOME,
                     esMovimientoRapido = true
-                )
+                ),
+                originalItems = emptyList(),
+                stockShortages = emptyList()
             )
         }
     }
@@ -91,7 +97,9 @@ class MovimientoViewModel @Inject constructor(
                     monto = BigDecimal.ZERO,
                     tipoMovimiento = EnumTipoMovimiento.EXPENSE,
                     esMovimientoRapido = true
-                )
+                ),
+                originalItems = emptyList(),
+                stockShortages = emptyList()
             )
         }
     }
@@ -102,7 +110,9 @@ class MovimientoViewModel @Inject constructor(
             it.copy(
                 tipoMovimiento = movimiento.tipoMovimiento,
                 modoOperacion = EnumModoOperacion.EDITAR,
-                movimientoRegEdit = movimiento
+                movimientoRegEdit = movimiento,
+                originalItems = movimiento.items,
+                stockShortages = emptyList()
             )
         }
     }
@@ -117,7 +127,7 @@ class MovimientoViewModel @Inject constructor(
 
                 val result = when (currentState.modoOperacion) {
                     EnumModoOperacion.REGISTRAR -> addMovimientoOnlineUseCase(movimiento)
-                    EnumModoOperacion.EDITAR -> updateMovimientoOnlineUseCase(movimiento)
+                    EnumModoOperacion.EDITAR -> updateMovimientoOnlineUseCase(movimiento, currentState.originalItems)
                 }
 
                 result.fold(
@@ -132,12 +142,21 @@ class MovimientoViewModel @Inject constructor(
                             it.copy(
                                 modoOperacion = EnumModoOperacion.REGISTRAR,
                                 movimientoRegEdit = null,
+                                originalItems = emptyList(),
+                                stockShortages = emptyList()
                             )
                         }
                     },
                     onFailure = {
                         val errorMsg = it.message ?: "Error al guardar"
-                        _operationState.value = UiState.Error(errorMsg)
+                        if (it is InsufficientStockException) {
+                            _uiState.update { state ->
+                                state.copy(stockShortages = it.shortages)
+                            }
+                            _operationState.value = UiState.Empty
+                        } else {
+                            _operationState.value = UiState.Error(errorMsg)
+                        }
                     }
                 )
             }
@@ -172,6 +191,10 @@ class MovimientoViewModel @Inject constructor(
 
     fun clearOperationState() {
         _operationState.value = UiState.Empty
+    }
+
+    fun clearStockShortages() {
+        _uiState.update { it.copy(stockShortages = emptyList()) }
     }
 
     // ── Offline-first methods (preserved for future use) ──────────────

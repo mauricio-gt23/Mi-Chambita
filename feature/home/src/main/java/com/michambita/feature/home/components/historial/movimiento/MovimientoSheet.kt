@@ -213,7 +213,8 @@ private fun VentaDetalleSection(
                 modifier = Modifier.fillMaxWidth()
             )
             DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-                items.forEach { p ->
+                val addedItemIds = itemsVenta.map { it.itemId }.toSet()
+                items.filter { p -> p.id !in addedItemIds }.forEach { p ->
                     DropdownMenuItem(
                         text = { Text(p.nombre) },
                         onClick = {
@@ -285,6 +286,8 @@ private fun VentaDetalleSection(
                             }
                             onMontoChange(total.toString())
                             cantidad = ""
+                            precioUnitario = ""
+                            selectedItem = null
                             onItemsChange(itemsVenta)
                         }
                     }

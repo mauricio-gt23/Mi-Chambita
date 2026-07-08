@@ -19,6 +19,7 @@ import com.michambita.feature.home.viewmodel.MovimientoViewModel
 import com.michambita.common.UiState
 import com.michambita.ui.components.widget.AlertModal
 import com.michambita.ui.components.widget.LoadingOverlay
+import com.michambita.feature.home.components.StockShortageModal
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 
@@ -140,6 +141,14 @@ fun HomeScreen(
         }
         else -> {}
     }
+
+    if (movimientoUiState.stockShortages.isNotEmpty()) {
+        StockShortageModal(
+            shortages = movimientoUiState.stockShortages,
+            onDismiss = { movimientoViewModel.clearStockShortages() }
+        )
+    }
+
 
     // ── Offline-first sync UI (commented out for MVP online-first) ──────
     // when (val state = uiState) {
