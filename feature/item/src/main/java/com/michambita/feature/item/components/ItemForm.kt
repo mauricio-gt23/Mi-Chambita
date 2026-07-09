@@ -16,6 +16,7 @@ import coil.ImageLoader
 import com.michambita.feature.item.config.ItemFormUiConfig
 import com.michambita.feature.item.components.section.DatosBasicosSection
 import com.michambita.feature.item.components.section.ImagenSection
+import com.michambita.ui.components.widget.RequiredTextField
 
 @Composable
 fun ItemForm(
@@ -40,6 +41,10 @@ fun ItemForm(
     onGuardarClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val isFormValid = nombre.isNotBlank() &&
+            precio.isNotBlank() &&
+            (!uiConfig.showStock || stock.isNotBlank())
+
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -60,10 +65,10 @@ fun ItemForm(
                 Text("Precio y detalles", style = MaterialTheme.typography.titleMedium)
                 Spacer(Modifier.height(8.dp))
 
-                OutlinedTextField(
+                RequiredTextField(
                     value = precio,
                     onValueChange = onPrecioChange,
-                    label = { Text("Precio") },
+                    label = "Precio",
                     leadingIcon = { Icon(Icons.Default.AttachMoney, contentDescription = null) },
                     trailingIcon = {
                         if (precio.isNotEmpty()) {
@@ -81,13 +86,13 @@ fun ItemForm(
 
                 if (uiConfig.showStock) {
                     Spacer(Modifier.height(10.dp))
-                    OutlinedTextField(
+                    RequiredTextField(
                         value = stock,
                         onValueChange = { input ->
                             val sanitized = input.filter { it.isDigit() }
                             onStockChange(sanitized)
                         },
-                        label = { Text("Stock inicial") },
+                        label = "Stock inicial",
                         leadingIcon = { Icon(Icons.Rounded.Inventory2, contentDescription = null) },
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Number,
@@ -141,6 +146,7 @@ fun ItemForm(
 
         Button(
             onClick = onGuardarClick,
+            enabled = isFormValid,
             modifier = Modifier.fillMaxWidth()
         ) {
             Icon(Icons.Default.Save, contentDescription = null)
@@ -149,6 +155,7 @@ fun ItemForm(
         }
     }
 }
+
 
 @Composable
 fun SectionCard(title: String, content: @Composable ColumnScope.() -> Unit) {

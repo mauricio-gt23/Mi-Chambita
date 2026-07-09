@@ -10,13 +10,13 @@ import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Inventory
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.michambita.feature.item.components.SectionCard
+import com.michambita.ui.components.widget.RequiredTextField
 
 @Composable
 fun DatosBasicosSection(
@@ -26,10 +26,10 @@ fun DatosBasicosSection(
     onDescripcionChange: (String) -> Unit,
 ) {
     SectionCard(title = "Datos básicos") {
-        OutlinedTextField(
+        RequiredTextField(
             value = nombre,
             onValueChange = onNombreChange,
-            label = { Text("Nombre") },
+            label = "Nombre",
             leadingIcon = { Icon(Icons.Default.Inventory, contentDescription = null) },
             trailingIcon = {
                 if (nombre.isNotEmpty()) {
@@ -44,12 +44,13 @@ fun DatosBasicosSection(
 
         Spacer(Modifier.height(12.dp))
 
-        OutlinedTextField(
+        RequiredTextField(
             value = descripcion,
             onValueChange = onDescripcionChange,
-            label = { Text("Descripción") },
+            label = "Descripción",
+            isRequired = false,
             leadingIcon = { Icon(Icons.Default.Description, contentDescription = null) },
-            supportingText = { Text("Opcional. Añade detalles o notas") },
+            defaultSupportingText = { Text("Opcional. Añade detalles o notas") },
             trailingIcon = {
                 if (descripcion.isNotEmpty()) {
                     IconButton(onClick = { onDescripcionChange("") }) {
@@ -58,6 +59,7 @@ fun DatosBasicosSection(
                 }
             },
             maxLines = 4,
+            singleLine = false,
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
             modifier = Modifier.fillMaxWidth()
         )

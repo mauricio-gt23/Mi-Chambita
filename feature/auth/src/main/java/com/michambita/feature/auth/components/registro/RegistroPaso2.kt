@@ -10,17 +10,13 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.unit.dp
+import com.michambita.ui.components.widget.RequiredTextField
 
 @Composable
 fun RegistroPaso2(
@@ -41,11 +37,6 @@ fun RegistroPaso2(
 
     val submitLabel = if (companyOption == "crear") "Continuar" else "Registrarse"
 
-    var companyNameWasFocused by remember { mutableStateOf(false) }
-    var companyCodeWasFocused by remember { mutableStateOf(false) }
-    var companyNameShowError by remember { mutableStateOf(false) }
-    var companyCodeShowError by remember { mutableStateOf(false) }
-
     Text(
         text = "Configuración de Empresa",
         style = MaterialTheme.typography.titleLarge
@@ -55,7 +46,7 @@ fun RegistroPaso2(
 
     Column {
         Row(
-            verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+            verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth()
         ) {
             RadioButton(
@@ -69,7 +60,7 @@ fun RegistroPaso2(
         Spacer(modifier = Modifier.height(8.dp))
 
         Row(
-            verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+            verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth()
         ) {
             RadioButton(
@@ -84,36 +75,18 @@ fun RegistroPaso2(
     Spacer(modifier = Modifier.height(16.dp))
 
     if (companyOption == "crear") {
-        OutlinedTextField(
+        RequiredTextField(
             value = companyName,
             onValueChange = onCompanyNameChange,
-            label = { Text("Nombre de la empresa *") },
-            isError = companyNameShowError && companyName.isBlank(),
-            modifier = Modifier
-                .fillMaxWidth()
-                .onFocusChanged { f ->
-                    if (f.isFocused) {
-                        companyNameWasFocused = true
-                    } else if (companyNameWasFocused) {
-                        companyNameShowError = true
-                    }
-                }
+            label = "Nombre de la empresa",
+            modifier = Modifier.fillMaxWidth()
         )
     } else {
-        OutlinedTextField(
+        RequiredTextField(
             value = companyCode,
             onValueChange = onCompanyCodeChange,
-            label = { Text("Código de empresa *") },
-            isError = companyCodeShowError && companyCode.isBlank(),
-            modifier = Modifier
-                .fillMaxWidth()
-                .onFocusChanged { f ->
-                    if (f.isFocused) {
-                        companyCodeWasFocused = true
-                    } else if (companyCodeWasFocused) {
-                        companyCodeShowError = true
-                    }
-                }
+            label = "Código de empresa",
+            modifier = Modifier.fillMaxWidth()
         )
     }
 

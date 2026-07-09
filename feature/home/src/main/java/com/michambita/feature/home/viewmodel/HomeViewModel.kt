@@ -9,22 +9,15 @@ import com.michambita.domain.usecase.GetAllMovimientoUseCase
 import com.michambita.domain.usecase.GetMovimientosOnlineUseCase
 import com.michambita.domain.usecase.SyncMovimientosUseCase
 import com.michambita.common.UiState
-import java.util.Calendar
 import java.math.BigDecimal
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import com.michambita.common.DateUtils
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOf
 
 data class HomeUiState(
     val ventas: String = "S/ 0.00",

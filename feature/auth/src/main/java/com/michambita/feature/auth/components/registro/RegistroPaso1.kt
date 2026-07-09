@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Button
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -12,9 +11,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import com.michambita.core.common.util.ValidateUtil.isEmailValid
+import com.michambita.ui.components.widget.RequiredTextField
+import com.michambita.ui.components.widget.PasswordTextField
+import com.michambita.ui.components.widget.PasswordStrengthIndicator
 
 @Composable
 fun RegistroPaso1(
@@ -28,97 +29,72 @@ fun RegistroPaso1(
     onConfirmPasswordChange: (String) -> Unit,
     onContinue: () -> Unit
 ) {
-    val nameError = name.isBlank()
-    val emailError = email.isBlank()
-    val passwordError = password.isBlank()
-    val confirmError = confirmPassword.isBlank()
+    val emailInvalid = email.isNotBlank() && !isEmailValid(email)
+    val emailCustomError = if (emailInvalid) "Formato de correo inválido" else null
+    
     val passwordMismatch = password != confirmPassword
+    val confirmCustomError = if (passwordMismatch && confirmPassword.isNotEmpty()) {
+        "Las contraseñas no coinciden"
+    } else null
 
-    val formValid = !nameError && !emailError && !passwordError && !confirmError && !passwordMismatch
+    val hasMinLength = password.length >= 8
+    val hasUppercase = password.any { it.isUpperCase() }
+    val hasDigit = password.any { it.isDigit() }
+    val hasSpecialChar = password.any { it in "!@#$%^&*()_+-=[]{}|;':\",./<>?~`" }
+    val passwordValid = hasMinLength && hasUppercase && hasDigit && hasSpecialChar
 
-    var nameWasFocused by remember { mutableStateOf(false) }
-    var emailWasFocused by remember { mutableStateOf(false) }
-    var passwordWasFocused by remember { mutableStateOf(false) }
-    var confirmWasFocused by remember { mutableStateOf(false) }
+    val formValid = name.isNotBlank() && 
+            email.isNotBlank() && !emailInvalid && 
+            passwordValid && 
+            confirmPassword.isNotBlank() && !passwordMismatch
 
-    var nameShowError by remember { mutableStateOf(false) }
-    var emailShowError by remember { mutableStateOf(false) }
-    var passwordShowError by remember { mutableStateOf(false) }
-    var confirmShowError by remember { mutableStateOf(false) }
+    var isPasswordFocused by remember { mutableStateOf(false) }
 
-    OutlinedTextField(
+    RequiredTextField(
         value = name,
         onValueChange = onNameChange,
-        label = { Text("Nombre completo *") },
-        isError = nameShowError && nameError,
-        modifier = Modifier
-            .fillMaxWidth()
-            .onFocusChanged { f ->
-                if (f.isFocused) {
-                    nameWasFocused = true
-                } else if (nameWasFocused) {
-                    nameShowError = true
-                }
-            }
+        label = "Nombre completo",
+        modifier = Modifier.fillMaxWidth()
     )
 
     Spacer(modifier = Modifier.height(16.dp))
 
-    OutlinedTextField(
+    RequiredTextField(
         value = email,
         onValueChange = onEmailChange,
-        label = { Text("Correo electrónico *") },
-        isError = emailShowError && emailError,
-        modifier = Modifier
-            .fillMaxWidth()
-            .onFocusChanged { f ->
-                if (f.isFocused) {
-                    emailWasFocused = true
-                } else if (emailWasFocused) {
-                    emailShowError = true
-                }
-            }
+        label = "Correo electrónico",
+        customError = emailCustomError,
+        modifier = Modifier.fillMaxWidth()
     )
 
     Spacer(modifier = Modifier.height(16.dp))
 
-    OutlinedTextField(
+    PasswordTextField(
         value = password,
         onValueChange = onPasswordChange,
-        label = { Text("Contraseña *") },
-        visualTransformation = PasswordVisualTransformation(),
-        isError = passwordShowError && passwordError,
-        modifier = Modifier
-            .fillMaxWidth()
-            .onFocusChanged { f ->
-                if (f.isFocused) {
-                    passwordWasFocused = true
-                } else if (passwordWasFocused) {
-                    passwordShowError = true
-                }
-            }
+        label = "Contraseña",
+        onFocusChanged = { isPasswordFocused = it },
+        modifier = Modifier.fillMaxWidth()
+    )
+
+    PasswordStrengthIndicator(
+        isVisible = isPasswordFocused,
+        hasMinLength = hasMinLength,
+        hasUppercase = hasUppercase,
+        hasDigit = hasDigit,
+        hasSpecialChar = hasSpecialChar,
+        allRulesMet = passwordValid,
+        modifier = Modifier.fillMaxWidth()
     )
 
     Spacer(modifier = Modifier.height(16.dp))
 
-    OutlinedTextField(
+    PasswordTextField(
         value = confirmPassword,
         onValueChange = onConfirmPasswordChange,
-        label = { Text("Confirmar contraseña *") },
-        visualTransformation = PasswordVisualTransformation(),
-        isError = confirmShowError && (confirmError || passwordMismatch),
-        supportingText = if (confirmShowError && passwordMismatch && !confirmError) {
-            { Text("Las contraseñas no coinciden") }
-        } else null,
-        modifier = Modifier
-            .fillMaxWidth()
-            .onFocusChanged { f ->
-                if (f.isFocused) {
-                    confirmWasFocused = true
-                } else if (confirmWasFocused) {
-                    confirmShowError = true
-                }
-            }
+        label = "Confirmar contraseña",
+        customError = confirmCustomError,
+        modifier = Modifier.fillMaxWidth()
     )
 
     Spacer(modifier = Modifier.height(24.dp))
