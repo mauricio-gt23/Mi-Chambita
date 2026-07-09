@@ -61,9 +61,6 @@ fun InventarioContent(
             }
     ) { _ ->
         Column(modifier = modifier.fillMaxSize().padding(16.dp)) {
-            InventoryHeader()
-
-            Spacer(modifier = Modifier.height(12.dp))
 
             // Búsqueda y filtros
             var query by remember { mutableStateOf("") }
@@ -108,15 +105,6 @@ fun InventarioContent(
             }
         }
     }
-}
-
-@Composable
-private fun InventoryHeader(title: String = "Inventario") {
-    Text(
-            text = title,
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.SemiBold
-    )
 }
 
 @Composable

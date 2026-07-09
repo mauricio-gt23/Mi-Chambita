@@ -70,9 +70,7 @@ fun ItemScreen(
             uri?.let { itemImageViewModel.subirImagen(it) }
         }
 
-        val titulo = if (modo == EnumModoOperacion.EDITAR) "Editar ${uiConfig.itemTypeLabel}" else "Registrar ${uiConfig.itemTypeLabel}"
         ItemForm(
-            titulo = titulo,
             nombre = uiFormState.nombre,
             descripcion = uiFormState.descripcion,
             precio = uiFormState.precio,

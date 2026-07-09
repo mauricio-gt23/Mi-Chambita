@@ -97,7 +97,7 @@ fun ProfileScreen(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 ProfileInfoCard(
-                    title = "Información personal",
+                    title = "INFORMACIÓN PERSONAL",
                     items = listOf(
                         ProfileInfoItem(
                             icon = Icons.Default.Person,
@@ -119,7 +119,7 @@ fun ProfileScreen(
 
                 uiState.company?.let { empresa ->
                     ProfileInfoCard(
-                        title = "Mi empresa",
+                        title = "INFORMACIÓN EMPRESA",
                         items = listOfNotNull(
                             ProfileInfoItem(
                                 icon = Icons.Default.Business,

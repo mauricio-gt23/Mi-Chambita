@@ -19,7 +19,6 @@ import com.michambita.feature.item.components.section.ImagenSection
 
 @Composable
 fun ItemForm(
-    titulo: String,
     nombre: String,
     descripcion: String,
     precio: String,
@@ -45,8 +44,6 @@ fun ItemForm(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Text(titulo, style = MaterialTheme.typography.headlineMedium)
-
         DatosBasicosSection(
             nombre = nombre,
             descripcion = descripcion,
