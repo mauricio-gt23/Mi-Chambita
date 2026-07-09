@@ -1,11 +1,12 @@
-package com.michambita.common
+package com.michambita.core.common.util
 
+import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
-import java.text.SimpleDateFormat
 import java.util.Locale
 
 object DateUtils {
+
     fun isToday(date: Date): Boolean {
         val today = Calendar.getInstance()
         val y = today.get(Calendar.YEAR)
@@ -30,4 +31,5 @@ object DateUtils {
         val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
         return sdf.format(date)
     }
+
 }
