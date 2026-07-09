@@ -8,11 +8,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.michambita.core.common.UiState
+import com.michambita.common.UiState
 import com.michambita.feature.auth.components.login.LoginForm
-import com.michambita.core.ui.components.widget.AlertModal
-import com.michambita.core.ui.components.widget.ErrorDisplay
-import com.michambita.core.ui.components.widget.LoadingOverlay
+import com.michambita.ui.components.widget.AlertModal
+import com.michambita.ui.components.widget.ErrorDisplay
+import com.michambita.ui.components.widget.LoadingOverlay
 import com.michambita.feature.auth.viewmodel.LoginViewModel
 
 @Composable

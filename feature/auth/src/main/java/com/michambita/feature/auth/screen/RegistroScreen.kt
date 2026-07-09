@@ -9,12 +9,13 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.michambita.feature.auth.viewmodel.RegistroViewModel
-import com.michambita.core.common.UiState
+import com.michambita.common.UiState
 import com.michambita.feature.auth.components.registro.RegistroPaso1
 import com.michambita.feature.auth.components.registro.RegistroPaso2
-import com.michambita.core.ui.components.widget.AlertModal
-import com.michambita.core.ui.components.widget.ErrorDisplay
-import com.michambita.core.ui.components.widget.LoadingOverlay
+import com.michambita.feature.auth.components.registro.RegistroPaso3
+import com.michambita.ui.components.widget.AlertModal
+import com.michambita.ui.components.widget.ErrorDisplay
+import com.michambita.ui.components.widget.LoadingOverlay
 
 @Composable
 fun RegistroScreen(
@@ -24,6 +25,8 @@ fun RegistroScreen(
 ) {
     val registroUiState by viewModel.registroUiState.collectAsStateWithLifecycle()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    val totalSteps = viewModel.totalSteps
 
     Column(
         modifier = Modifier
@@ -46,7 +49,7 @@ fun RegistroScreen(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = "Paso ${registroUiState.currentStep} de 2",
+                    text = "Paso ${registroUiState.currentStep} de $totalSteps",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.primary
                 )
@@ -71,13 +74,27 @@ fun RegistroScreen(
             }
             2 -> {
                 RegistroPaso2(
-                    empresaOption = registroUiState.empresaOption,
-                    empresaNombre = registroUiState.empresa.nombre,
-                    empresaCodigo = registroUiState.empresa.id ?: "",
-                    onEmpresaOptionChange = viewModel::updateEmpresaOption,
-                    onEmpresaNombreChange = viewModel::updateEmpresaNombre,
-                    onEmpresaCodigoChange = viewModel::updateEmpresaCodigo,
+                    companyOption = registroUiState.companyOption,
+                    companyName = registroUiState.company.nombre,
+                    companyCode = registroUiState.company.id ?: "",
+                    onCompanyOptionChange = viewModel::updateCompanyOption,
+                    onCompanyNameChange = viewModel::updateCompanyNombre,
+                    onCompanyCodeChange = viewModel::updateCompanyCodigo,
                     onBack = { viewModel.updateCurrentStep(1) },
+                    onSubmit = {
+                        if (registroUiState.companyOption == "crear") {
+                            viewModel.updateCurrentStep(3)
+                        } else {
+                            viewModel.register()
+                        }
+                    }
+                )
+            }
+            3 -> {
+                RegistroPaso3(
+                    selectedBusinessType = registroUiState.businessType,
+                    onBusinessTypeSelected = viewModel::updateBusinessType,
+                    onBack = { viewModel.updateCurrentStep(2) },
                     onSubmit = { viewModel.register() }
                 )
             }

@@ -8,9 +8,9 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
+import com.michambita.core.ui.components.wrapper.DismissKeyboard
 import com.michambita.router.NavigationGraph
-import com.michambita.core.ui.theme.MiChambitaTheme
-import com.michambita.core.common.DismissKeyboardWrapper
+import com.michambita.ui.theme.MiChambitaTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -25,7 +25,7 @@ class MainActivity : ComponentActivity() {
                 dynamicColor = false
             ) {
                 val navController = rememberNavController()
-                DismissKeyboardWrapper {
+                DismissKeyboard {
                     Box(modifier = Modifier.fillMaxSize()) {
                         NavigationGraph(navController = navController)
                     }

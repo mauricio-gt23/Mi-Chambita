@@ -9,9 +9,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.michambita.feature.home.config.HomeUiConfig
 
 @Composable
 fun HomeAcciones(
+    uiConfig: HomeUiConfig,
     onRegistrarVenta: () -> Unit,
     onRegistrarGasto: () -> Unit,
     onProductosClick: () -> Unit,
@@ -40,24 +42,28 @@ fun HomeAcciones(
             )
         }
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            ActionButton(
-                "Productos", 
-                Icons.Filled.AddBox, 
-                onClick = onProductosClick, 
-                isSecondary = true,
-                modifier = Modifier.weight(1f)
-            )
-            ActionButton(
-                "Inventario",
-                Icons.Filled.Inventory, 
-                onClick = onInventarioClick, 
-                isSecondary = true,
-                modifier = Modifier.weight(1f)
-            )
+        if (uiConfig.itemLabel.isNotEmpty()) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                ActionButton(
+                    uiConfig.itemLabel,
+                    Icons.Filled.AddBox,
+                    onClick = onProductosClick,
+                    isSecondary = true,
+                    modifier = Modifier.weight(1f)
+                )
+                if (uiConfig.showInventorySection) {
+                    ActionButton(
+                        "Catálogo",
+                        Icons.Filled.Inventory,
+                        onClick = onInventarioClick,
+                        isSecondary = true,
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+            }
         }
 
         Row(
@@ -65,9 +71,9 @@ fun HomeAcciones(
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             ActionButton(
-                "Estadisticas",
+                "Estadísticas",
                 Icons.Filled.AttachMoney,
-                onClick = onProductosClick,
+                onClick = {},
                 isSecondary = true,
                 modifier = Modifier.weight(1f)
             )

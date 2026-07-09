@@ -1,37 +1,37 @@
 package com.michambita.feature.inventario.intentmodel
 
 import androidx.lifecycle.viewModelScope
-import com.michambita.core.common.mvi.BaseIntentModel
-import com.michambita.core.domain.usecase.LoadAllProductoByUserId
-import com.michambita.core.domain.usecase.UpdateProductoStockUseCase
+import com.michambita.common.mvi.BaseIntentModel
+import com.michambita.domain.usecase.LoadAllItemsByCompanyIdUseCase
+import com.michambita.domain.usecase.UpdateItemStockUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class InventarioIntentModel @Inject constructor(
-    private val loadAllProductoByUserId: LoadAllProductoByUserId,
-    private val updateProductoStockUseCase: UpdateProductoStockUseCase
+    private val loadAllItemsByCompanyIdUseCase: LoadAllItemsByCompanyIdUseCase,
+    private val updateItemStockUseCase: UpdateItemStockUseCase
 ) : BaseIntentModel<InventarioUiState, InventarioIntent, Nothing>(
     initialState = InventarioUiState()
 ) {
 
     override fun handleIntent(intent: InventarioIntent) {
         when (intent) {
-            is InventarioIntent.LoadProductos -> loadProductos()
-            is InventarioIntent.UpdateStock -> updateStock(intent.productoId, intent.newStock)
+            is InventarioIntent.LoadItems -> loadItems()
+            is InventarioIntent.UpdateStock -> updateStock(intent.itemId, intent.newStock)
         }
     }
 
-    private fun loadProductos() {
+    private fun loadItems() {
         reduce { copy(isLoading = true, errorMessage = null) }
 
         viewModelScope.launch {
-            val result = loadAllProductoByUserId.invoke()
+            val result = loadAllItemsByCompanyIdUseCase.invoke()
 
             result.fold(
-                onSuccess = { productos ->
-                    reduce { copy(isLoading = false, productos = productos) }
+                onSuccess = { items ->
+                    reduce { copy(isLoading = false, items = items) }
                 },
                 onFailure = { error ->
                     reduce { copy(isLoading = false, errorMessage = error.message) }
@@ -40,15 +40,15 @@ class InventarioIntentModel @Inject constructor(
         }
     }
 
-    private fun updateStock(productoId: String, newStock: Int) {
+    private fun updateStock(itemId: String, newStock: Int) {
         viewModelScope.launch {
-            val result = updateProductoStockUseCase.invoke(productoId, newStock)
+            val result = updateItemStockUseCase.invoke(itemId, newStock)
 
             result.fold(
                 onSuccess = {
-                    sendIntent(InventarioIntent.LoadProductos)
+                    sendIntent(InventarioIntent.LoadItems)
                 },
-                onFailure = { /* noop — mismo comportamiento actual */ }
+                onFailure = { /* noop */ }
             )
         }
     }

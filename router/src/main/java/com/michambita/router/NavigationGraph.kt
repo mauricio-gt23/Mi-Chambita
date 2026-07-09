@@ -9,13 +9,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.michambita.core.common.Screen
+import com.michambita.common.Screen
 import com.michambita.feature.auth.screen.SplashScreen
 import com.michambita.feature.auth.screen.LoginScreen
 import com.michambita.feature.auth.screen.RegistroScreen
 import com.michambita.feature.auth.viewmodel.SessionViewModel
 import com.michambita.feature.auth.viewmodel.UserSessionState
-
 
 @Composable
 fun NavigationGraph(
@@ -24,6 +23,7 @@ fun NavigationGraph(
     sessionViewModel: SessionViewModel = hiltViewModel()
 ) {
     val userSessionState by sessionViewModel.userSessionState.collectAsState()
+    val businessType by sessionViewModel.currentBusinessType.collectAsState()
 
     NavHost(
         navController = navController,
@@ -34,19 +34,18 @@ fun NavigationGraph(
         composable(Screen.Splash.route) {
             SplashScreen()
 
-            LaunchedEffect(userSessionState) {
-                when (userSessionState) {
-                    is UserSessionState.Authenticated -> {
+            LaunchedEffect(userSessionState, businessType) {
+                when {
+                    userSessionState is UserSessionState.Authenticated && businessType != null -> {
                         navController.navigate(Screen.MainContainer.route) {
                             popUpTo(Screen.Splash.route) { inclusive = true }
                         }
                     }
-                    is UserSessionState.Unauthenticated -> {
+                    userSessionState is UserSessionState.Unauthenticated -> {
                         navController.navigate(Screen.Login.route) {
                             popUpTo(Screen.Splash.route) { inclusive = true }
                         }
                     }
-                    is UserSessionState.Unknown -> {}
                 }
             }
         }
@@ -78,7 +77,15 @@ fun NavigationGraph(
         }
 
         composable(Screen.MainContainer.route) {
-            MainContainer()
+            val safeBusinessType = businessType ?: return@composable
+            MainContainer(
+                businessType = safeBusinessType,
+                onLogout = {
+                    navController.navigate(Screen.Login.route) {
+                        popUpTo(0) { inclusive = true }
+                    }
+                },
+            )
         }
     }
 }

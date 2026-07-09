@@ -9,10 +9,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
-
-import com.michambita.core.common.Screen
-import com.michambita.core.ui.components.widget.LoadingOverlay
+import com.michambita.domain.model.Item
+import com.michambita.ui.components.widget.LoadingOverlay
 import com.michambita.feature.inventario.components.InventarioContent
 import com.michambita.feature.inventario.intentmodel.InventarioIntent
 import com.michambita.feature.inventario.intentmodel.InventarioIntentModel
@@ -21,28 +19,24 @@ import com.michambita.feature.inventario.intentmodel.InventarioIntentModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InventarioScreen(
-    navController: NavController,
+    onAddItem: () -> Unit,
+    onOpenEditItem: (Item) -> Unit,
     intentModel: InventarioIntentModel = hiltViewModel()
 ) {
     val uiState by intentModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
-        intentModel.sendIntent(InventarioIntent.LoadProductos)
+        intentModel.sendIntent(InventarioIntent.LoadItems)
     }
 
     InventarioContent(
-        productos = uiState.productos,
+        items = uiState.items,
         modifier = Modifier.fillMaxSize(),
-        onAddProduct = { navController.navigate(Screen.Producto.route) },
+        onAddItem = onAddItem,
         onChangeStock = { id, stock ->
             intentModel.sendIntent(InventarioIntent.UpdateStock(id, stock))
         },
-        onOpenEditProduct = { p ->
-            val id = p.id
-            if (!id.isNullOrBlank()) {
-                navController.navigate("${Screen.Producto.route}/$id")
-            }
-        }
+        onOpenEditItem = onOpenEditItem
     )
 
     if (uiState.isLoading) {

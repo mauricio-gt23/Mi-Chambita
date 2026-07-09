@@ -1,5 +1,7 @@
 plugins {
-    id("michambita.android.feature")
+    id("michambita.android.library")
+    id("michambita.android.hilt")
+    id("michambita.android.compose")
 }
 
 android {
@@ -7,11 +9,12 @@ android {
 }
 
 dependencies {
-    implementation(project(":core:domain"))
-    implementation(project(":core:common"))
-    implementation(project(":core:ui"))
+    implementation(project(":domain"))
+    implementation(project(":common"))
+    implementation(project(":ui"))
     implementation(project(":feature:auth"))
     implementation(project(":feature:home"))
-    implementation(project(":feature:producto"))
+    implementation(project(":feature:item"))
     implementation(project(":feature:inventario"))
+    implementation(project(":feature:profile"))
 }

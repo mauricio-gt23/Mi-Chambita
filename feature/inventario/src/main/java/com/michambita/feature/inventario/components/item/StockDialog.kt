@@ -12,7 +12,7 @@ import androidx.compose.ui.text.input.KeyboardType
 
 @Composable
 fun StockDialog(
-    selectedProductId: String?,
+    selectedItemId: String?,
     inputStock: String,
     onInputStockChange: (String) -> Unit,
     onConfirm: (String, Int) -> Unit,
@@ -39,7 +39,7 @@ fun StockDialog(
         confirmButton = {
             TextButton(onClick = {
                 val ns = inputStock.toIntOrNull()
-                val id = selectedProductId
+                val id = selectedItemId
                 if (id != null && ns != null) {
                     onConfirm(id, ns)
                 }

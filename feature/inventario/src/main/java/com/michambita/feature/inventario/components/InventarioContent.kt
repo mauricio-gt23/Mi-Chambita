@@ -27,90 +27,80 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.michambita.core.domain.model.Producto
-import com.michambita.core.domain.enums.EnumTipoProducto
-import com.michambita.core.ui.components.widget.SearchBar
+import com.michambita.domain.enums.ItemType
+import com.michambita.domain.model.Item
 import com.michambita.feature.inventario.components.item.ItemGrid
 import com.michambita.feature.inventario.components.item.StockDialog
+import com.michambita.ui.components.widget.SearchBar
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun InventarioContent(
-    productos: List<Producto>,
-    modifier: Modifier = Modifier,
-    onAddProduct: () -> Unit = {},
-    onChangeStock: (String, Int) -> Unit = { _, _ -> },
-    onOpenEditProduct: (Producto) -> Unit = {}
+        items: List<Item>,
+        modifier: Modifier = Modifier,
+        onAddItem: () -> Unit = {},
+        onChangeStock: (String, Int) -> Unit = { _, _ -> },
+        onOpenEditItem: (Item) -> Unit = {}
 ) {
     val gridState = rememberLazyGridState()
     var stockDialogOpen by remember { mutableStateOf(false) }
-    var selectedProductId by remember { mutableStateOf<String?>(null) }
+    var selectedItemId by remember { mutableStateOf<String?>(null) }
     var inputStock by remember { mutableStateOf("") }
 
     Scaffold(
-        floatingActionButton = {
-            val fabVisible by remember { derivedStateOf { !gridState.isScrollInProgress } }
-            AddProductFab(visible = fabVisible, onClick = onAddProduct)
-        }
-    ) { padding ->
-        Column(
-            modifier = modifier
-                .fillMaxSize()
-                .padding(16.dp)
-        ) {
-            InventoryHeader()
-
-            Spacer(modifier = Modifier.height(12.dp))
+            floatingActionButton = {
+                val fabVisible by remember { derivedStateOf { !gridState.isScrollInProgress } }
+                AddItemFab(visible = fabVisible, onClick = onAddItem)
+            }
+    ) { _ ->
+        Column(modifier = modifier.fillMaxSize().padding(16.dp)) {
 
             // Búsqueda y filtros
             var query by remember { mutableStateOf("") }
-            var selectedTipo by remember { mutableStateOf<EnumTipoProducto?>(null) }
+            var selectedTipo by remember { mutableStateOf<ItemType?>(null) }
 
             SearchBar(query = query, onQueryChange = { query = it })
 
-            FilterChipsRow(
-                selectedTipo = selectedTipo,
-                onTipoSelected = { selectedTipo = it }
-            )
+            // TODO: REVISAR IMPLEMENTACION DE FILTROS
+            // FilterChipsRow(selectedTipo = selectedTipo, onTipoSelected = { selectedTipo = it })
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            val filtered = remember(query, selectedTipo, productos) {
-                var list = productos
-                    .filter {
-                        it.nombre.contains(query, true) || (it.descripcion?.contains(query, true) == true)
+            val filtered =
+                    remember(query, selectedTipo, items) {
+                        items
+                                .filter {
+                                    it.nombre.contains(query, true) ||
+                                            (it.descripcion?.contains(query, true) == true)
+                                }
+                                .filter { selectedTipo?.let { tp -> it.itemType == tp } ?: true }
                     }
-                    .filter { selectedTipo?.let { tp -> it.tipoProducto == tp } ?: true }
-                list
-            }
 
             ItemGrid(
-                productos = filtered,
-                state = gridState,
-                onRequestEditStock = { p ->
-                    selectedProductId = p.id
-                    inputStock = (p.stock ?: 0).toString()
-                    stockDialogOpen = true
-                },
-                onOpenEditProduct = onOpenEditProduct
+                    items = filtered,
+                    state = gridState,
+                    onRequestEditStock = { item ->
+                        selectedItemId = item.id
+                        inputStock = (item.stock ?: 0).toString()
+                        stockDialogOpen = true
+                    },
+                    onOpenEditProduct = onOpenEditItem
             )
 
             if (stockDialogOpen) {
                 StockDialog(
-                    selectedProductId = selectedProductId,
-                    inputStock = inputStock,
-                    onInputStockChange = { inputStock = it },
-                    onConfirm = { id, ns ->
-                        onChangeStock(id, ns)
-                    },
-                    onDismiss = { stockDialogOpen = false }
+                        selectedItemId = selectedItemId,
+                        inputStock = inputStock,
+                        onInputStockChange = { inputStock = it },
+                        onConfirm = { id, ns -> onChangeStock(id, ns) },
+                        onDismiss = { stockDialogOpen = false }
                 )
             }
         }
@@ -118,58 +108,44 @@ fun InventarioContent(
 }
 
 @Composable
-private fun InventoryHeader(title: String = "Inventario") {
-    Text(
-        text = title,
-        style = MaterialTheme.typography.headlineMedium,
-        fontWeight = FontWeight.SemiBold
-    )
-}
-
-@Composable
-private fun AddProductFab(visible: Boolean, onClick: () -> Unit) {
+private fun AddItemFab(visible: Boolean, onClick: () -> Unit) {
     AnimatedVisibility(
-        visible = visible,
-        enter = fadeIn() + scaleIn(),
-        exit = fadeOut() + scaleOut()
+            visible = visible,
+            enter = fadeIn() + scaleIn(),
+            exit = fadeOut() + scaleOut()
     ) {
         FloatingActionButton(onClick = onClick) {
-            Icon(Icons.Rounded.Add, contentDescription = "Agregar producto")
+            Icon(Icons.Rounded.Add, contentDescription = "Agregar item")
         }
     }
 }
 
-
-
 @Composable
-fun FilterChipsRow(
-    selectedTipo: EnumTipoProducto?,
-    onTipoSelected: (EnumTipoProducto?) -> Unit
-) {
+fun FilterChipsRow(selectedTipo: ItemType?, onTipoSelected: (ItemType?) -> Unit) {
     LazyRow(
-        contentPadding = PaddingValues(horizontal = 4.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+            contentPadding = PaddingValues(horizontal = 4.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         item {
             FilterChip(
-                selected = selectedTipo == null,
-                onClick = { onTipoSelected(null) },
-                label = { Text("Todos") },
-                colors = FilterChipDefaults.filterChipColors()
+                    selected = selectedTipo == null,
+                    onClick = { onTipoSelected(null) },
+                    label = { Text("Todos") },
+                    colors = FilterChipDefaults.filterChipColors()
             )
         }
-        items(EnumTipoProducto.values().size) { idx ->
-            val tipo = EnumTipoProducto.values()[idx]
-            val label = when (tipo) {
-                EnumTipoProducto.INVENTARIABLE -> "Inventariable"
-                EnumTipoProducto.NO_INVENTARIABLE -> "No inventariable"
-                EnumTipoProducto.SERVICIO -> "Servicio"
-            }
+        items(ItemType.values().size) { idx ->
+            val tipo = ItemType.values()[idx]
+            val label =
+                    when (tipo) {
+                        ItemType.PRODUCT -> "Productos"
+                        ItemType.SERVICE -> "Servicios"
+                    }
             FilterChip(
-                selected = selectedTipo == tipo,
-                onClick = { onTipoSelected(tipo) },
-                label = { Text(label) },
-                colors = FilterChipDefaults.filterChipColors()
+                    selected = selectedTipo == tipo,
+                    onClick = { onTipoSelected(tipo) },
+                    label = { Text(label) },
+                    colors = FilterChipDefaults.filterChipColors()
             )
         }
     }

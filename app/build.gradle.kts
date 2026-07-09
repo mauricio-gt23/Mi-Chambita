@@ -15,14 +15,14 @@ android {
 
 dependencies {
     // Module dependencies
-    implementation(project(":core:domain"))
-    implementation(project(":core:common"))
-    implementation(project(":core:data"))
-    implementation(project(":core:ui"))
+    implementation(project(":domain"))
+    implementation(project(":common"))
+    implementation(project(":data"))
+    implementation(project(":ui"))
     implementation(project(":router"))
     implementation(project(":feature:auth"))
     implementation(project(":feature:home"))
-    implementation(project(":feature:producto"))
+    implementation(project(":feature:item"))
     implementation(project(":feature:inventario"))
 
     // WorkManager

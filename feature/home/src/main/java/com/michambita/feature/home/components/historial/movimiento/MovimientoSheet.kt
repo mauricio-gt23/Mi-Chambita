@@ -16,38 +16,37 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.michambita.core.domain.enums.EnumModoOperacion
-import com.michambita.core.domain.enums.EnumTipoProducto
-import com.michambita.core.domain.enums.EnumTipoMovimiento
-import com.michambita.core.domain.model.Producto
-import com.michambita.core.domain.model.MovimientoItem
-import com.michambita.core.domain.model.Movimiento
+import com.michambita.domain.enums.EnumModoOperacion
+import com.michambita.domain.enums.ItemType
+import com.michambita.domain.enums.EnumTipoMovimiento
+import com.michambita.domain.model.Item
+import com.michambita.domain.model.MovimientoItem
+import com.michambita.domain.model.Movimiento
 import java.math.BigDecimal
 import java.math.RoundingMode
-
 
 @Composable
 fun MovimientoSheet(
     modifier: Modifier,
     modoOperacion: EnumModoOperacion,
     movimiento: Movimiento?,
-    productos: List<Producto> = emptyList(),
+    items: List<Item> = emptyList(),
     onMovimientoChange: (Movimiento) -> Unit,
     onGuardarClick: () -> Unit,
 ) {
     val m = movimiento ?: Movimiento(
         descripcion = "",
         monto = BigDecimal.ZERO,
-        tipoMovimiento = EnumTipoMovimiento.VENTA,
+        tipoMovimiento = EnumTipoMovimiento.INCOME,
         esMovimientoRapido = true,
         items = emptyList()
     )
 
     val tipoOperacion = m.tipoMovimiento
 
-    val showDetalleVenta = tipoOperacion == EnumTipoMovimiento.VENTA && !m.esMovimientoRapido
+    val showDetalleVenta = tipoOperacion == EnumTipoMovimiento.INCOME && !m.esMovimientoRapido
 
-    val heighSheet = if (showDetalleVenta)  Modifier.fillMaxHeight(0.9f)   else Modifier.height(320.dp)
+    val heighSheet = if (showDetalleVenta) Modifier.fillMaxHeight(0.9f) else Modifier.height(320.dp)
 
     Column(
         modifier = heighSheet
@@ -73,10 +72,9 @@ fun MovimientoSheet(
             if (showDetalleVenta) {
                 VentaDetalleSection(
                     itemsIniciales = m.items,
-                    productos = productos,
+                    items = items,
                     onMontoChange = { nuevoMontoStr ->
-                        val nuevoMonto =
-                            nuevoMontoStr.trim().toBigDecimalOrNull() ?: BigDecimal.ZERO
+                        val nuevoMonto = nuevoMontoStr.trim().toBigDecimalOrNull() ?: BigDecimal.ZERO
                         onMovimientoChange(m.copy(monto = nuevoMonto))
                     },
                     onItemsChange = { nuevosItems ->
@@ -116,20 +114,20 @@ private fun HeaderRow(
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(
-                imageVector = if (tipoOperacion == EnumTipoMovimiento.VENTA) Icons.Default.PointOfSale else Icons.Default.MoneyOff,
+                imageVector = if (tipoOperacion == EnumTipoMovimiento.INCOME) Icons.Default.PointOfSale else Icons.Default.MoneyOff,
                 contentDescription = null
             )
             Spacer(Modifier.width(8.dp))
             Text(
                 text = if (modoOperacion == EnumModoOperacion.REGISTRAR) {
-                    if (tipoOperacion == EnumTipoMovimiento.VENTA) "Registrar Venta" else "Registrar Gasto"
+                    if (tipoOperacion == EnumTipoMovimiento.INCOME) "Registrar Venta" else "Registrar Gasto"
                 } else {
                     "Editar Movimiento"
                 },
                 style = MaterialTheme.typography.titleLarge
             )
         }
-        if (tipoOperacion == EnumTipoMovimiento.VENTA) {
+        if (tipoOperacion == EnumTipoMovimiento.INCOME) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Switch(
                     checked = esMovimientoRapido,
@@ -157,7 +155,7 @@ private fun DescriptionField(
         value = titulo,
         onValueChange = onTituloChange,
         label = { Text("Descripción") },
-        placeholder = { Text(if (tipoOperacion == EnumTipoMovimiento.VENTA) "Ej: venta de jugos" else "Ej: compra de vasos") },
+        placeholder = { Text(if (tipoOperacion == EnumTipoMovimiento.INCOME) "Ej: venta de jugos" else "Ej: compra de vasos") },
         modifier = Modifier.fillMaxWidth()
     )
 }
@@ -179,7 +177,7 @@ private fun MontoField(
 @Composable
 private fun VentaDetalleSection(
     itemsIniciales: List<MovimientoItem>,
-    productos: List<Producto>,
+    items: List<Item>,
     onMontoChange: (String) -> Unit,
     onItemsChange: (List<MovimientoItem>) -> Unit,
     modoOperacion: EnumModoOperacion,
@@ -189,7 +187,7 @@ private fun VentaDetalleSection(
         var cantidad by remember { mutableStateOf("") }
         var precioUnitario by remember { mutableStateOf("") }
         var expanded by remember { mutableStateOf(false) }
-        var selectedProducto by remember { mutableStateOf<Producto?>(null) }
+        var selectedItem by remember { mutableStateOf<Item?>(null) }
         var itemsVenta by remember { mutableStateOf(itemsIniciales) }
         var showDetalle by remember { mutableStateOf(modoOperacion == EnumModoOperacion.EDITAR || itemsIniciales.isNotEmpty()) }
 
@@ -202,10 +200,10 @@ private fun VentaDetalleSection(
 
         Box(modifier = Modifier.fillMaxWidth()) {
             OutlinedTextField(
-                value = selectedProducto?.nombre ?: "",
+                value = selectedItem?.nombre ?: "",
                 onValueChange = {},
-                label = { Text("Producto") },
-                placeholder = { Text("Selecciona producto") },
+                label = { Text("Item") },
+                placeholder = { Text("Selecciona producto/servicio") },
                 readOnly = true,
                 trailingIcon = {
                     IconButton(onClick = { expanded = true }) {
@@ -215,11 +213,12 @@ private fun VentaDetalleSection(
                 modifier = Modifier.fillMaxWidth()
             )
             DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-                productos.forEach { p ->
+                val addedItemIds = itemsVenta.map { it.itemId }.toSet()
+                items.filter { p -> p.id !in addedItemIds }.forEach { p ->
                     DropdownMenuItem(
                         text = { Text(p.nombre) },
                         onClick = {
-                            selectedProducto = p
+                            selectedItem = p
                             expanded = false
                             precioUnitario = p.precio.toString()
                             val c = cantidad.trim().toBigDecimalOrNull() ?: BigDecimal.ZERO
@@ -235,7 +234,7 @@ private fun VentaDetalleSection(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             modifier = Modifier.fillMaxWidth()
         ) {
-            if (selectedProducto?.tipoProducto == EnumTipoProducto.INVENTARIABLE) {
+            if (selectedItem?.itemType == ItemType.PRODUCT) {
                 OutlinedTextField(
                     value = cantidad,
                     onValueChange = {
@@ -271,15 +270,15 @@ private fun VentaDetalleSection(
         ) {
             Button(
                 onClick = {
-                    val p = selectedProducto
+                    val p = selectedItem
                     val precio = precioUnitario.trim().toBigDecimalOrNull() ?: BigDecimal.ZERO
                     if (p != null && precio > BigDecimal.ZERO) {
-                        val cantInt = if (p.tipoProducto == EnumTipoProducto.INVENTARIABLE) {
+                        val cantInt = if (p.itemType == ItemType.PRODUCT) {
                             cantidad.toIntOrNull() ?: 0
                         } else {
                             1
                         }
-                        if (p.tipoProducto != EnumTipoProducto.INVENTARIABLE || cantInt > 0) {
+                        if (p.itemType != ItemType.PRODUCT || cantInt > 0) {
                             val totalItem = precio.multiply(cantInt.toBigDecimal())
                             itemsVenta = itemsVenta + MovimientoItem(p.id ?: "", cantInt, totalItem)
                             val total = itemsVenta.fold(BigDecimal.ZERO) { acc, item ->
@@ -287,6 +286,8 @@ private fun VentaDetalleSection(
                             }
                             onMontoChange(total.toString())
                             cantidad = ""
+                            precioUnitario = ""
+                            selectedItem = null
                             onItemsChange(itemsVenta)
                         }
                     }
@@ -301,7 +302,7 @@ private fun VentaDetalleSection(
         }
 
         if (showDetalle && itemsVenta.isNotEmpty()) {
-            VentaDetalleList(itemsVenta, productos, onMontoChange, Modifier.fillMaxSize()) {
+            VentaDetalleList(itemsVenta, items, onMontoChange, Modifier.fillMaxSize()) {
                 itemsVenta = it
                 onItemsChange(itemsVenta)
             }
@@ -312,7 +313,7 @@ private fun VentaDetalleSection(
 @Composable
 private fun VentaDetalleList(
     itemsVenta: List<MovimientoItem>,
-    productos: List<Producto>,
+    items: List<Item>,
     onMontoChange: (String) -> Unit,
     modifier: Modifier = Modifier,
     onItemsUpdate: (List<MovimientoItem>) -> Unit,
@@ -330,22 +331,21 @@ private fun VentaDetalleList(
                 .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Text("Productos en la venta", style = MaterialTheme.typography.titleMedium)
+            Text("Productos/Servicios en la venta", style = MaterialTheme.typography.titleMedium)
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier.fillMaxSize()
             ) {
                 itemsIndexed(
                     itemsVenta,
-                    key = { idx, item -> "${item.productoId}:${item.cantidad}:${item.precioTotal.toPlainString()}:$idx" }) { index, item ->
+                    key = { idx, item -> "${item.itemId}:${item.cantidad}:${item.precioTotal.toPlainString()}:$idx" }) { index, item ->
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Column(modifier = Modifier.weight(1f)) {
-                            val nombre = productos.find { it.id == item.productoId }?.nombre
-                                ?: item.productoId
+                            val nombre = items.find { it.id == item.itemId }?.nombre ?: item.itemId
                             val unitPrice = if (item.cantidad > 0) {
                                 item.precioTotal.divide(
                                     BigDecimal(item.cantidad),
@@ -411,7 +411,7 @@ private fun FooterDetailed(
             Text(
                 when (modoOperacion) {
                     EnumModoOperacion.REGISTRAR ->
-                        if (tipoOperacion == EnumTipoMovimiento.VENTA) "Guardar Venta" else "Guardar Gasto"
+                        if (tipoOperacion == EnumTipoMovimiento.INCOME) "Guardar Venta" else "Guardar Gasto"
 
                     EnumModoOperacion.EDITAR -> "Guardar Cambios"
                 }
@@ -433,7 +433,7 @@ private fun FooterSimple(
         Text(
             when (modoOperacion) {
                 EnumModoOperacion.REGISTRAR ->
-                    if (tipoOperacion == EnumTipoMovimiento.VENTA) "Guardar Venta" else "Guardar Gasto"
+                    if (tipoOperacion == EnumTipoMovimiento.INCOME) "Guardar Venta" else "Guardar Gasto"
 
                 EnumModoOperacion.EDITAR -> "Guardar Cambios"
             }

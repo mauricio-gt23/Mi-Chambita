@@ -13,17 +13,17 @@ gradlePlugin {
             id = "michambita.android.application"
             implementationClass = "AndroidApplicationConventionPlugin"
         }
-        register("kotlinLibrary") {
-            id = "michambita.kotlin.library"
-            implementationClass = "KotlinLibraryConventionPlugin"
-        }
         register("androidLibrary") {
             id = "michambita.android.library"
             implementationClass = "AndroidLibraryConventionPlugin"
         }
-        register("androidFeature") {
-            id = "michambita.android.feature"
-            implementationClass = "AndroidFeatureConventionPlugin"
+        register("androidHilt") {
+            id = "michambita.android.hilt"
+            implementationClass = "AndroidHiltConventionPlugin"
+        }
+        register("androidCompose") {
+            id = "michambita.android.compose"
+            implementationClass = "AndroidComposeConventionPlugin"
         }
     }
 }

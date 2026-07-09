@@ -2,29 +2,28 @@ package com.michambita.feature.home.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.michambita.core.domain.model.Movimiento
-import com.michambita.core.domain.enums.EnumTipoMovimiento
-import com.michambita.core.domain.repository.SynchronizationRepository
-import com.michambita.core.domain.usecase.GetAllMovimientoUseCase
-import com.michambita.core.domain.usecase.SyncMovimientosUseCase
-import com.michambita.core.common.UiState
-import java.util.Calendar
+import com.michambita.domain.model.Movimiento
+import com.michambita.domain.enums.EnumTipoMovimiento
+import com.michambita.domain.repository.SynchronizationRepository
+import com.michambita.domain.usecase.GetAllMovimientoUseCase
+import com.michambita.domain.usecase.GetMovimientosOnlineUseCase
+import com.michambita.domain.usecase.SyncMovimientosUseCase
+import com.michambita.common.UiState
+import java.math.BigDecimal
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import com.michambita.core.common.DateUtils
 import kotlinx.coroutines.delay
 
 data class HomeUiState(
     val ventas: String = "S/ 0.00",
     val gastos: String = "S/ 0.00",
+    val total: String = "S/ 0.00",
+    val isTotalPositive: Boolean = true,
     val bottomSheetVisible: Boolean = false,
     val isInitialLoading: Boolean = true,
     val movimientosPendientesAyer: Int = 0
@@ -34,7 +33,8 @@ data class HomeUiState(
 class HomeViewModel @Inject constructor(
     private val getAllMovimientoUseCase: GetAllMovimientoUseCase,
     private val syncMovimientosUseCase: SyncMovimientosUseCase,
-    private val synchronizationRepository: SynchronizationRepository
+    private val synchronizationRepository: SynchronizationRepository,
+    private val getMovimientosOnlineUseCase: GetMovimientosOnlineUseCase
 ) : ViewModel() {
 
     private val _homeUiState = MutableStateFlow(HomeUiState())
@@ -43,36 +43,55 @@ class HomeViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<UiState<String>>(UiState.Empty)
     val uiState: StateFlow<UiState<String>> = _uiState.asStateFlow()
 
-    val movimientos: StateFlow<List<Movimiento>> =
-        getAllMovimientoUseCase()
-            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+    // ── Online-first: lectura de movimientos de hoy desde Firestore ──
+    private val _movimientos = MutableStateFlow<List<Movimiento>>(emptyList())
+    val movimientos: StateFlow<List<Movimiento>> = _movimientos.asStateFlow()
 
     init {
+        // Online-first: cargar movimientos de hoy desde Firestore
         viewModelScope.launch {
-            movimientos.collect { listaMovimientos ->
+            val flow = getMovimientosOnlineUseCase()
+            flow.collect { listaMovimientos ->
+                _movimientos.value = listaMovimientos
                 actualizarResumen(listaMovimientos)
             }
         }
 
         viewModelScope.launch {
-            val firstData = getAllMovimientoUseCase().first()
-            delay(1000)
+            delay(1500)
             _homeUiState.update { it.copy(isInitialLoading = false) }
         }
 
-        viewModelScope.launch {
-            synchronizationRepository.getAllMovimientoPendientes().collect { pendientes ->
-                // Filtrar solo movimientos del día anterior
-                val yesterday = Calendar.getInstance().apply {
-                    add(Calendar.DAY_OF_YEAR, -1)
-                }
-                val pendientesAyer = pendientes.filter { movimiento ->
-                    DateUtils.isSameDay(movimiento.fechaRegistro, yesterday.time)
-                }
-                _homeUiState.update { it.copy(movimientosPendientesAyer = pendientesAyer.size) }
-            }
-        }
+        // ── Offline-first code (preserved for future use) ──────────────
+        // viewModelScope.launch {
+        //     movimientosOffline.collect { listaMovimientos ->
+        //         actualizarResumen(listaMovimientos)
+        //     }
+        // }
+        //
+        // viewModelScope.launch {
+        //     val firstData = getAllMovimientoUseCase().first()
+        //     delay(1000)
+        //     _homeUiState.update { it.copy(isInitialLoading = false) }
+        // }
+        //
+        // viewModelScope.launch {
+        //     synchronizationRepository.getAllMovimientoPendientes().collect { pendientes ->
+        //         val yesterday = Calendar.getInstance().apply {
+        //             add(Calendar.DAY_OF_YEAR, -1)
+        //         }
+        //         val pendientesAyer = pendientes.filter { movimiento ->
+        //             DateUtils.isSameDay(movimiento.fechaRegistro, yesterday.time)
+        //         }
+        //         _homeUiState.update { it.copy(movimientosPendientesAyer = pendientesAyer.size) }
+        //     }
+        // }
     }
+
+    // ── Offline-first: lectura desde Room (preserved for future use) ──
+    // val movimientosOffline: StateFlow<List<Movimiento>> =
+    //     getAllMovimientoUseCase()
+    //         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     fun onSincronizarMovimientos() {
         viewModelScope.launch {
@@ -92,20 +111,25 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun actualizarResumen(movimientos: List<Movimiento>) {
-        val movimientosHoy = movimientos.filter { DateUtils.isToday(it.fechaRegistro) }
-
-        val totalVentas = movimientosHoy
-            .filter { it.tipoMovimiento == EnumTipoMovimiento.VENTA }
+        // Online-first: los movimientos ya vienen filtrados por hoy desde Firestore
+        val totalIncome = movimientos
+            .filter { it.tipoMovimiento == EnumTipoMovimiento.INCOME }
             .sumOf { it.monto }
 
-        val totalGastos = movimientosHoy
-            .filter { it.tipoMovimiento == EnumTipoMovimiento.GASTO }
+        val totalExpense = movimientos
+            .filter { it.tipoMovimiento == EnumTipoMovimiento.EXPENSE }
             .sumOf { it.monto }
+
+        val rawTotal = totalIncome.subtract(totalExpense)
+        val isPositive = rawTotal >= BigDecimal.ZERO
+        val totalAbs = rawTotal.abs()
 
         _homeUiState.update { currentState ->
             currentState.copy(
-                ventas = "S/ ${totalVentas.toPlainString()}",
-                gastos = "S/ ${totalGastos.toPlainString()}"
+                ventas = "S/ ${totalIncome.toPlainString()}",
+                gastos = "S/ ${totalExpense.toPlainString()}",
+                total = "S/ ${totalAbs.toPlainString()}",
+                isTotalPositive = isPositive
             )
         }
     }

@@ -7,12 +7,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CloudDone
-import androidx.compose.material.icons.filled.CloudQueue
 import androidx.compose.material.icons.filled.PointOfSale
 import androidx.compose.material.icons.filled.Receipt
 import androidx.compose.material3.Card
@@ -25,33 +21,37 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.michambita.core.domain.model.Movimiento
-import com.michambita.core.common.DateUtils
-import com.michambita.core.domain.enums.EnumTipoMovimiento
+import com.michambita.domain.model.Movimiento
+import com.michambita.core.common.util.DateUtils
+import com.michambita.domain.enums.EnumTipoMovimiento
 
 @Composable
 fun MovimientoItem(
     movimiento: Movimiento,
 ) {
-    val esVenta = movimiento.tipoMovimiento == EnumTipoMovimiento.VENTA
-    val color = if (esVenta) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
-    val icon = if (esVenta) Icons.Filled.PointOfSale else Icons.Filled.Receipt
+    val isIncome = movimiento.tipoMovimiento == EnumTipoMovimiento.INCOME
+    val color = if (isIncome) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
+    val icon = if (isIncome) Icons.Filled.PointOfSale else Icons.Filled.Receipt
     
     // Colores de estado de sincronización
-    val estadoColor = if (movimiento.sincronizado) 
-        MaterialTheme.colorScheme.tertiary  // Verde
-    else 
-        MaterialTheme.colorScheme.primary   // Naranja
+    val estadoColor = MaterialTheme.colorScheme.primary
+    val backgroundColor = MaterialTheme.colorScheme.surface
+
+    // Offline - first
+    // val estadoColor = if (movimiento.sincronizado) 
+    //     MaterialTheme.colorScheme.tertiary  // Verde
+    // else 
+    //     MaterialTheme.colorScheme.primary   // Naranja
         
-    val estadoIcon = if (movimiento.sincronizado) 
-        Icons.Filled.CloudDone 
-    else 
-        Icons.Filled.CloudQueue
+    // val estadoIcon = if (movimiento.sincronizado) 
+    //     Icons.Filled.CloudDone 
+    // else 
+    //     Icons.Filled.CloudQueue
         
-    val backgroundColor = if (movimiento.sincronizado) 
-        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
-    else 
-        MaterialTheme.colorScheme.surface
+    // val backgroundColor = if (movimiento.sincronizado) 
+    //     MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
+    // else 
+    //     MaterialTheme.colorScheme.surface
 
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -90,14 +90,14 @@ fun MovimientoItem(
             Spacer(Modifier.width(8.dp))
             
             // Ícono de estado de sincronización
-            Icon(
-                estadoIcon,
-                contentDescription = if (movimiento.sincronizado) "Sincronizado" else "Pendiente",
-                tint = estadoColor,
-                modifier = Modifier
-                    .size(20.dp)
-                    .padding(end = 12.dp)
-            )
+//            Icon(
+//                estadoIcon,
+//                contentDescription = if (movimiento.sincronizado) "Sincronizado" else "Pendiente",
+//                tint = estadoColor,
+//                modifier = Modifier
+//                    .size(20.dp)
+//                    .padding(end = 12.dp)
+//            )
         }
     }
 }

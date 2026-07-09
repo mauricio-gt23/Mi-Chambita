@@ -8,7 +8,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.michambita.core.domain.model.Movimiento
+import com.michambita.domain.model.Movimiento
 import com.michambita.feature.home.components.historial.movimiento.SwipeMovimientoItem
 
 
@@ -50,7 +50,7 @@ fun MovimientoHistorial(
                 ) {
                     items(
                         items = movimientos,
-                        key = { it.hashCode() }
+                        key = { it.id ?: it.hashCode().toString() }
                     ) { movimiento ->
                         SwipeMovimientoItem(
                             movimiento = movimiento,
