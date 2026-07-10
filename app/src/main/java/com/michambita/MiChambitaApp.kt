@@ -15,7 +15,7 @@ class MiChambitaApp : Application() {
         super.onCreate()
         FirebaseApp.initializeApp(this)
         AndroidThreeTen.init(this)
-        setupWorkManager()
+        //setupWorkManager()
     }
 
     private fun setupWorkManager() {
