@@ -27,6 +27,8 @@ hiltNavigationCompose = "1.1.0"
 junit4 = "4.13.2"
 junitExt = "1.1.5"
 espressoCore = "3.5.1"
+javaxInject = "1"
+coroutines = "1.7.3"
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -68,6 +70,8 @@ androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navig
 junit4 = { group = "junit", name = "junit", version.ref = "junit4" }
 androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitExt" }
 androidx-test-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+javax-inject = { module = "javax.inject:javax.inject", version.ref = "javaxInject" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
 kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }

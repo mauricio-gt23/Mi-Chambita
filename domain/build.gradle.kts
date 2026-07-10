@@ -1,6 +1,5 @@
 plugins {
     id("michambita.android.library")
-    id("michambita.android.hilt")
 }
 
 android {
@@ -9,4 +8,6 @@ android {
 
 dependencies {
     implementation(project(":common"))
+    implementation(libs.javax.inject)
+    implementation(libs.kotlinx.coroutines.core)
 }
