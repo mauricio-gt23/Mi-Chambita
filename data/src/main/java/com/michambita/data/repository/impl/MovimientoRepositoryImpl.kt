@@ -126,4 +126,40 @@ class MovimientoRepositoryImpl @Inject constructor(
 
         awaitClose { listener.remove() }
     }
+
+    // ── History query (on-demand, paginated) ──────────────────────────
+
+    override suspend fun getMovimientosHistorial(
+        companyId: String,
+        fechaInicio: Date,
+        fechaFin: Date,
+        limit: Int,
+        lastDocumentId: String?
+    ): Result<List<Movimiento>> {
+        return try {
+            var query = movimientosCollection(companyId)
+                .whereGreaterThanOrEqualTo("fechaRegistro", fechaInicio)
+                .whereLessThan("fechaRegistro", fechaFin)
+                .orderBy("fechaRegistro", Query.Direction.DESCENDING)
+                .limit(limit.toLong())
+
+            // Pagination: fetch the last document snapshot and use startAfter
+            if (lastDocumentId != null) {
+                val lastDoc = movimientosCollection(companyId)
+                    .document(lastDocumentId).get().await()
+                if (lastDoc.exists()) {
+                    query = query.startAfter(lastDoc)
+                }
+            }
+
+            val snapshot = query.get().await()
+            val movimientos = snapshot.documents.mapNotNull { doc ->
+                doc.toObject(MovimientoModel::class.java)
+                    ?.copy(id = doc.id)?.toDomain()
+            }
+            Result.success(movimientos)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }
