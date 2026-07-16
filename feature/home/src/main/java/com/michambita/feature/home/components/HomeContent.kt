@@ -14,6 +14,7 @@ import com.michambita.feature.home.config.HomeUiConfig
 import com.michambita.feature.home.components.historial.EncabezadoHistorial
 import com.michambita.feature.home.components.historial.MovimientoHistorial
 import com.michambita.feature.home.viewmodel.HomeUiState
+import com.michambita.ui.components.widget.ResumenCard
 
 @Composable
 fun HomeContent(
@@ -26,7 +27,8 @@ fun HomeContent(
     onRegistrarVenta: () -> Unit,
     onRegistrarGasto: () -> Unit,
     onEditarMovimiento: (Movimiento) -> Unit,
-    onEliminarMovimiento: (Movimiento) -> Unit
+    onEliminarMovimiento: (Movimiento) -> Unit,
+    onHistorialClick: () -> Unit = {}
     // onSincronizarMovimiento: () -> Unit // Offline-first: comentado para MVP online-first
 ) {
     // Online-first: los movimientos ya vienen filtrados por hoy desde Firestore,
@@ -39,12 +41,14 @@ fun HomeContent(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
-        ResumenDiario(
+        ResumenCard(
+            title = "RESUMEN DEL DÍA",
             ventas = uiState.ventas,
             gastos = uiState.gastos,
-            totalHoy = uiState.total,
-            isTotalHoyPositive = uiState.isTotalPositive,
-            isInitialLoading = uiState.isInitialLoading
+            total = uiState.total,
+            isTotalPositive = uiState.isTotalPositive,
+            isInitialLoading = uiState.isInitialLoading,
+            modifier = modifier
         )
 
         HomeAcciones(
@@ -57,7 +61,7 @@ fun HomeContent(
 
         Spacer(modifier = Modifier.height(10.dp))
 
-        EncabezadoHistorial(modifier)
+        EncabezadoHistorial(modifier, onVerHistorial = onHistorialClick)
         MovimientoHistorial(
             movimientos = movimientosParaMostrar,
             onEditarMovimiento = onEditarMovimiento,

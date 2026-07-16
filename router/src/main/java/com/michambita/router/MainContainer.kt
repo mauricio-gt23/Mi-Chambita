@@ -25,6 +25,7 @@ import com.michambita.feature.home.screen.HomeScreen
 import com.michambita.feature.item.screen.ItemScreen
 import com.michambita.feature.inventario.screen.InventarioScreen
 import com.michambita.feature.profile.screen.ProfileScreen
+import com.michambita.feature.history.screen.HistoryScreen
 import com.michambita.common.UiState
 import com.michambita.domain.enums.BusinessType
 
@@ -66,6 +67,7 @@ fun MainContainer(
         Screen.Inventario.route -> "Inventario"
         Screen.Item.route -> "Registrar Producto"
         "${Screen.Item.route}/{id}" -> "Editar Producto"
+        Screen.History.route -> "Historial"
         else -> "Mi Chambita"
     }
     val navigationIcon: @Composable (() -> Unit)? = if (currentRoute != Screen.HomeScreen.route) {
@@ -124,6 +126,13 @@ fun MainContainer(
                                 launchSingleTop = true
                             }
                         }
+                    },
+                    onHistorialClick = {
+                        if (navController.currentDestination?.route != Screen.History.route) {
+                            navController.navigate(Screen.History.route) {
+                                launchSingleTop = true
+                            }
+                        }
                     }
                 )
             }
@@ -168,6 +177,9 @@ fun MainContainer(
                     onNavigateBack = { navController.popBackStack() },
                     onLogout = onLogout,
                 )
+            }
+            composable(Screen.History.route) {
+                HistoryScreen(businessType = businessType)
             }
         }
     }

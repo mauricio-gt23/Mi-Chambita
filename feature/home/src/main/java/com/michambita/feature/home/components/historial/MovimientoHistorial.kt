@@ -8,8 +8,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.michambita.core.common.util.DateUtils
 import com.michambita.domain.model.Movimiento
-import com.michambita.feature.home.components.historial.movimiento.SwipeMovimientoItem
+import com.michambita.ui.components.movimiento.SwipeMovimientoItemCard
 
 
 @Composable
@@ -52,8 +53,9 @@ fun MovimientoHistorial(
                         items = movimientos,
                         key = { it.id ?: it.hashCode().toString() }
                     ) { movimiento ->
-                        SwipeMovimientoItem(
+                        SwipeMovimientoItemCard(
                             movimiento = movimiento,
+                            formattedDate = DateUtils.formatDate(movimiento.fechaRegistro),
                             onEditar = onEditarMovimiento,
                             onEliminar = onEliminarMovimiento,
                         )
