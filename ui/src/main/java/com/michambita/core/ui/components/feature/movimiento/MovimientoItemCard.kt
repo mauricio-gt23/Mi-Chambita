@@ -1,4 +1,4 @@
-package com.michambita.feature.home.components.historial.movimiento
+package com.michambita.ui.components.movimiento
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -22,12 +22,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.michambita.domain.model.Movimiento
-import com.michambita.core.common.util.DateUtils
 import com.michambita.domain.enums.EnumTipoMovimiento
 
 @Composable
-fun MovimientoItem(
+fun MovimientoItemCard(
     movimiento: Movimiento,
+    formattedDate: String,
 ) {
     val isIncome = movimiento.tipoMovimiento == EnumTipoMovimiento.INCOME
     val color = if (isIncome) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
@@ -78,7 +78,7 @@ fun MovimientoItem(
 
             Column(modifier = Modifier.weight(1f)) {
                 Text(movimiento.descripcion, fontWeight = FontWeight.SemiBold)
-                Text(DateUtils.formatDate(movimiento.fechaRegistro), style = MaterialTheme.typography.bodySmall)
+                Text(formattedDate, style = MaterialTheme.typography.bodySmall)
             }
             Spacer(Modifier.width(12.dp))
             Text(

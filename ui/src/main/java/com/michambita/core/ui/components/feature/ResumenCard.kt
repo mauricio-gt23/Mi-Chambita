@@ -1,4 +1,4 @@
-package com.michambita.feature.home.components
+package com.michambita.ui.components.widget
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -15,18 +15,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun ResumenDiario(
+fun ResumenCard(
+        title: String,
         ventas: String,
         gastos: String,
-        totalHoy: String,
-        isTotalHoyPositive: Boolean,
+        total: String,
+        isTotalPositive: Boolean,
         isInitialLoading: Boolean,
         modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text(
-
-                text = "RESUMEN DEL DÍA",
+                text = title,
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface
@@ -67,8 +67,8 @@ fun ResumenDiario(
                 ResumenRow(
                         icon = Icons.Rounded.AccountBalance,
                         title = "BALANCE",
-                        amount = totalHoy,
-                        amountColor = if (isTotalHoyPositive) MaterialTheme.colorScheme.tertiary
+                        amount = total,
+                        amountColor = if (isTotalPositive) MaterialTheme.colorScheme.tertiary
                                 else MaterialTheme.colorScheme.error,
                         isInitialLoading = isInitialLoading,
                         emphasized = true
@@ -79,7 +79,7 @@ fun ResumenDiario(
 }
 
 @Composable
-private fun ResumenRow(
+internal fun ResumenRow(
         icon: ImageVector,
         title: String,
         amount: String,
