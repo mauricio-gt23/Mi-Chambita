@@ -36,6 +36,9 @@ class ItemViewModel @Inject constructor(
     private val _uiStateSaveItem = MutableStateFlow<UiState<Boolean>>(UiState.Empty)
     val uiStateSaveItem: StateFlow<UiState<Boolean>> = _uiStateSaveItem
 
+    private val _uiStateLoadItem = MutableStateFlow<UiState<Unit>>(UiState.Empty)
+    val uiStateLoadItem: StateFlow<UiState<Unit>> = _uiStateLoadItem.asStateFlow()
+
     private var currentItemId: String? = null
     private val _modoOperacion = MutableStateFlow(EnumModoOperacion.REGISTRAR)
     val modoOperacion: StateFlow<EnumModoOperacion> = _modoOperacion.asStateFlow()
@@ -110,8 +113,9 @@ class ItemViewModel @Inject constructor(
 
     fun cargarItem(id: String) {
         viewModelScope.launch {
+            _uiStateLoadItem.value = UiState.Loading
             val result = getItemUseCase.invoke(id)
-            result.fold(
+            _uiStateLoadItem.value = result.fold(
                 onSuccess = { p ->
                     currentItemId = p.id
                     _modoOperacion.value = EnumModoOperacion.EDITAR
@@ -124,9 +128,16 @@ class ItemViewModel @Inject constructor(
                         stock = p.stock?.toString() ?: "",
                         imagenUrl = p.imagenUrl
                     )
+                    UiState.Success(Unit)
                 },
-                onFailure = { }
+                onFailure = {
+                    UiState.Error(it.message ?: "No se pudo cargar el item")
+                }
             )
         }
+    }
+
+    fun clearLoadState() {
+        _uiStateLoadItem.value = UiState.Empty
     }
 }

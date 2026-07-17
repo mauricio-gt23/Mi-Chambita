@@ -4,15 +4,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.michambita.domain.enums.EnumTipoMovimiento
 import com.michambita.domain.model.Movimiento
-import com.michambita.domain.repository.MovimientoRepository
-import com.michambita.domain.repository.preference.CompanyPreferencesRepository
+import com.michambita.domain.usecase.DeleteMovimientoOnlineUseCase
 import com.michambita.domain.usecase.GetMovimientosHistorialUseCase
 import com.michambita.core.common.util.DateUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
@@ -94,8 +92,7 @@ data class HistoryUiState(
 @HiltViewModel
 class HistoryViewModel @Inject constructor(
     private val getMovimientosHistorialUseCase: GetMovimientosHistorialUseCase,
-    private val movimientoRepository: MovimientoRepository,
-    private val companyPreferencesRepository: CompanyPreferencesRepository
+    private val deleteMovimientoOnlineUseCase: DeleteMovimientoOnlineUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HistoryUiState())
@@ -168,10 +165,7 @@ class HistoryViewModel @Inject constructor(
 
     fun deleteMovimiento(movimiento: Movimiento) {
         viewModelScope.launch {
-            val company = companyPreferencesRepository.companyFlow.firstOrNull() ?: return@launch
-            val companyId = company.id ?: return@launch
-
-            val result = movimientoRepository.deleteMovimientoOnline(movimiento, companyId)
+            val result = deleteMovimientoOnlineUseCase(movimiento)
             result.fold(
                 onSuccess = {
                     allMovimientos.removeAll { it.id == movimiento.id }
