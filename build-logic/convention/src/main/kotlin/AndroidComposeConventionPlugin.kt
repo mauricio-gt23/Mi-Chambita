@@ -8,13 +8,6 @@ import org.gradle.kotlin.dsl.dependencies
 class AndroidComposeConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
-            val libs =
-                    extensions
-                            .getByType(
-                                    org.gradle.api.artifacts.VersionCatalogsExtension::class.java
-                            )
-                            .named("libs")
-
             val composeCompilerVersion = libs.findVersion("composeCompiler").get().toString()
 
             // Configura Compose cuando el módulo es tipo Application

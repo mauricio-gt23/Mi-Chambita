@@ -8,17 +8,13 @@ class AndroidHiltConventionPlugin : Plugin<Project> {
             pluginManager.apply("org.jetbrains.kotlin.kapt")
             pluginManager.apply("com.google.dagger.hilt.android")
 
-            val libs = extensions.getByType(
-                org.gradle.api.artifacts.VersionCatalogsExtension::class.java
-            ).named("libs")
-
             dependencies {
                 add("implementation", libs.findLibrary("dagger.hilt.android").get())
                 add("kapt", libs.findLibrary("dagger.hilt.compiler").get())
                 
                 // Note: When migrating to KSP, replace kapt with ksp plugin and dependency configurations here.
                 // e.g., pluginManager.apply("com.google.devtools.ksp")
-                // add("ksp", libs.findLibrary("dagger.hilt.compiler").get())
+                // add("ksp", .libs.findLibrary("dagger.hilt.compiler").get())
             }
 
         }

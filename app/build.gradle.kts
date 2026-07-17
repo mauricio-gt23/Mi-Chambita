@@ -25,10 +25,8 @@ dependencies {
     implementation(project(":feature:item"))
     implementation(project(":feature:inventario"))
 
-    // WorkManager
+    // WorkManager: solo runtime
     implementation(libs.androidx.work.runtime)
-    implementation(libs.androidx.hilt.work)
-    kapt(libs.androidx.hilt.compiler)
 
     // ThreeTenABP
     implementation(libs.threetenabp)
