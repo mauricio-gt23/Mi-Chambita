@@ -3,8 +3,10 @@
 ## Project Overview
 
 MiChambita es una app Android nativa para gestión de micro-negocios (chambitas).
-Permite registrar productos, controlar inventario, registrar movimientos de
-entrada/salida, y sincronizar datos offline-first vía Firebase + Room.
+Permite registrar items (productos o servicios), controlar inventario, registrar
+movimientos de ventas/gastos y consultar el historial. El flujo de datos actual es
+**online-first vía Firestore**; la infraestructura offline (Room + WorkManager)
+existe pero está deshabilitada (`setupWorkManager()` comentado en `MiChambitaApp`).
 
 ## Build System
 
@@ -48,7 +50,7 @@ No usar dependencias hardcodeadas con versión inline; todo debe pasar por el ca
             └─ :ui            ← Componentes Compose reutilizables, tema
             └─ :domain        ← Modelos, interfaces de repositorio, use cases
                  └─ :common   ← Utilidades base (UiState, Screen, MVI, DateUtils)
-  └─ :data                    ← Implementaciones de repos (Room, Firebase, Retrofit)
+  └─ :data                    ← Implementaciones de repos (Firebase, Room, DataStore)
        └─ :domain, :common
 ```
 
@@ -83,14 +85,20 @@ No usar dependencias hardcodeadas con versión inline; todo debe pasar por el ca
 
 Dos patrones coexisten:
 - **`UiState<T>`** (sealed class en `:common`): `Empty | Loading | Success<T> | Error(message)`
-  — usado en ViewModels que exponen un solo flujo de estado simple.
+  — usado en ViewModels que exponen un solo flujo de estado simple, o combinado con
+  data classes `*UiState` propias + `MutableStateFlow` (Home, Item, Profile, History).
 - **MVI vía `BaseIntentModel<UiState, UiIntent, UiEffect>`** (en `:common/mvi/`):
-  State + Intent + Effect con `Channel` + `StateFlow`. Usado en `:feature:inventario`.
+  State + Intent + Effect con `Channel` + `StateFlow`. Usado **solo** en `:feature:inventario`.
 
 ### Navegación
 
 - Rutas definidas como `sealed class Screen` en `:common` (todas las rutas centralizadas).
-- `NavigationGraph` en `:router` ensambla el grafo de Navigation Compose.
+- Dos `NavHost` anidados en `:router`:
+  - `NavigationGraph` — top-level: Splash → Login/Registro → `MainContainer`,
+    gated por el estado de sesión y tipo de negocio de `SessionViewModel`.
+  - `MainContainer` — NavHost propio para el shell autenticado (Home, Item,
+    Inventario, Profile, History) con una única `TopAppBar` compartida.
+    No hay bottom navigation bar.
 
 ### Linters / Formatters
 
@@ -109,14 +117,15 @@ Tampoco se encontraron archivos de CI (.github/workflows, Jenkinsfile, etc.).
 
 | Módulo | Responsabilidad |
 |--------|----------------|
-| `:app` | Entry point Android, `@HiltAndroidApp`, Google Services, WorkManager init |
-| `:common` | Utilidades transversales: `UiState`, `Screen` (rutas), MVI base, `DateUtils` |
+| `:app` | Entry point Android, `@HiltAndroidApp`, Google Services, WorkManager init (deshabilitado) |
+| `:common` | Utilidades transversales: `UiState`, `Screen` (rutas), MVI base, `DateUtils`, `ValidateUtil` |
 | `:domain` | Modelos de negocio, interfaces de repositorio, use cases |
-| `:data` | Implementaciones: Room DB, Firebase Auth/Firestore/Storage, DataStore, Retrofit, Workers |
+| `:data` | Implementaciones: Room DB (ruta offline inactiva), Firebase Auth/Firestore/Storage, DataStore, Workers. Retrofit está declarado pero sin uso |
 | `:ui` | Tema Material 3 (Color, Type, Shape), componentes Compose reutilizables, Coil |
 | `:router` | `NavigationGraph`, `MainContainer`, `MainViewModel` — ensambla la navegación |
 | `:feature:auth` | Login, Registro (3 pasos), Splash, `SessionViewModel` |
-| `:feature:home` | Dashboard principal, resumen diario, historial de movimientos |
-| `:feature:producto` | CRUD de productos, gestión de imágenes, formulario |
+| `:feature:home` | Dashboard principal, resumen diario con balance, registro/edición de movimientos |
+| `:feature:item` | CRUD de items (producto o servicio según `BusinessType`), gestión de imágenes, formulario |
 | `:feature:inventario` | Grid de inventario, diálogos de stock, MVI completo |
 | `:feature:profile` | Pantalla de perfil, logout |
+| `:feature:history` | Historial de movimientos: filtros de fecha/tipo, paginación por cursor, swipe editar/eliminar |
