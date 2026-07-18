@@ -16,8 +16,6 @@ class LoginUseCase @Inject constructor(
     private val userPreferencesRepository: UserPreferencesRepository,
     private val companyPreferencesRepository: CompanyPreferencesRepository
 ) {
-    fun getCurrentUser(): Flow<String?> = authRepository.getCurrentUser()
-
     suspend operator fun invoke(email: String, password: String): Result<String> {
         // 1. Autenticar con Firebase
         val loginResult = authRepository.login(email, password)
@@ -25,7 +23,7 @@ class LoginUseCase @Inject constructor(
         val uid = loginResult.getOrNull()!!
 
         // 2. Obtener usuario → companyId
-        val user = userRepository.getUser(uid).getOrNull()
+        val user = userRepository.fetchUser(uid).getOrNull()
             ?: return Result.failure(Exception("No se pudo obtener el perfil de usuario"))
         val companyId = user.companyId
             ?: return Result.failure(Exception("El usuario no tiene empresa asociada"))

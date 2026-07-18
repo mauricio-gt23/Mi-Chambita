@@ -37,10 +37,10 @@ fun MainContainer(
     viewModel: MainViewModel = hiltViewModel(),
 ) {
     val navController = rememberNavController()
-    val uiState by viewModel.uiStateGetUser.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiStateLoadUser.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
-        viewModel.getUser()
+        viewModel.loadUser()
     }
 
     // Observar la ruta actual en el backstack

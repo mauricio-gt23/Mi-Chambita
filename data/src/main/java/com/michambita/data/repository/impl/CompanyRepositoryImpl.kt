@@ -66,4 +66,13 @@ class CompanyRepositoryImpl @Inject constructor(
             Result.failure(e)
         }
     }
+
+    override suspend fun deleteCompanyById(id: String): Result<Unit> {
+        return try {
+            companyCollection.document(id).delete().await()
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }
