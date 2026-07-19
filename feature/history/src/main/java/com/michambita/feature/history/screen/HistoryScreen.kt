@@ -31,21 +31,6 @@ fun HistoryScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val listState = rememberLazyListState()
 
-    // Detect when user scrolls near the end for pagination
-    val shouldLoadMore by remember {
-        derivedStateOf {
-            val lastVisibleItem = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
-            val totalItems = listState.layoutInfo.totalItemsCount
-            lastVisibleItem >= totalItems - 3 && totalItems > 0
-        }
-    }
-
-    LaunchedEffect(shouldLoadMore) {
-        if (shouldLoadMore && !uiState.isLoading && !uiState.isLoadingMore && uiState.hasMorePages) {
-            viewModel.loadNextPage()
-        }
-    }
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -59,7 +44,7 @@ fun HistoryScreen(
             gastos = uiState.totalGastos,
             total = uiState.balance,
             isTotalPositive = uiState.isBalancePositive,
-            isInitialLoading = uiState.isLoading && uiState.groupedMovimientos.isEmpty()
+            isInitialLoading = uiState.isLoading
         )
 
         // ── Filtros ─────────────────────────────────────────────────
@@ -74,7 +59,7 @@ fun HistoryScreen(
         )
 
         // ── Lista agrupada por día ──────────────────────────────────
-        if (uiState.isLoading && uiState.groupedMovimientos.isEmpty()) {
+        if (uiState.isLoading) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -129,23 +114,6 @@ fun HistoryScreen(
                             MovimientoItemCard(
                                 movimiento = movimiento,
                                 formattedDate = formattedDate
-                            )
-                        }
-                    }
-                }
-
-                // Loading more indicator
-                if (uiState.isLoadingMore) {
-                    item(key = "loading_more") {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            CircularProgressIndicator(
-                                modifier = Modifier.size(24.dp),
-                                strokeWidth = 3.dp
                             )
                         }
                     }

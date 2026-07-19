@@ -3,9 +3,8 @@ package com.michambita.feature.home.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.michambita.domain.model.Movimiento
-import com.michambita.domain.enums.EnumTipoMovimiento
+import com.michambita.domain.usecase.CalcularResumenUseCase
 import com.michambita.domain.usecase.GetMovimientosOnlineUseCase
-import java.math.BigDecimal
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -26,20 +25,20 @@ data class HomeUiState(
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val getMovimientosOnlineUseCase: GetMovimientosOnlineUseCase
+    private val getMovimientosOnlineUseCase: GetMovimientosOnlineUseCase,
+    private val calcularResumenUseCase: CalcularResumenUseCase
 ) : ViewModel() {
 
     private val _homeUiState = MutableStateFlow(HomeUiState())
     val homeUiState: StateFlow<HomeUiState> = _homeUiState.asStateFlow()
 
-    // ── Online-first: lectura de movimientos de hoy desde Firestore ──
+    // ── Online-first ──
     private val _movimientos = MutableStateFlow<List<Movimiento>>(emptyList())
     val movimientos: StateFlow<List<Movimiento>> = _movimientos.asStateFlow()
 
     init {
-        // Online-first: cargar movimientos de hoy desde Firestore.
-        // isInitialLoading se apaga con la primera emisión real (no con un delay fijo).
-        viewModelScope.launch {
+        // Online-first: Firestore
+         viewModelScope.launch {
             getMovimientosOnlineUseCase().collect { listaMovimientos ->
                 _movimientos.value = listaMovimientos
                 actualizarResumen(listaMovimientos)
@@ -51,25 +50,14 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun actualizarResumen(movimientos: List<Movimiento>) {
-        // Online-first: los movimientos ya vienen filtrados por hoy desde Firestore
-        val totalIncome = movimientos
-            .filter { it.tipoMovimiento == EnumTipoMovimiento.INCOME }
-            .sumOf { it.monto }
-
-        val totalExpense = movimientos
-            .filter { it.tipoMovimiento == EnumTipoMovimiento.EXPENSE }
-            .sumOf { it.monto }
-
-        val rawTotal = totalIncome.subtract(totalExpense)
-        val isPositive = rawTotal >= BigDecimal.ZERO
-        val totalAbs = rawTotal.abs()
+        val resumen = calcularResumenUseCase(movimientos)
 
         _homeUiState.update { currentState ->
             currentState.copy(
-                ventas = "S/ ${totalIncome.toPlainString()}",
-                gastos = "S/ ${totalExpense.toPlainString()}",
-                total = "S/ ${totalAbs.toPlainString()}",
-                isTotalPositive = isPositive
+                ventas = "S/ ${resumen.totalIngresos.toPlainString()}",
+                gastos = "S/ ${resumen.totalGastos.toPlainString()}",
+                total = "S/ ${resumen.balance.abs().toPlainString()}",
+                isTotalPositive = resumen.isBalancePositive
             )
         }
     }

@@ -13,20 +13,16 @@ class GetMovimientosHistorialUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(
         fechaInicio: Date,
-        fechaFin: Date,
-        limit: Int = 25,
-        lastDocumentId: String? = null
+        fechaFin: Date
     ): Result<List<Movimiento>> {
         val company = companyPreferencesRepository.companyFlow.firstOrNull()
             ?: return Result.failure(Exception("No company found"))
         val companyId = company.id
             ?: return Result.failure(Exception("Company has no ID"))
-        return movimientoRepository.getMovimientosHistorial(
+        return movimientoRepository.getMovimientosPorPeriodo(
             companyId = companyId,
             fechaInicio = fechaInicio,
-            fechaFin = fechaFin,
-            limit = limit,
-            lastDocumentId = lastDocumentId
+            fechaFin = fechaFin
         )
     }
 }

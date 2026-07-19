@@ -12,14 +12,11 @@ interface MovimientoRepository {
     suspend fun addMovimientoOnline(movimiento: Movimiento, companyId: String): Result<Unit>
     suspend fun updateMovimientoOnline(movimiento: Movimiento, companyId: String): Result<Unit>
     suspend fun deleteMovimientoOnline(movimiento: Movimiento, companyId: String): Result<Unit>
-    fun getMovimientosOnline(companyId: String): Flow<List<Movimiento>>
 
-    // History query (on-demand, paginated)
-    suspend fun getMovimientosHistorial(
+    fun getMovimientosOnline(companyId: String): Flow<List<Movimiento>>
+    suspend fun getMovimientosPorPeriodo(
         companyId: String,
         fechaInicio: java.util.Date,
-        fechaFin: java.util.Date,
-        limit: Int = 25,
-        lastDocumentId: String? = null
+        fechaFin: java.util.Date
     ): Result<List<Movimiento>>
 }
