@@ -2,6 +2,8 @@ package com.michambita.data.di
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FirebaseFirestoreSettings
+import com.google.firebase.firestore.persistentCacheSettings
 import com.google.firebase.storage.FirebaseStorage
 import dagger.Module
 import dagger.Provides
@@ -15,7 +17,17 @@ object FirebaseModule {
 
     @Provides
     @Singleton
-    fun provideFirestore(): FirebaseFirestore = FirebaseFirestore.getInstance()
+    fun provideFirestore(): FirebaseFirestore =
+        FirebaseFirestore.getInstance().apply {
+            firestoreSettings = FirebaseFirestoreSettings.Builder()
+                .setLocalCacheSettings(
+                    persistentCacheSettings {
+                        setSizeBytes(FirebaseFirestoreSettings.CACHE_SIZE_UNLIMITED)
+                    }
+                )
+                .setSslEnabled(true)
+                .build()
+        }
 
     @Provides
     @Singleton

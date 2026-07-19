@@ -1,0 +1,14 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "movements",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "tipoMovimiento", "order": "ASCENDING" },
+        { "fieldPath": "fechaRegistro", "order": "ASCENDING" },
+        { "fieldPath": "monto", "order": "ASCENDING" }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}

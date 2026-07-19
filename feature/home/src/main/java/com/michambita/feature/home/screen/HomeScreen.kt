@@ -29,6 +29,7 @@ fun HomeScreen(
     businessType: BusinessType,
     onProductosClick: () -> Unit,
     onInventarioClick: () -> Unit,
+    onHistorialClick: () -> Unit = {},
     homeViewModel: HomeViewModel = hiltViewModel(),
     movimientoViewModel: MovimientoViewModel = hiltViewModel()
 ) {
@@ -77,7 +78,8 @@ fun HomeScreen(
                 movimientoViewModel.onEditarMovimiento(it)
                 homeViewModel.showBottomSheet()
             },
-            onEliminarMovimiento = movimientoViewModel::deleteMovimiento
+            onEliminarMovimiento = movimientoViewModel::deleteMovimiento,
+            onHistorialClick = onHistorialClick
             // onSincronizarMovimiento = homeViewModel::onSincronizarMovimientos // Offline-first: comentado para MVP online-first
         )
     }

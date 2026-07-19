@@ -1,4 +1,4 @@
-package com.michambita.feature.home.components.historial.movimiento
+package com.michambita.ui.components.movimiento
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -28,15 +28,16 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SwipeMovimientoItem(
+fun SwipeMovimientoItemCard(
         movimiento: Movimiento,
+        formattedDate: String,
         onEditar: (Movimiento) -> Unit,
         onEliminar: (Movimiento) -> Unit,
 ) {
     // OFFLINE - FIRST
     // Si está sincronizado, solo mostrar sin swipe
     // if (movimiento.sincronizado) {
-    //     MovimientoItem(movimiento)
+    //     MovimientoItemCard(movimiento, formattedDate)
     //     return
     // }
 
@@ -99,5 +100,5 @@ fun SwipeMovimientoItem(
                                 }
                 ) { icon?.let { Icon(it, contentDescription = null, tint = Color.White) } }
             }
-    ) { MovimientoItem(movimiento) }
+    ) { MovimientoItemCard(movimiento, formattedDate) }
 }

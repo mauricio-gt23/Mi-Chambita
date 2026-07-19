@@ -21,7 +21,8 @@ import com.michambita.domain.model.Movimiento
 
 @Composable
 fun EncabezadoHistorial(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onVerHistorial: () -> Unit = {}
     // movimientos: List<Movimiento>,           // Offline-first: comentado para MVP online-first
     // onSincronizarMovimiento: () -> Unit       // Offline-first: comentado para MVP online-first
 ) {
@@ -52,7 +53,7 @@ fun EncabezadoHistorial(
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(
-                onClick = { /* TODO: Ver historial completo */ },
+                onClick = onVerHistorial,
                 enabled = true
             ) {
                 Icon(

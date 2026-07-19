@@ -29,7 +29,7 @@ class ItemImageViewModel @Inject constructor(
             _imageUrl.value = uri.toString()
             _uiStateUploadImage.value = UiState.Loading
 
-            val result = uploadItemImageUseCase.invoke(uri)
+            val result = uploadItemImageUseCase.invoke(uri.toString())
 
             _uiStateUploadImage.value = result.fold(
                 onSuccess = { url ->

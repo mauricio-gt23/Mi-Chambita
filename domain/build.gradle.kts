@@ -1,12 +1,8 @@
 plugins {
-    id("michambita.android.library")
-    id("michambita.android.hilt")
-}
-
-android {
-    namespace = "com.michambita.domain"
+    id("michambita.jvm.library")
 }
 
 dependencies {
-    implementation(project(":common"))
+    implementation(libs.javax.inject)
+    implementation(libs.kotlinx.coroutines.core)
 }

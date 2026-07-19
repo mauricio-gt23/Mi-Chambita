@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.michambita.domain.model.Company
 import com.michambita.domain.model.User
-import com.michambita.domain.repository.AuthRepository
 import com.michambita.domain.usecase.GetProfileUseCase
+import com.michambita.domain.usecase.LogoutUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,7 +28,7 @@ data class ProfileUiState(
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     private val getProfileUseCase: GetProfileUseCase,
-    private val authRepository: AuthRepository,
+    private val logoutUseCase: LogoutUseCase,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ProfileUiState())
@@ -77,7 +77,7 @@ class ProfileViewModel @Inject constructor(
     fun onLogoutConfirmed() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoggingOut = true, showLogoutDialog = false) }
-            authRepository.logout()
+            logoutUseCase()
             _logoutEvent.send(Unit)
         }
     }

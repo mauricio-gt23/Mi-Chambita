@@ -35,6 +35,7 @@ fun ItemScreen(
     itemImageViewModel: ItemImageViewModel = hiltViewModel()
 ) {
     val uiState by itemViewModel.uiStateSaveItem.collectAsStateWithLifecycle()
+    val uiLoadState by itemViewModel.uiStateLoadItem.collectAsStateWithLifecycle()
     val uiFormState by itemViewModel.uiFormState.collectAsStateWithLifecycle()
     val modo by itemViewModel.modoOperacion.collectAsStateWithLifecycle()
 
@@ -121,6 +122,22 @@ fun ItemScreen(
                 LaunchedEffect(uiState) {
                     val msg = (uiState as UiState.Error).message
                     snackbarHostState.showSnackbar(message = msg)
+                }
+            }
+
+            else -> {}
+        }
+
+        when (uiLoadState) {
+            is UiState.Loading -> {
+                LoadingOverlay(modifier = Modifier, message = "Cargando ${uiConfig.itemTypeLabel}...")
+            }
+
+            is UiState.Error -> {
+                LaunchedEffect(uiLoadState) {
+                    val msg = (uiLoadState as UiState.Error).message
+                    snackbarHostState.showSnackbar(message = msg)
+                    itemViewModel.clearLoadState()
                 }
             }
 

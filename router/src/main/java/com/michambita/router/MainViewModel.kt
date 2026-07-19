@@ -13,18 +13,18 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val getUserUseCase: LoadUserUseCase,
+    private val loadUserUseCase: LoadUserUseCase,
 ) : ViewModel() {
-    private val _uiStateGetUser = MutableStateFlow<UiState<User>>(UiState.Empty)
-    val uiStateGetUser : StateFlow<UiState<User>> = _uiStateGetUser
+    private val _uiStateLoadUser = MutableStateFlow<UiState<User>>(UiState.Empty)
+    val uiStateLoadUser : StateFlow<UiState<User>> = _uiStateLoadUser
 
-    fun getUser() {
+    fun loadUser() {
         viewModelScope.launch {
-            _uiStateGetUser.value = UiState.Loading
+            _uiStateLoadUser.value = UiState.Loading
 
-            val result = getUserUseCase.invoke()
+            val result = loadUserUseCase.invoke()
 
-            _uiStateGetUser.value = result.fold(
+            _uiStateLoadUser.value = result.fold(
                 onSuccess = { user -> UiState.Success(user) },
                 onFailure = { UiState.Error(it.message ?: "Ocurrió un error al obtener el usuario") }
             )

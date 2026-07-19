@@ -17,4 +17,5 @@ dependencies {
     implementation(project(":feature:item"))
     implementation(project(":feature:inventario"))
     implementation(project(":feature:profile"))
+    implementation(project(":feature:history"))
 }

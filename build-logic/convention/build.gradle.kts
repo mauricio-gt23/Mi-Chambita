@@ -17,6 +17,10 @@ gradlePlugin {
             id = "michambita.android.library"
             implementationClass = "AndroidLibraryConventionPlugin"
         }
+        register("jvmLibrary") {
+            id = "michambita.jvm.library"
+            implementationClass = "JvmLibraryConventionPlugin"
+        }
         register("androidHilt") {
             id = "michambita.android.hilt"
             implementationClass = "AndroidHiltConventionPlugin"
