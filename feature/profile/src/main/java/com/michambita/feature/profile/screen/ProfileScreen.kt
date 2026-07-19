@@ -56,114 +56,116 @@ fun ProfileScreen(
         }
     }
 
-    when {
-        uiState.isLoading -> {
-            LoadingOverlay(
-                message = "Cargando perfil...",
-            )
-        }
-
-        uiState.error != null -> {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize(),
-                contentAlignment = Alignment.Center,
-            ) {
-                Text(
-                    text = uiState.error ?: "Error desconocido",
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.error,
+    Box(modifier = Modifier.fillMaxSize()) {
+        when {
+            uiState.isLoading -> {
+                LoadingOverlay(
+                    message = "Cargando perfil...",
                 )
             }
-        }
 
-        uiState.user != null -> {
-            val user = uiState.user!!
-
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-                    .padding(horizontal = 16.dp, vertical = 24.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-            ) {
-                ProfileHeader(
-                    name = user.name.orEmpty(),
-                    email = user.email.orEmpty(),
-                    modifier = Modifier.fillMaxWidth(),
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                ProfileInfoCard(
-                    title = "INFORMACIÓN PERSONAL",
-                    items = listOf(
-                        ProfileInfoItem(
-                            icon = Icons.Default.Person,
-                            label = "Nombre",
-                            value = user.name.orEmpty().ifEmpty { "Sin nombre" },
-                        ),
-                        ProfileInfoItem(
-                            icon = Icons.Default.Email,
-                            label = "Correo electrónico",
-                            value = user.email.orEmpty().ifEmpty { "Sin correo" },
-                        ),
-                        ProfileInfoItem(
-                            icon = Icons.Default.Badge,
-                            label = "Rol",
-                            value = if (user.ctrlAdmin) "Administrador" else "Colaborador",
-                        ),
-                    ),
-                )
-
-                uiState.company?.let { empresa ->
-                    ProfileInfoCard(
-                        title = "INFORMACIÓN EMPRESA",
-                        items = listOfNotNull(
-                            ProfileInfoItem(
-                                icon = Icons.Default.Business,
-                                label = "Nombre de empresa",
-                                value = empresa.nombre,
-                            ),
-                            empresa.descripcion?.takeIf { it.isNotBlank() }?.let {
-                                ProfileInfoItem(
-                                    icon = Icons.Default.Category,
-                                    label = "Descripción",
-                                    value = it,
-                                )
-                            },
-                            empresa.businessType?.let {
-                                ProfileInfoItem(
-                                    icon = Icons.Default.Category,
-                                    label = "Tipo de negocio",
-                                    value = it.name,
-                                )
-                            },
-                        ),
-                    )
-                }
-
-                Spacer(modifier = Modifier.weight(1f))
-
-                OutlinedButton(
-                    onClick = viewModel::showLogoutDialog,
-                    modifier = Modifier.fillMaxWidth(),
-                    enabled = !uiState.isLoggingOut,
-                    colors = ButtonDefaults.outlinedButtonColors(
-                        contentColor = MaterialTheme.colorScheme.error,
-                    ),
+            uiState.error != null -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    contentAlignment = Alignment.Center,
                 ) {
-                    Text(text = "Cerrar sesión")
-                }
-
-                if (uiState.isLoggingOut) {
-                    LoadingOverlay(
-                        modifier = Modifier,
-                        message = "Cerrando sesión...",
+                    Text(
+                        text = uiState.error ?: "Error desconocido",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.error,
                     )
                 }
             }
+
+            uiState.user != null -> {
+                val user = uiState.user!!
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState())
+                        .padding(horizontal = 16.dp, vertical = 24.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                ) {
+                    ProfileHeader(
+                        name = user.name.orEmpty(),
+                        email = user.email.orEmpty(),
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    ProfileInfoCard(
+                        title = "INFORMACIÓN PERSONAL",
+                        items = listOf(
+                            ProfileInfoItem(
+                                icon = Icons.Default.Person,
+                                label = "Nombre",
+                                value = user.name.orEmpty().ifEmpty { "Sin nombre" },
+                            ),
+                            ProfileInfoItem(
+                                icon = Icons.Default.Email,
+                                label = "Correo electrónico",
+                                value = user.email.orEmpty().ifEmpty { "Sin correo" },
+                            ),
+                            ProfileInfoItem(
+                                icon = Icons.Default.Badge,
+                                label = "Rol",
+                                value = if (user.ctrlAdmin) "Administrador" else "Colaborador",
+                            ),
+                        ),
+                    )
+
+                    uiState.company?.let { empresa ->
+                        ProfileInfoCard(
+                            title = "INFORMACIÓN EMPRESA",
+                            items = listOfNotNull(
+                                ProfileInfoItem(
+                                    icon = Icons.Default.Business,
+                                    label = "Nombre de empresa",
+                                    value = empresa.nombre,
+                                ),
+                                empresa.descripcion?.takeIf { it.isNotBlank() }?.let {
+                                    ProfileInfoItem(
+                                        icon = Icons.Default.Category,
+                                        label = "Descripción",
+                                        value = it,
+                                    )
+                                },
+                                empresa.businessType?.let {
+                                    ProfileInfoItem(
+                                        icon = Icons.Default.Category,
+                                        label = "Tipo de negocio",
+                                        value = it.name,
+                                    )
+                                },
+                            ),
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.weight(1f))
+
+                    OutlinedButton(
+                        onClick = viewModel::showLogoutDialog,
+                        modifier = Modifier.fillMaxWidth(),
+                        enabled = !uiState.isLoggingOut,
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            contentColor = MaterialTheme.colorScheme.error,
+                        ),
+                    ) {
+                        Text(text = "Cerrar sesión")
+                    }
+                }
+            }
+        }
+
+        if (uiState.isLoggingOut) {
+            LoadingOverlay(
+                modifier = Modifier,
+                message = "Cerrando sesión...",
+            )
         }
     }
 
