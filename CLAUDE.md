@@ -33,7 +33,7 @@ Only placeholder template tests exist (`app/src/test/.../ExampleUnitTest.kt`, `a
        └─ :feature:*          ← Feature modules (UI)
             └─ :ui            ← Theme (Color, Type, Shape), reusable Compose components
             └─ :domain        ← Business models, repository interfaces, use cases
-                 └─ :common   ← UiState, Screen (routes), MVI base, DateUtils
+                 └─ :common   ← UiState, Screen (routes), MVI base, DateUtils, NetworkState
   └─ :data                    ← Room, Firebase, DataStore, Retrofit, Workers
        └─ :domain, :common
 ```
@@ -73,6 +73,8 @@ All external dependency versions live in `gradle/libs.versions.toml` (version ca
 - `NavigationGraph` (`:router`) — top-level `NavHost`: Splash → Login/Registro → `MainContainer`, gated by `SessionViewModel`'s auth + business-type state.
 - `MainContainer` (`:router`) — owns its own `NavHost` for the authenticated app shell (Home, Item, Inventario, Profile, History) plus the shared `TopAppBar`.
 
+Global connectivity: `NavigationGraph` overlays a non-dismissable `NoConnectionModal` (`:ui`) whenever `SessionViewModel.isOnline` is `false`. That flag is backed by the `NetworkState` contract (interface in `:common/network`, impl `NetworkStateImpl` in `:data` tracking validated networks — `NET_CAPABILITY_INTERNET` + `NET_CAPABILITY_VALIDATED` — to avoid false offline flashes). Firestore's persistent cache still serves data behind the modal; Home is intentionally **not** forced into a loading state while offline.
+
 ### State management patterns (two coexist)
 
 - **`UiState<T>`** (sealed class in `:common`): `Empty | Loading | Success<T> | Error(message)` — for ViewModels exposing a single simple state flow, often combined with a bespoke `*UiState` data class + `MutableStateFlow` (Home, Item, Profile, History all follow this shape).
@@ -80,7 +82,7 @@ All external dependency versions live in `gradle/libs.versions.toml` (version ca
 
 ### Dependency injection
 
-Hilt via kapt (not KSP) throughout. `@HiltAndroidApp` on the `:app` Application class, `@AndroidEntryPoint` on Activities, `@HiltViewModel` + `@Inject constructor` on ViewModels. Provider modules (`RepositoryModule`, `FirebaseModule`, etc.) live in `:data`.
+Hilt via kapt (not KSP) throughout. `@HiltAndroidApp` on the `:app` Application class, `@AndroidEntryPoint` on Activities, `@HiltViewModel` + `@Inject constructor` on ViewModels. Provider modules (`RepositoryModule`, `FirebaseModule`, etc.) live in `:data`. Cross-cutting contracts that aren't repositories get their own module rather than being lumped into `RepositoryModule` — e.g. `NetworkState` is bound by a dedicated `NetworkModule` in `:data`.
 
 ### Data flow: online-first, with dormant offline infrastructure
 

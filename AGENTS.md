@@ -49,7 +49,7 @@ No usar dependencias hardcodeadas con versión inline; todo debe pasar por el ca
        └─ :feature:*          ← Feature modules (UI de cada funcionalidad)
             └─ :ui            ← Componentes Compose reutilizables, tema
             └─ :domain        ← Modelos, interfaces de repositorio, use cases
-                 └─ :common   ← Utilidades base (UiState, Screen, MVI, DateUtils)
+                 └─ :common   ← Utilidades base (UiState, Screen, MVI, DateUtils, NetworkState)
   └─ :data                    ← Implementaciones de repos (Firebase, Room, DataStore)
        └─ :domain, :common
 ```
@@ -79,7 +79,10 @@ No usar dependencias hardcodeadas con versión inline; todo debe pasar por el ca
 - **Hilt** (Dagger) vía kapt en todos los módulos que lo necesitan
 - `@HiltAndroidApp` en `:app`, `@AndroidEntryPoint` en Activities/Fragments
 - `@HiltViewModel` + `@Inject constructor` en ViewModels
-- Módulos de provisión (ej. `RepositoryModule`, `FirebaseModule`) en `:data`
+- Módulos de provisión (ej. `RepositoryModule`, `FirebaseModule`, `NetworkModule`) en `:data`
+- Contratos transversales que no son repositorios tienen su propio módulo Hilt en `:data`
+  (ej. `NetworkState` — interfaz en `:common/network`, impl `NetworkStateImpl` — se enlaza
+  vía `NetworkModule`, no dentro de `RepositoryModule`)
 
 ### Patrones de estado UI
 
@@ -99,6 +102,10 @@ Dos patrones coexisten:
   - `MainContainer` — NavHost propio para el shell autenticado (Home, Item,
     Inventario, Profile, History) con una única `TopAppBar` compartida.
     No hay bottom navigation bar.
+- Conectividad global: `NavigationGraph` superpone un `NoConnectionModal` (`:ui`) no
+  descartable cuando `SessionViewModel.isOnline` es `false`, respaldado por el contrato
+  `NetworkState` (`:common/network`). El caché persistente de Firestore sigue sirviendo
+  datos detrás del modal; Home no se fuerza a estado de carga estando offline.
 
 ### Linters / Formatters
 
@@ -118,7 +125,7 @@ Tampoco se encontraron archivos de CI (.github/workflows, Jenkinsfile, etc.).
 | Módulo | Responsabilidad |
 |--------|----------------|
 | `:app` | Entry point Android, `@HiltAndroidApp`, Google Services, WorkManager init (deshabilitado) |
-| `:common` | Utilidades transversales: `UiState`, `Screen` (rutas), MVI base, `DateUtils`, `ValidateUtil` |
+| `:common` | Utilidades transversales: `UiState`, `Screen` (rutas), MVI base, `DateUtils`, `ValidateUtil`, `NetworkState` (contrato de conectividad) |
 | `:domain` | Modelos de negocio, interfaces de repositorio, use cases |
 | `:data` | Implementaciones: Room DB (ruta offline inactiva), Firebase Auth/Firestore/Storage, DataStore, Workers. Retrofit está declarado pero sin uso |
 | `:ui` | Tema Material 3 (Color, Type, Shape), componentes Compose reutilizables, Coil |
@@ -128,4 +135,4 @@ Tampoco se encontraron archivos de CI (.github/workflows, Jenkinsfile, etc.).
 | `:feature:item` | CRUD de items (producto o servicio según `BusinessType`), gestión de imágenes, formulario |
 | `:feature:inventario` | Grid de inventario, diálogos de stock, MVI completo |
 | `:feature:profile` | Pantalla de perfil, logout |
-| `:feature:history` | Historial de movimientos: filtros de fecha/tipo, paginación por cursor, swipe editar/eliminar |
+| `:feature:history` | Historial de movimientos: filtros de fecha/tipo, paginación por cursor, swipe editar (abre el `MovimientoSheet` compartido de `:ui`) / eliminar |

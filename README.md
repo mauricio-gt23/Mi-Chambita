@@ -15,7 +15,7 @@
 - ✅ Resumen diario en Home con ventas, gastos y **balance** (`ResumenDiario`)
 - ✅ **Validación de stock** en ventas detalladas: si no alcanza, se lanza `InsufficientStockException` y se muestra un modal con los faltantes (`StockShortageModal`)
 - ✅ Descuento automático de stock al registrar ventas detalladas (negocios tipo `INVENTORY`)
-- ✅ Edición y eliminación de movimientos
+- ✅ Edición y eliminación de movimientos — la edición reutiliza el `MovimientoSheet` compartido (mismo componente en Home e Historial)
 
 ### 📜 Historial de Movimientos
 
@@ -24,7 +24,7 @@
 - ✅ Filtro por tipo: Todos · Ventas · Gastos
 - ✅ Movimientos agrupados por día ("Hoy", "lunes 13 de julio", …)
 - ✅ **Paginación infinita** (25 movimientos por página, cursor Firestore)
-- ✅ **Swipe para editar/eliminar** — solo disponible para movimientos de la semana actual
+- ✅ **Swipe para editar/eliminar** — solo disponible para movimientos de la semana actual; editar abre el `MovimientoSheet` compartido
 
 ### 📦 Gestión de Catálogo e Inventario
 
@@ -45,6 +45,11 @@
 
 - ✅ Pantalla de perfil con datos del usuario y empresa
 - ✅ Cierre de sesión con confirmación
+
+### 🌐 Conexión
+
+- ✅ **Detección de conectividad** vía `NetworkState` (contrato en `:common`, implementado con `ConnectivityManager`/`NetworkCallback` sobre redes validadas)
+- ✅ **Modal global sin conexión** (`NoConnectionModal`): al quedarse sin internet, un diálogo no descartable bloquea la app y reintenta automáticamente. El caché de Firestore sigue sirviendo datos detrás del modal
 
 ---
 
@@ -96,7 +101,7 @@ El proyecto usa **convention plugins** en `build-logic/` para centralizar la con
        └─ :feature:*          ← Módulos de funcionalidad (UI)
             └─ :ui            ← Tema (Color, Type, Shape), componentes Compose
             └─ :domain        ← Modelos de negocio, interfaces de repo, use cases
-                 └─ :common   ← UiState, Screen (rutas), MVI base, DateUtils
+                 └─ :common   ← UiState, Screen (rutas), MVI base, DateUtils, NetworkState
   └─ :data                    ← Room, Firebase, DataStore, Workers
        └─ :domain, :common
 ```
@@ -106,7 +111,7 @@ El proyecto usa **convention plugins** en `build-logic/` para centralizar la con
 | Módulo | Responsabilidad |
 |--------|----------------|
 | `:app` | Entry point Android, `@HiltAndroidApp`, WorkManager init (deshabilitado) |
-| `:common` | `UiState`, `Screen` (rutas), `BaseIntentModel` (MVI), `DateUtils`, `ValidateUtil` |
+| `:common` | `UiState`, `Screen` (rutas), `BaseIntentModel` (MVI), `DateUtils`, `ValidateUtil`, `NetworkState` (contrato de conectividad) |
 | `:domain` | Modelos de negocio, interfaces de repositorio, use cases |
 | `:data` | Implementaciones: Room DB, Firebase Auth/Firestore/Storage, DataStore, Workers |
 | `:ui` | Tema Material 3, componentes Compose reutilizables, Coil |
@@ -146,8 +151,8 @@ La navegación tiene **dos niveles**: `NavigationGraph` (Splash → Login/Regist
 - Soporte de **Dynamic Color** (Material You) en Android 12+
 - Paleta de colores personalizada (tonos naranja/marrón)
 - Tipografía y formas (`MiChambitaTypography`, `MiChambitaShapes`)
-- Componentes reutilizables en `:ui`: `TopBarScaffold`, `LoadingOverlay`, `ErrorDisplay`, `AlertModal`, `SearchBar`, `SnackbackHost`, `RequiredTextField`, `PasswordTextField` (con `PasswordStrengthIndicator`), `DismissKeyboard`
-- Componentes de negocio compartidos: `ResumenCard` (resumen ingresos/gastos/balance, usado en Home e Historial), `MovimientoItemCard`, `SwipeMovimientoItemCard` (swipe editar/eliminar)
+- Componentes reutilizables en `:ui`: `TopBarScaffold`, `LoadingOverlay`, `ErrorDisplay`, `AlertModal`, `NoConnectionModal` (sin conexión), `SearchBar`, `SnackbackHost`, `RequiredTextField`, `PasswordTextField` (con `PasswordStrengthIndicator`), `DismissKeyboard`
+- Componentes de negocio compartidos: `ResumenCard` (resumen ingresos/gastos/balance, usado en Home e Historial), `MovimientoItemCard`, `SwipeMovimientoItemCard` (swipe editar/eliminar), `MovimientoSheet` (registro/edición de movimientos, compartido por Home e Historial)
 
 ---
 
@@ -159,6 +164,7 @@ La navegación tiene **dos niveles**: `NavigationGraph` (Splash → Login/Regist
 - Home escucha en tiempo real los movimientos del día (snapshot listener vía `GetMovimientosOnlineUseCase`)
 - El historial consulta por rango de fechas con paginación por cursor (`getMovimientosHistorial`)
 - Preferencias de usuario y empresa (incluido el tipo de negocio) persisten en **DataStore** (`data_preferences`)
+- Sin conexión, un `NoConnectionModal` global bloquea la app (el caché persistente de Firestore sigue mostrando datos detrás); ver `NetworkState`/`NetworkStateImpl`
 
 **Infraestructura offline (preservada, deshabilitada):**
 
