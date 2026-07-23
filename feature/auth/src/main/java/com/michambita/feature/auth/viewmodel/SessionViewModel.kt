@@ -3,6 +3,7 @@ package com.michambita.feature.auth.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.michambita.domain.enums.BusinessType
+import com.michambita.common.network.NetworkState
 import com.michambita.domain.usecase.GetBusinessTypeUseCase
 import com.michambita.domain.usecase.LoadUserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,8 +16,16 @@ import javax.inject.Inject
 @HiltViewModel
 class SessionViewModel @Inject constructor(
     private val loadUserUseCase: LoadUserUseCase,
-    private val getBusinessTypeUseCase: GetBusinessTypeUseCase
+    private val getBusinessTypeUseCase: GetBusinessTypeUseCase,
+    private val networkState: NetworkState
 ) : ViewModel() {
+
+    val isOnline: StateFlow<Boolean> = networkState.isOnline
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = true
+        )
 
     val userSessionState: StateFlow<UserSessionState> = loadUserUseCase.getCurrentUserId()
         .map { userUid ->

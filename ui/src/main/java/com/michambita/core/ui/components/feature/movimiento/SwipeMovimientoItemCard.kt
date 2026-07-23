@@ -18,6 +18,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -44,17 +45,20 @@ fun SwipeMovimientoItemCard(
     // Permitir swipe en todos los casos (offline/sincronizado ignorado de momento)
     val scope = rememberCoroutineScope()
     var pendingReset by remember { mutableStateOf(false) }
+    val currentMovimiento by rememberUpdatedState(movimiento)
+    val currentOnEditar by rememberUpdatedState(onEditar)
+    val currentOnEliminar by rememberUpdatedState(onEliminar)
     val dismissState =
             rememberSwipeToDismissBoxState(
                     confirmValueChange = { value ->
                         when (value) {
                             SwipeToDismissBoxValue.EndToStart -> {
-                                onEliminar(movimiento)
+                                currentOnEliminar(currentMovimiento)
                                 pendingReset = true
                                 false
                             }
                             SwipeToDismissBoxValue.StartToEnd -> {
-                                onEditar(movimiento)
+                                currentOnEditar(currentMovimiento)
                                 pendingReset = true
                                 false
                             }

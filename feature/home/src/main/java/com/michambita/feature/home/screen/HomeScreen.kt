@@ -13,7 +13,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.michambita.domain.enums.BusinessType
 import com.michambita.feature.home.config.HomeUiConfig
 import com.michambita.feature.home.components.HomeContent
-import com.michambita.feature.home.components.historial.movimiento.MovimientoSheet
+import com.michambita.ui.components.movimiento.MovimientoSheet
 import com.michambita.feature.home.viewmodel.HomeViewModel
 import com.michambita.feature.home.viewmodel.MovimientoViewModel
 import com.michambita.common.UiState

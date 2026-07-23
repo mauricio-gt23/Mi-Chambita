@@ -15,6 +15,7 @@ import com.michambita.feature.auth.screen.LoginScreen
 import com.michambita.feature.auth.screen.RegistroScreen
 import com.michambita.feature.auth.viewmodel.SessionViewModel
 import com.michambita.feature.auth.viewmodel.UserSessionState
+import com.michambita.ui.components.widget.NoConnectionModal
 
 @Composable
 fun NavigationGraph(
@@ -24,6 +25,7 @@ fun NavigationGraph(
 ) {
     val userSessionState by sessionViewModel.userSessionState.collectAsState()
     val businessType by sessionViewModel.currentBusinessType.collectAsState()
+    val isOnline by sessionViewModel.isOnline.collectAsState()
 
     NavHost(
         navController = navController,
@@ -87,5 +89,9 @@ fun NavigationGraph(
                 },
             )
         }
+    }
+
+    if (!isOnline) {
+        NoConnectionModal()
     }
 }
