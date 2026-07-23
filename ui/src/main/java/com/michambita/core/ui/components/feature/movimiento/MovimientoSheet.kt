@@ -1,4 +1,4 @@
-package com.michambita.feature.home.components.historial.movimiento
+package com.michambita.ui.components.movimiento
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn

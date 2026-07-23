@@ -3,11 +3,16 @@ package com.michambita.feature.history.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.michambita.domain.enums.EnumTipoMovimiento
+import com.michambita.domain.model.Item
 import com.michambita.domain.model.Movimiento
+import com.michambita.domain.model.MovimientoItem
 import com.michambita.domain.usecase.CalcularResumenUseCase
 import com.michambita.domain.usecase.DeleteMovimientoOnlineUseCase
 import com.michambita.domain.usecase.GetMovimientosHistorialUseCase
+import com.michambita.domain.usecase.LoadAllItemsByCompanyIdUseCase
+import com.michambita.domain.usecase.UpdateMovimientoOnlineUseCase
 import com.michambita.core.common.util.DateUtils
+import com.michambita.common.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,13 +24,14 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
+import java.math.BigDecimal
 
 // ── Date filter sealed class ────────────────────────────────────────────
 
 sealed class DateFilter(val label: String) {
     object Today : DateFilter("Hoy")
-    object ThisWeek : DateFilter("Esta semana")
-    object ThisMonth : DateFilter("Este mes")
+    object ThisWeek : DateFilter("Semana")
+    object ThisMonth : DateFilter("Mes")
     data class Custom(val start: Date, val end: Date) : DateFilter("Personalizado")
 
     fun toDateRange(): Pair<Date, Date> {
@@ -74,15 +80,19 @@ sealed class DateFilter(val label: String) {
 data class HistoryUiState(
     val groupedMovimientos: Map<String, List<Movimiento>> = emptyMap(),
     val dateFilter: DateFilter = DateFilter.ThisWeek,
-    val typeFilter: EnumTipoMovimiento? = null, // null = Todos
+    val typeFilter: EnumTipoMovimiento? = null,
     val isLoading: Boolean = false,
     val totalVentas: String = "S/ 0.00",
     val totalGastos: String = "S/ 0.00",
     val balance: String = "S/ 0.00",
     val isBalancePositive: Boolean = true,
     val showDatePicker: Boolean = false,
-    val error: String? = null,
-    val operationMessage: String? = null
+    val operationState: UiState<String> = UiState.Empty,
+    // ── Edición vía MovimientoSheet ──────────────────────────────────
+    val sheetVisible: Boolean = false,
+    val items: List<Item> = emptyList(),
+    val movimientoEnEdicion: Movimiento? = null,
+    val originalItems: List<MovimientoItem> = emptyList()
 )
 
 // ── ViewModel ───────────────────────────────────────────────────────────
@@ -91,13 +101,12 @@ data class HistoryUiState(
 class HistoryViewModel @Inject constructor(
     private val getMovimientosHistorialUseCase: GetMovimientosHistorialUseCase,
     private val deleteMovimientoOnlineUseCase: DeleteMovimientoOnlineUseCase,
+    private val updateMovimientoOnlineUseCase: UpdateMovimientoOnlineUseCase,
+    private val loadAllItemsByCompanyIdUseCase: LoadAllItemsByCompanyIdUseCase,
     private val calcularResumenUseCase: CalcularResumenUseCase
 ) : ViewModel() {
-
     private val _uiState = MutableStateFlow(HistoryUiState())
     val uiState: StateFlow<HistoryUiState> = _uiState.asStateFlow()
-
-    // Internal list of all loaded movimientos (before type filtering)
     private var allMovimientos: MutableList<Movimiento> = mutableListOf()
 
     companion object {
@@ -106,13 +115,13 @@ class HistoryViewModel @Inject constructor(
 
     init {
         loadMovimientos()
+        loadItems()
     }
 
     // ── Public actions ──────────────────────────────────────────────────
 
     fun onDateFilterChanged(filter: DateFilter) {
         if (filter is DateFilter.Custom) {
-            // Just open the picker, don't load yet
             _uiState.update { it.copy(showDatePicker = true) }
             return
         }
@@ -147,9 +156,67 @@ class HistoryViewModel @Inject constructor(
         applyTypeFilterAndUpdateUI()
     }
 
-    fun editMovimiento(movimiento: Movimiento) {
+    // ── Edición vía MovimientoSheet ─────────────────────────────────────
+    private fun loadItems() {
         viewModelScope.launch {
-            // Will be handled by navigation to the edit sheet
+            loadAllItemsByCompanyIdUseCase.invoke()
+                .onSuccess { items -> _uiState.update { it.copy(items = items) } }
+        }
+    }
+
+    fun onEditarMovimiento(movimiento: Movimiento) {
+        _uiState.update {
+            it.copy(
+                movimientoEnEdicion = movimiento,
+                originalItems = movimiento.items,
+                sheetVisible = true
+            )
+        }
+    }
+
+    fun onMovimientoChange(movimiento: Movimiento) {
+        _uiState.update { it.copy(movimientoEnEdicion = movimiento) }
+    }
+
+    fun onGuardarMovimiento() {
+        val currentState = _uiState.value
+        val movimiento = currentState.movimientoEnEdicion ?: return
+
+        if (movimiento.descripcion.isBlank() || movimiento.monto <= BigDecimal.ZERO) return
+
+        viewModelScope.launch {
+            _uiState.update { it.copy(operationState = UiState.Loading) }
+
+            updateMovimientoOnlineUseCase(movimiento, currentState.originalItems).fold(
+                onSuccess = {
+                    _uiState.update {
+                        it.copy(
+                            sheetVisible = false,
+                            movimientoEnEdicion = null,
+                            originalItems = emptyList(),
+                            operationState = UiState.Success("Movimiento actualizado")
+                        )
+                    }
+                    resetAndLoad()
+                },
+                onFailure = { throwable ->
+                    _uiState.update {
+                        it.copy(
+                            operationState = UiState.Error(throwable.message ?: "Error al guardar")
+                        )
+                    }
+                }
+            )
+        }
+    }
+
+    fun dismissSheet() {
+        _uiState.update {
+            it.copy(
+                sheetVisible = false,
+                movimientoEnEdicion = null,
+                originalItems = emptyList()
+            )
         }
     }
 
@@ -161,21 +228,17 @@ class HistoryViewModel @Inject constructor(
                     allMovimientos.removeAll { it.id == movimiento.id }
                     applyTypeFilterAndUpdateUI()
                     calcularResumen(allMovimientos)
-                    _uiState.update { it.copy(operationMessage = "Movimiento eliminado") }
+                    _uiState.update { it.copy(operationState = UiState.Success("Movimiento eliminado")) }
                 },
                 onFailure = { e ->
-                    _uiState.update { it.copy(error = e.message ?: "Error al eliminar") }
+                    _uiState.update { it.copy(operationState = UiState.Error(e.message ?: "Error al eliminar")) }
                 }
             )
         }
     }
 
-    fun clearOperationMessage() {
-        _uiState.update { it.copy(operationMessage = null) }
-    }
-
-    fun clearError() {
-        _uiState.update { it.copy(error = null) }
+    fun clearOperationState() {
+        _uiState.update { it.copy(operationState = UiState.Empty) }
     }
 
     // ── Internal helpers ────────────────────────────────────────────────
@@ -183,10 +246,7 @@ class HistoryViewModel @Inject constructor(
     private fun resetAndLoad() {
         allMovimientos.clear()
         _uiState.update {
-            it.copy(
-                groupedMovimientos = emptyMap(),
-                error = null
-            )
+            it.copy(groupedMovimientos = emptyMap())
         }
         loadMovimientos()
     }
@@ -205,7 +265,7 @@ class HistoryViewModel @Inject constructor(
             result.fold(
                 onSuccess = { movimientos ->
                     allMovimientos = movimientos.toMutableList()
-                    _uiState.update { it.copy(isLoading = false, error = null) }
+                    _uiState.update { it.copy(isLoading = false) }
                     applyTypeFilterAndUpdateUI()
                     calcularResumen(allMovimientos)
                 },
@@ -213,7 +273,7 @@ class HistoryViewModel @Inject constructor(
                     _uiState.update {
                         it.copy(
                             isLoading = false,
-                            error = e.message ?: "Error al cargar historial"
+                            operationState = UiState.Error(e.message ?: "Error al cargar historial")
                         )
                     }
                 }
@@ -254,19 +314,5 @@ class HistoryViewModel @Inject constructor(
                 isBalancePositive = resumen.isBalancePositive
             )
         }
-    }
-
-    /**
-     * Determines if a movimiento is within the current week (Monday to Sunday)
-     */
-    fun isMovimientoEditable(movimiento: Movimiento): Boolean {
-        val cal = Calendar.getInstance()
-        cal.firstDayOfWeek = Calendar.MONDAY
-        cal.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY)
-        cal.set(Calendar.HOUR_OF_DAY, 0)
-        cal.set(Calendar.MINUTE, 0)
-        cal.set(Calendar.SECOND, 0)
-        cal.set(Calendar.MILLISECOND, 0)
-        return movimiento.fechaRegistro >= cal.time
     }
 }
