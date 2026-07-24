@@ -49,7 +49,7 @@ No usar dependencias hardcodeadas con versión inline; todo debe pasar por el ca
        └─ :feature:*          ← Feature modules (UI de cada funcionalidad)
             └─ :ui            ← Componentes Compose reutilizables, tema
             └─ :domain        ← Modelos, interfaces de repositorio, use cases
-                 └─ :common   ← Utilidades base (UiState, Screen, MVI, DateUtils, NetworkState)
+                 └─ :common   ← Utilidades base (UiState, Screen, DateUtils, NetworkState)
   └─ :data                    ← Implementaciones de repos (Firebase, Room, DataStore)
        └─ :domain, :common
 ```
@@ -84,14 +84,14 @@ No usar dependencias hardcodeadas con versión inline; todo debe pasar por el ca
   (ej. `NetworkState` — interfaz en `:common/network`, impl `NetworkStateImpl` — se enlaza
   vía `NetworkModule`, no dentro de `RepositoryModule`)
 
-### Patrones de estado UI
+### Patrón de estado UI
 
-Dos patrones coexisten:
-- **`UiState<T>`** (sealed class en `:common`): `Empty | Loading | Success<T> | Error(message)`
-  — usado en ViewModels que exponen un solo flujo de estado simple, o combinado con
-  data classes `*UiState` propias + `MutableStateFlow` (Home, Item, Profile, History).
-- **MVI vía `BaseIntentModel<UiState, UiIntent, UiEffect>`** (en `:common/mvi/`):
-  State + Intent + Effect con `Channel` + `StateFlow`. Usado **solo** en `:feature:inventario`.
+Un único patrón en toda la app:
+- **`UiState<T>`** (sealed class en `:common`): `Empty | Loading | Success<T> | Error(message)`.
+  Los ViewModels extienden `ViewModel()`, exponen un `StateFlow` de una data class `*UiState`
+  propia respaldada por un `MutableStateFlow` privado (actualizado con `_uiState.update { it.copy(...) }`)
+  y exponen funciones públicas simples para las acciones del usuario
+  (Home, Item, Profile, History, Inventario siguen esta forma). No introducir MVI ni otros frameworks de estado.
 
 ### Navegación
 
@@ -125,7 +125,7 @@ Tampoco se encontraron archivos de CI (.github/workflows, Jenkinsfile, etc.).
 | Módulo | Responsabilidad |
 |--------|----------------|
 | `:app` | Entry point Android, `@HiltAndroidApp`, Google Services, WorkManager init (deshabilitado) |
-| `:common` | Utilidades transversales: `UiState`, `Screen` (rutas), MVI base, `DateUtils`, `ValidateUtil`, `NetworkState` (contrato de conectividad) |
+| `:common` | Utilidades transversales: `UiState`, `Screen` (rutas), `DateUtils`, `ValidateUtil`, `NetworkState` (contrato de conectividad) |
 | `:domain` | Modelos de negocio, interfaces de repositorio, use cases |
 | `:data` | Implementaciones: Room DB (ruta offline inactiva), Firebase Auth/Firestore/Storage, DataStore, Workers. Retrofit está declarado pero sin uso |
 | `:ui` | Tema Material 3 (Color, Type, Shape), componentes Compose reutilizables, Coil |
@@ -133,6 +133,6 @@ Tampoco se encontraron archivos de CI (.github/workflows, Jenkinsfile, etc.).
 | `:feature:auth` | Login, Registro (3 pasos), Splash, `SessionViewModel` |
 | `:feature:home` | Dashboard principal, resumen diario con balance, registro/edición de movimientos |
 | `:feature:item` | CRUD de items (producto o servicio según `BusinessType`), gestión de imágenes, formulario |
-| `:feature:inventario` | Grid de inventario, diálogos de stock, MVI completo |
+| `:feature:inventario` | Grid de inventario, diálogos de stock |
 | `:feature:profile` | Pantalla de perfil, logout |
 | `:feature:history` | Historial de movimientos: filtros de fecha/tipo, paginación por cursor, swipe editar (abre el `MovimientoSheet` compartido de `:ui`) / eliminar |

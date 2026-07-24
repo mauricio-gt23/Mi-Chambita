@@ -101,7 +101,7 @@ El proyecto usa **convention plugins** en `build-logic/` para centralizar la con
        └─ :feature:*          ← Módulos de funcionalidad (UI)
             └─ :ui            ← Tema (Color, Type, Shape), componentes Compose
             └─ :domain        ← Modelos de negocio, interfaces de repo, use cases
-                 └─ :common   ← UiState, Screen (rutas), MVI base, DateUtils, NetworkState
+                 └─ :common   ← UiState, Screen (rutas), DateUtils, NetworkState
   └─ :data                    ← Room, Firebase, DataStore, Workers
        └─ :domain, :common
 ```
@@ -111,7 +111,7 @@ El proyecto usa **convention plugins** en `build-logic/` para centralizar la con
 | Módulo | Responsabilidad |
 |--------|----------------|
 | `:app` | Entry point Android, `@HiltAndroidApp`, WorkManager init (deshabilitado) |
-| `:common` | `UiState`, `Screen` (rutas), `BaseIntentModel` (MVI), `DateUtils`, `ValidateUtil`, `NetworkState` (contrato de conectividad) |
+| `:common` | `UiState`, `Screen` (rutas), `DateUtils`, `ValidateUtil`, `NetworkState` (contrato de conectividad) |
 | `:domain` | Modelos de negocio, interfaces de repositorio, use cases |
 | `:data` | Implementaciones: Room DB, Firebase Auth/Firestore/Storage, DataStore, Workers |
 | `:ui` | Tema Material 3, componentes Compose reutilizables, Coil |
@@ -119,7 +119,7 @@ El proyecto usa **convention plugins** en `build-logic/` para centralizar la con
 | `:feature:auth` | Login, Registro (3 pasos), Splash, `SessionViewModel` |
 | `:feature:home` | Dashboard principal, resumen diario con balance, registro/edición de movimientos |
 | `:feature:item` | CRUD de items (producto o servicio), gestión de imágenes, formulario adaptado por tipo de negocio |
-| `:feature:inventario` | Grid de inventario, diálogos de stock, MVI completo |
+| `:feature:inventario` | Grid de inventario, diálogos de stock |
 | `:feature:profile` | Pantalla de perfil, logout |
 | `:feature:history` | Historial de movimientos: filtros de fecha/tipo, paginación, swipe editar/eliminar |
 

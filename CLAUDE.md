@@ -33,7 +33,7 @@ Only placeholder template tests exist (`app/src/test/.../ExampleUnitTest.kt`, `a
        └─ :feature:*          ← Feature modules (UI)
             └─ :ui            ← Theme (Color, Type, Shape), reusable Compose components
             └─ :domain        ← Business models, repository interfaces, use cases
-                 └─ :common   ← UiState, Screen (routes), MVI base, DateUtils, NetworkState
+                 └─ :common   ← UiState, Screen (routes), DateUtils, NetworkState
   └─ :data                    ← Room, Firebase, DataStore, Retrofit, Workers
        └─ :domain, :common
 ```
@@ -75,10 +75,9 @@ All external dependency versions live in `gradle/libs.versions.toml` (version ca
 
 Global connectivity: `NavigationGraph` overlays a non-dismissable `NoConnectionModal` (`:ui`) whenever `SessionViewModel.isOnline` is `false`. That flag is backed by the `NetworkState` contract (interface in `:common/network`, impl `NetworkStateImpl` in `:data` tracking validated networks — `NET_CAPABILITY_INTERNET` + `NET_CAPABILITY_VALIDATED` — to avoid false offline flashes). Firestore's persistent cache still serves data behind the modal; Home is intentionally **not** forced into a loading state while offline.
 
-### State management patterns (two coexist)
+### State management pattern
 
-- **`UiState<T>`** (sealed class in `:common`): `Empty | Loading | Success<T> | Error(message)` — for ViewModels exposing a single simple state flow, often combined with a bespoke `*UiState` data class + `MutableStateFlow` (Home, Item, Profile, History all follow this shape).
-- **MVI via `BaseIntentModel<UiState, UiIntent, UiEffect>`** (`:common/mvi/`): State + Intent + Effect using `Channel` + `StateFlow`. Used only in `:feature:inventario`; prefer this pattern for screens with multiple user-triggered actions/side effects rather than mixing it with plain `UiState`.
+- **`UiState<T>`** (sealed class in `:common`): `Empty | Loading | Success<T> | Error(message)` — the single state pattern across the app. ViewModels extend `ViewModel()`, expose a `StateFlow` of a bespoke `*UiState` data class backed by a private `MutableStateFlow` (updated via `_uiState.update { it.copy(...) }`), and expose plain public functions for user actions (Home, Item, Profile, History, Inventario all follow this shape). Don't introduce MVI/Intent-Effect or other state frameworks.
 
 ### Dependency injection
 
