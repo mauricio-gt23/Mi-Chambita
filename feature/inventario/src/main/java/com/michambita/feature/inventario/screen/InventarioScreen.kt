@@ -12,8 +12,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.michambita.domain.model.Item
 import com.michambita.ui.components.widget.LoadingOverlay
 import com.michambita.feature.inventario.components.InventarioContent
-import com.michambita.feature.inventario.intentmodel.InventarioIntent
-import com.michambita.feature.inventario.intentmodel.InventarioIntentModel
+import com.michambita.feature.inventario.viewmodel.InventarioViewModel
 
 @SuppressLint("MutableCollectionMutableState")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -21,12 +20,12 @@ import com.michambita.feature.inventario.intentmodel.InventarioIntentModel
 fun InventarioScreen(
     onAddItem: () -> Unit,
     onOpenEditItem: (Item) -> Unit,
-    intentModel: InventarioIntentModel = hiltViewModel()
+    viewModel: InventarioViewModel = hiltViewModel()
 ) {
-    val uiState by intentModel.uiState.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
-        intentModel.sendIntent(InventarioIntent.LoadItems)
+        viewModel.loadItems()
     }
 
     InventarioContent(
@@ -34,7 +33,7 @@ fun InventarioScreen(
         modifier = Modifier.fillMaxSize(),
         onAddItem = onAddItem,
         onChangeStock = { id, stock ->
-            intentModel.sendIntent(InventarioIntent.UpdateStock(id, stock))
+            viewModel.updateStock(id, stock)
         },
         onOpenEditItem = onOpenEditItem
     )
